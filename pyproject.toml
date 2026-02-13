@@ -1,0 +1,29 @@
+[project]
+name = "libcst-code-mods"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "ed cuss", email = "edcussmusic@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "attrs>=25.4.0",
+    "libcst>=1.8.6",
+]
+
+[project.scripts]
+libcst-code-mods = "libcst_code_mods:main"
+
+[build-system]
+requires = ["uv_build>=0.8.13,<0.9.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.2.0",
+    "pre-commit>=4.5.1",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.15.0",
+]
