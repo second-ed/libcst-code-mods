@@ -203,6 +203,18 @@ wheels = [
 ]
 
 [[package]]
+name = "danom"
+version = "0.10.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "attrs" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/83/87/ceb7db61fb6e430f8d6e1ed676cdd52b6a06c1292596ad268920508ca0b4/danom-0.10.0.tar.gz", hash = "sha256:fb9097fc27424adab9b74bcb877fefa042bd9adf00a7127d3948d068b10355a7", size = 11141, upload-time = "2026-02-08T20:28:51.868Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e3/9f/cc74ea218d0e57226e90ace25e8dc2451283ed20bd591205d954be1d9402/danom-0.10.0-py3-none-any.whl", hash = "sha256:3f1dee299a578f82a62253e00f494ff2611ee3cc3733fb7a19e0d992b5377789", size = 14798, upload-time = "2026-02-08T20:28:50.697Z" },
+]
+
+[[package]]
 name = "debugpy"
 version = "1.8.20"
 source = { registry = "https://pypi.org/simple" }
@@ -433,6 +445,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
+    { name = "danom" },
     { name = "libcst" },
 ]
 
@@ -448,6 +461,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "attrs", specifier = ">=25.4.0" },
+    { name = "danom", specifier = ">=0.10.0" },
     { name = "libcst", specifier = ">=1.8.6" },
 ]
 
