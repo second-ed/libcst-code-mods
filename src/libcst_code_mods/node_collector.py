@@ -22,7 +22,7 @@ class MetadataBase(cst.CSTVisitor):
 @attrs.define
 class NodeCollector(MetadataBase):
     matcher: m.BaseMatcherNode
-    results: list = attrs.field(factory=list)
+    results: list[NodeMetadata] = attrs.field(factory=list)
 
     def on_visit(self, node: cst.CSTNode) -> bool:
         if not m.matches(node, self.matcher):
