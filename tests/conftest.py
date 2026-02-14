@@ -21,7 +21,7 @@ def fixture_get_matcher_case(
 
 @pytest.fixture(scope="session")
 def fixture_get_usecase_files() -> MappingProxyType[str, str]:
-    paths = Path(f"{REPO_ROOT}/tests/test_usecases").rglob("**/*.py")
+    paths = Path(f"{REPO_ROOT}/tests/test_transformer_cases").rglob("**/*.py")
     return {tuple(p.with_suffix("").parts[-2:]): p.read_text() for p in paths if p.stem != "__init__"}
 
 

@@ -33,6 +33,8 @@ ignore = [
     "ANN"      # Who typehints their tests?
 ]
 "conf.py" = ["ALL"]
+"tests/test_transformer_cases/**.py" = ["ALL"]
+
 [format]
 quote-style = "double"
 indent-style = "space"
