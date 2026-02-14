@@ -33,9 +33,9 @@ def has_return_type(type_hint: m.BaseMatcherNode | None = None) -> m.FunctionDef
 
 def assignment_has_type_hint(type_hint: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
     type_hint = type_hint or m.DoNotCare()
-    return m.SimpleStatementLine(body=[m.AnnAssign(annotation=m.Annotation(annotation=type_hint))])
+    return m.AnnAssign(annotation=m.Annotation(annotation=type_hint))
 
 
-def function_param_has_type_hint(type_hint: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
+def param_has_type_hint(type_hint: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
     type_hint = type_hint or m.DoNotCare()
-    return m.FunctionDef(params=m.MatchIfTrue(HasAny(m.Param(annotation=m.Annotation(annotation=type_hint)))))
+    return m.Param(annotation=m.Annotation(annotation=type_hint))

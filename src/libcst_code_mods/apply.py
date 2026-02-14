@@ -18,7 +18,7 @@ def apply_code_mod(  # noqa: PLR0913
     transform_matcher: m.BaseMatcherNode | None = None,
     transform_matcher_fn: Callable[[cst.CSTNode], cst.CSTNode] | None = None,
 ) -> str:
-    wrapper = cst.MetadataWrapper(code)
+    wrapper = cst.MetadataWrapper(cst.parse_module(code))
     collector = NodeCollector(collecter_matcher)
     wrapper.visit(collector)
 
@@ -29,9 +29,10 @@ def apply_code_mod(  # noqa: PLR0913
         filtered = collector.results
 
     replacements = {elem.node: NodeTransform(transform_fn) for elem in filtered}
-    return wrapper.module.visit(
-        ApplyTransformations(replacements, matcher=transform_matcher, transform_matcher_fn=transform_matcher_fn)
-    ).code
+    transformer = ApplyTransformations(
+        replacements, matcher=transform_matcher, transform_matcher_fn=transform_matcher_fn
+    )
+    return wrapper.module.visit(transformer).code
 
 
 @attrs.define(frozen=True, hash=True, eq=True)

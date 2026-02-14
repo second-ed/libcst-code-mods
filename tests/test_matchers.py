@@ -3,6 +3,14 @@ import libcst.matchers as m
 import pytest
 
 import src.libcst_code_mods.matchers as mat
+from src.libcst_code_mods.node_collector import NodeCollector, NodeMetadata
+
+
+def _get_node_collecter_results(code: str, type_matcher: m.BaseMatcherNode) -> list[NodeMetadata]:
+    wrapper = cst.MetadataWrapper(cst.parse_module(code))
+    collector = NodeCollector(type_matcher)
+    wrapper.visit(collector)
+    return collector.results
 
 
 @pytest.mark.parametrize(
@@ -23,8 +31,8 @@ import src.libcst_code_mods.matchers as mat
 )
 def test_is_function(fixture_get_matcher_case, expected_result):
     code = fixture_get_matcher_case
-    node = cst.parse_module(code).body[0]
-    assert m.matches(node, mat.is_function()) == expected_result
+    results = _get_node_collecter_results(code, mat.is_function())
+    assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -45,8 +53,8 @@ def test_is_function(fixture_get_matcher_case, expected_result):
 )
 def test_is_class(fixture_get_matcher_case, expected_result):
     code = fixture_get_matcher_case
-    node = cst.parse_module(code).body[0]
-    assert m.matches(node, mat.is_class()) == expected_result
+    results = _get_node_collecter_results(code, mat.is_class())
+    assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -72,8 +80,8 @@ def test_is_class(fixture_get_matcher_case, expected_result):
 )
 def test_raises_exception(fixture_get_matcher_case, expected_result):
     code = fixture_get_matcher_case
-    node = cst.parse_module(code).body[0]
-    assert m.matches(node, mat.raises_exception()) == expected_result
+    results = _get_node_collecter_results(code, mat.raises_exception())
+    assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -102,8 +110,8 @@ def test_raises_exception(fixture_get_matcher_case, expected_result):
 )
 def test_has_return_type(fixture_get_matcher_case, type_matcher, expected_result):
     code = fixture_get_matcher_case
-    node = cst.parse_module(code).body[0]
-    assert m.matches(node, mat.has_return_type(type_matcher)) == expected_result
+    results = _get_node_collecter_results(code, mat.has_return_type(type_matcher))
+    assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -119,7 +127,7 @@ def test_has_return_type(fixture_get_matcher_case, type_matcher, expected_result
             "global_assignment_with_type_hint",
             m.Name("float"),
             False,
-            id="ensure does not match if does not has specified type hint",
+            id="ensure does not match if does not have specified type hint",
         ),
         pytest.param(
             "global_assignment",
@@ -132,8 +140,8 @@ def test_has_return_type(fixture_get_matcher_case, type_matcher, expected_result
 )
 def test_assignment_has_type_hint(fixture_get_matcher_case, type_matcher, expected_result):
     code = fixture_get_matcher_case
-    node = cst.parse_module(code).body[0]
-    assert m.matches(node, mat.assignment_has_type_hint(type_matcher)) == expected_result
+    results = _get_node_collecter_results(code, mat.assignment_has_type_hint(type_matcher))
+    assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -160,7 +168,7 @@ def test_assignment_has_type_hint(fixture_get_matcher_case, type_matcher, expect
     ],
     indirect=["fixture_get_matcher_case"],
 )
-def test_function_param_has_type_hint(fixture_get_matcher_case, type_matcher, expected_result):
+def test_param_has_type_hint(fixture_get_matcher_case, type_matcher, expected_result):
     code = fixture_get_matcher_case
-    node = cst.parse_module(code).body[0]
-    assert m.matches(node, mat.function_param_has_type_hint(type_matcher)) == expected_result
+    results = _get_node_collecter_results(code, mat.param_has_type_hint(type_matcher))
+    assert bool(results) == expected_result
