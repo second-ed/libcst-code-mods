@@ -130,10 +130,10 @@ def test_has_return_type(fixture_get_matcher_case, type_matcher, expected_result
     ],
     indirect=["fixture_get_matcher_case"],
 )
-def test_assignment_has_type_hint_of(fixture_get_matcher_case, type_matcher, expected_result):
+def test_assignment_has_type_hint(fixture_get_matcher_case, type_matcher, expected_result):
     code = fixture_get_matcher_case
     node = cst.parse_module(code).body[0]
-    assert m.matches(node, mat.assignment_has_type_hint_of(type_matcher)) == expected_result
+    assert m.matches(node, mat.assignment_has_type_hint(type_matcher)) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -160,7 +160,7 @@ def test_assignment_has_type_hint_of(fixture_get_matcher_case, type_matcher, exp
     ],
     indirect=["fixture_get_matcher_case"],
 )
-def test_function_param_has_type_hint_of(fixture_get_matcher_case, type_matcher, expected_result):
+def test_function_param_has_type_hint(fixture_get_matcher_case, type_matcher, expected_result):
     code = fixture_get_matcher_case
     node = cst.parse_module(code).body[0]
-    assert m.matches(node, mat.function_param_has_type_hint_of(type_matcher)) == expected_result
+    assert m.matches(node, mat.function_param_has_type_hint(type_matcher)) == expected_result

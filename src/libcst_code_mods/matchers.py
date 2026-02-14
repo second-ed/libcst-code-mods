@@ -31,11 +31,11 @@ def has_return_type(type_hint: m.BaseMatcherNode | None = None) -> m.FunctionDef
     return m.FunctionDef(returns=m.Annotation(annotation=type_hint))
 
 
-def assignment_has_type_hint_of(type_hint: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
+def assignment_has_type_hint(type_hint: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
     type_hint = type_hint or m.DoNotCare()
     return m.SimpleStatementLine(body=[m.AnnAssign(annotation=m.Annotation(annotation=type_hint))])
 
 
-def function_param_has_type_hint_of(type_hint: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
+def function_param_has_type_hint(type_hint: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
     type_hint = type_hint or m.DoNotCare()
     return m.FunctionDef(params=m.MatchIfTrue(MatchHasAny(m.Param(annotation=m.Annotation(annotation=type_hint)))))
