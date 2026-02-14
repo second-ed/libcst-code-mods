@@ -104,3 +104,63 @@ def test_has_return_type(fixture_get_matcher_case, type_matcher, expected_result
     code = fixture_get_matcher_case
     node = cst.parse_module(code).body[0]
     assert m.matches(node, mat.has_return_type(type_matcher)) == expected_result
+
+
+@pytest.mark.parametrize(
+    ("fixture_get_matcher_case", "type_matcher", "expected_result"),
+    [
+        pytest.param(
+            "global_assignment_with_type_hint",
+            m.Name("int"),
+            True,
+            id="ensure matches if has specified type hint",
+        ),
+        pytest.param(
+            "global_assignment_with_type_hint",
+            m.Name("float"),
+            False,
+            id="ensure does not match if does not has specified type hint",
+        ),
+        pytest.param(
+            "global_assignment",
+            None,
+            False,
+            id="ensure does not match if has no type hint",
+        ),
+    ],
+    indirect=["fixture_get_matcher_case"],
+)
+def test_assignment_has_type_hint_of(fixture_get_matcher_case, type_matcher, expected_result):
+    code = fixture_get_matcher_case
+    node = cst.parse_module(code).body[0]
+    assert m.matches(node, mat.assignment_has_type_hint_of(type_matcher)) == expected_result
+
+
+@pytest.mark.parametrize(
+    ("fixture_get_matcher_case", "type_matcher", "expected_result"),
+    [
+        pytest.param(
+            "function_single_line",
+            m.Name("int"),
+            True,
+            id="ensure matches if has specified type hint",
+        ),
+        pytest.param(
+            "function_single_line",
+            m.Name("float"),
+            False,
+            id="ensure does not match if does not has specified type hint",
+        ),
+        pytest.param(
+            "function_raises_exception",
+            None,
+            False,
+            id="ensure does not match if has no type hint",
+        ),
+    ],
+    indirect=["fixture_get_matcher_case"],
+)
+def test_function_param_has_type_hint_of(fixture_get_matcher_case, type_matcher, expected_result):
+    code = fixture_get_matcher_case
+    node = cst.parse_module(code).body[0]
+    assert m.matches(node, mat.function_param_has_type_hint_of(type_matcher)) == expected_result
