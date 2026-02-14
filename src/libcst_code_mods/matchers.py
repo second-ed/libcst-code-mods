@@ -1,19 +1,30 @@
-from enum import Enum
+from __future__ import annotations
 
 import libcst.matchers as m
 
 
-class NodeMatcher(Enum):
-    IS_FUNCTION = m.FunctionDef()
-    IS_CLASS = m.ClassDef()
-    RAISES_EXCEPTION = m.FunctionDef(
-        body=m.IndentedBlock(
-            body=m.OneOf(
-                [
-                    m.SimpleStatementLine(body=[m.Raise(exc=m.DoNotCare())]),
-                    m.IndentedBlock(body=[m.Raise(exc=m.DoNotCare())]),
-                ]
+def is_function() -> m.FunctionDef:
+    return m.FunctionDef()
+
+
+def is_class() -> m.ClassDef:
+    return m.ClassDef()
+
+
+def raises_exception(exc: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
+    exc = exc or m.DoNotCare()
+    return m.FunctionDef(
+        body=m.MatchIfTrue(
+            lambda node: bool(
+                m.findall(
+                    node,
+                    m.Raise(exc=m.DoNotCare()),
+                )
             )
         )
     )
-    HAS_RETURN_TYPE = m.FunctionDef(returns=m.Annotation(annotation=m.DoNotCare()))
+
+
+def has_return_type(annotation: m.BaseMatcherNode | None = None) -> m.FunctionDef:
+    annotation = annotation or m.DoNotCare()
+    return m.FunctionDef(returns=m.Annotation(annotation=annotation))
