@@ -5,10 +5,16 @@ import libcst as cst
 import libcst.matchers as m
 
 import libcst_code_mods.matchers as mat
+from libcst_code_mods.node_collector import NodeMetadata
 
 
 @attrs.define
-class RenameVariableOfType(cst.CSTTransformer):
+class BaseMetadataTransformer(cst.CSTTransformer):
+    collected_nodes: list[NodeMetadata] = attrs.field(init=False)
+
+
+@attrs.define
+class RenameVariableOfType(BaseMetadataTransformer):
     type_hint: str
     new_variable_name: str
     replaced_names: list[str] = attrs.field(factory=list)
