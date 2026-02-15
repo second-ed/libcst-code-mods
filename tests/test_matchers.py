@@ -162,3 +162,31 @@ def test_assignment_has_type_hint(matcher_case, type_matcher, expected_result):
 def test_param_has_type_hint(matcher_case, type_matcher, expected_result):
     results = _get_node_collecter_results(matcher_case, mat.param_has_type_hint(type_matcher))
     assert bool(results) == expected_result
+
+
+@pytest.mark.parametrize(
+    ("matcher_case", "type_matcher", "expected_result"),
+    [
+        pytest.param(
+            "calls_print",
+            m.Name("print"),
+            True,
+            id="ensure matches if calls specified function",
+        ),
+        pytest.param(
+            "calls_print",
+            None,
+            True,
+            id="ensure matches if has any call",
+        ),
+        pytest.param(
+            "function_single_line",
+            None,
+            False,
+            id="ensure does not match if has no call",
+        ),
+    ],
+)
+def test_is_call_with_name(matcher_case, type_matcher, expected_result):
+    results = _get_node_collecter_results(matcher_case, mat.is_call_with_name(type_matcher))
+    assert bool(results) == expected_result

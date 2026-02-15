@@ -21,21 +21,30 @@ def is_class() -> m.ClassDef:
     return m.ClassDef()
 
 
-def raises_exception(exc: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
+def raises_exception(exc: m.Name | None = None) -> m.BaseMatcherNode:
     exc = exc or m.DoNotCare()
     return m.FunctionDef(body=m.MatchIfTrue(HasAny(m.Raise(exc=exc))))
 
 
-def has_return_type(type_hint: m.BaseMatcherNode | None = None) -> m.FunctionDef:
+def has_return_type(type_hint: m.Name | None = None) -> m.FunctionDef:
     type_hint = type_hint or m.DoNotCare()
     return m.FunctionDef(returns=m.Annotation(annotation=type_hint))
 
 
-def assignment_has_type_hint(type_hint: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
+def assignment_has_type_hint(type_hint: m.Name | None = None) -> m.BaseMatcherNode:
     type_hint = type_hint or m.DoNotCare()
     return m.AnnAssign(annotation=m.Annotation(annotation=type_hint))
 
 
-def param_has_type_hint(type_hint: m.BaseMatcherNode | None = None) -> m.BaseMatcherNode:
+def param_has_type_hint(type_hint: m.Name | None = None) -> m.BaseMatcherNode:
     type_hint = type_hint or m.DoNotCare()
     return m.Param(annotation=m.Annotation(annotation=type_hint))
+
+
+def is_call_with_name(func_name: m.Name | None = None) -> m.BaseMatcherNode:
+    if func_name is None:
+        # match any call
+        return m.Call()
+
+    func_name = func_name or m.DoNotCare()
+    return m.Call(func=m.OneOf(func_name, m.Attribute(value=m.DoNotCare(), attr=func_name)))
