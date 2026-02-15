@@ -3,8 +3,8 @@ import pytest
 
 import libcst_code_mods.matchers as mat
 from libcst_code_mods.apply import get_manager
+from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.node_collector import NodeCollector, NodeMetadata
-from tests.conftest import REPO_ROOT
 
 
 def _get_node_collecter_results(usecase: str, type_matcher: m.BaseMatcherNode) -> list[NodeMetadata]:
