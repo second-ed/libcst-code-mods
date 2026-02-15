@@ -2,6 +2,8 @@ import attrs
 import libcst as cst
 import libcst.matchers as m
 
+from libcst_code_mods.constants import METADATA_DEPS
+
 
 @attrs.define(frozen=True)
 class NodeMetadata:
@@ -12,11 +14,7 @@ class NodeMetadata:
 
 
 class MetadataBase(cst.CSTVisitor):
-    METADATA_DEPENDENCIES = (
-        cst.metadata.PositionProvider,
-        cst.metadata.ScopeProvider,
-        cst.metadata.QualifiedNameProvider,
-    )
+    METADATA_DEPENDENCIES = METADATA_DEPS
 
 
 @attrs.define
@@ -33,7 +31,7 @@ class NodeCollector(MetadataBase):
                 node=node,
                 position=self.get_metadata(cst.metadata.PositionProvider, node, None),
                 scope=self.get_metadata(cst.metadata.ScopeProvider, node, None),
-                qualified_names=self.get_metadata(cst.metadata.QualifiedNameProvider, node, set()),
+                qualified_names=self.get_metadata(cst.metadata.FullyQualifiedNameProvider, node, set()),
             )
         )
 

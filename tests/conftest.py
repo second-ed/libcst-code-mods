@@ -3,7 +3,7 @@ from types import MappingProxyType
 
 import pytest
 
-REPO_ROOT = Path(__file__).parents[1]
+from libcst_code_mods.constants import REPO_ROOT
 
 
 @pytest.fixture(scope="session")

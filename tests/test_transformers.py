@@ -1,26 +1,32 @@
+from pathlib import Path
+
 import libcst.matchers as m
 import pytest
 
 import libcst_code_mods.matchers as mat
 from libcst_code_mods.apply import apply_code_mod
+from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.transformers import RenameVariableOfType
 
 
 @pytest.mark.parametrize(
-    "fixture_get_usecase_case",
+    ("usecase_name", "matcher", "transformer"),
     [
-        "rename_variables_of_same_type",
+        pytest.param(
+            "rename_variables_of_same_type",
+            (
+                mat.assignment_has_type_hint(m.Name("CustomLoggingHandler"))
+                | mat.param_has_type_hint(m.Name("CustomLoggingHandler"))
+            ),
+            RenameVariableOfType("CustomLoggingHandler", "custom_handler"),
+        ),
     ],
-    indirect=True,
 )
-def test_rename_variables_of_same_type(fixture_get_usecase_case):
-    before, after = fixture_get_usecase_case
+def test_rename_variables_of_same_type(usecase_name, matcher, transformer):
+    usecase_root = f"{REPO_ROOT}/tests/test_transformer_cases/{usecase_name}"
+    before_path = f"{usecase_root}/before.py"
+    after_path = f"{usecase_root}/after.py"
 
-    matcher = mat.assignment_has_type_hint(m.Name("CustomLoggingHandler")) | mat.param_has_type_hint(
-        m.Name("CustomLoggingHandler")
-    )
+    res = apply_code_mod(usecase_root, before_path, matcher, transformer)
 
-    assert (
-        apply_code_mod(before, matcher, RenameVariableOfType("CustomLoggingHandler", "custom_handler")).splitlines()
-        == after.splitlines()
-    )
+    assert res.splitlines() == Path(after_path).read_text().splitlines()
