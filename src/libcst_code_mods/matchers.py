@@ -46,5 +46,18 @@ def is_call_with_name(func_name: m.Name | None = None) -> m.BaseMatcherNode:
         # match any call
         return m.Call()
 
-    func_name = func_name or m.DoNotCare()
     return m.Call(func=m.OneOf(func_name, m.Attribute(value=m.DoNotCare(), attr=func_name)))
+
+
+def is_fstring_with_text(formatted_text: str | None = None) -> m.FormattedString:
+    formatted_text = formatted_text or m.DoNotCare()
+    return _fstring_with_node(m.FormattedStringText(value=formatted_text))
+
+
+def is_fstring_with_placeholder(expression: m.Name | None = None) -> m.FormattedString:
+    expression = expression or m.DoNotCare()
+    return _fstring_with_node(m.FormattedStringExpression(expression=expression))
+
+
+def _fstring_with_node(node: m.BaseMatcherNode) -> m.FormattedString:
+    return m.FormattedString(parts=[m.ZeroOrMore(), node, m.ZeroOrMore()])

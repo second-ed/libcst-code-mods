@@ -190,3 +190,59 @@ def test_param_has_type_hint(matcher_case, type_matcher, expected_result):
 def test_is_call_with_name(matcher_case, type_matcher, expected_result):
     results = _get_node_collecter_results(matcher_case, mat.is_call_with_name(type_matcher))
     assert bool(results) == expected_result
+
+
+@pytest.mark.parametrize(
+    ("matcher_case", "type_matcher", "expected_result"),
+    [
+        pytest.param(
+            "print_with_fstring",
+            "x = ",
+            True,
+            id="ensure matches if text is present",
+        ),
+        pytest.param(
+            "print_with_fstring",
+            None,
+            True,
+            id="ensure matches if has any string element",
+        ),
+        pytest.param(
+            "print_with_fstring",
+            "blah blah",
+            False,
+            id="ensure does not match if string does not match",
+        ),
+    ],
+)
+def test_is_fstring_with_text(matcher_case, type_matcher, expected_result):
+    results = _get_node_collecter_results(matcher_case, mat.is_fstring_with_text(type_matcher))
+    assert bool(results) == expected_result
+
+
+@pytest.mark.parametrize(
+    ("matcher_case", "type_matcher", "expected_result"),
+    [
+        pytest.param(
+            "print_with_fstring",
+            m.Name("x"),
+            True,
+            id="ensure matches if text is present",
+        ),
+        pytest.param(
+            "print_with_fstring",
+            None,
+            True,
+            id="ensure matches if has any string element",
+        ),
+        pytest.param(
+            "print_with_fstring",
+            m.Name("blah blah"),
+            False,
+            id="ensure does not match if string does not match",
+        ),
+    ],
+)
+def test_is_fstring_with_placeholder(matcher_case, type_matcher, expected_result):
+    results = _get_node_collecter_results(matcher_case, mat.is_fstring_with_placeholder(type_matcher))
+    assert bool(results) == expected_result
