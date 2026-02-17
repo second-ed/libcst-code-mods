@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 import libcst.matchers as m
 import pytest
 from libcst.metadata.wrapper import MetadataWrapper
@@ -12,25 +10,24 @@ from libcst_code_mods.node_collector import NodeCollector, NodeMetadata
 MATCHER_TEST_ROOT = f"{REPO_ROOT}/tests/test_examples"
 
 
-@lru_cache
-def _get_test_manager():
+@pytest.fixture(scope="session")
+def test_manager():
     return get_manager(MATCHER_TEST_ROOT)
 
 
-@lru_cache
-def _get_usecase_wrapper(usecase: str) -> MetadataWrapper:
-    return _get_test_manager().get_metadata_wrapper_for_path(f"{MATCHER_TEST_ROOT}/{usecase}.py")
+@pytest.fixture
+def usecase_wrapper(test_manager, request: pytest.FixtureRequest) -> MetadataWrapper:
+    return test_manager.get_metadata_wrapper_for_path(f"{MATCHER_TEST_ROOT}/{request.param}.py")
 
 
-def _get_node_collecter_results(usecase: str, type_matcher: m.BaseMatcherNode) -> list[NodeMetadata]:
-    wrapper = _get_usecase_wrapper(usecase)
+def _get_node_collecter_results(wrapper: MetadataWrapper, type_matcher: m.BaseMatcherNode) -> list[NodeMetadata]:
     collector = NodeCollector(type_matcher)
     wrapper.visit(collector)
     return collector.results
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "expected_result"),
+    ("usecase_wrapper", "expected_result"),
     [
         pytest.param(
             "function_single_line",
@@ -43,14 +40,15 @@ def _get_node_collecter_results(usecase: str, type_matcher: m.BaseMatcherNode) -
             id="ensure does not match on not function",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_is_function(matcher_case, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.is_function())
+def test_is_function(usecase_wrapper, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.is_function())
     assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "expected_result"),
+    ("usecase_wrapper", "expected_result"),
     [
         pytest.param(
             "function_nested_function",
@@ -63,14 +61,15 @@ def test_is_function(matcher_case, expected_result):
             id="ensure does not match on not function",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_is_nested_function(matcher_case, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.is_nested_function())
+def test_is_nested_function(usecase_wrapper, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.is_nested_function())
     assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "expected_result"),
+    ("usecase_wrapper", "expected_result"),
     [
         pytest.param(
             "class_single_method",
@@ -83,14 +82,15 @@ def test_is_nested_function(matcher_case, expected_result):
             id="ensure does not match on not other elem",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_is_class(matcher_case, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.is_class())
+def test_is_class(usecase_wrapper, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.is_class())
     assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "expected_result"),
+    ("usecase_wrapper", "expected_result"),
     [
         pytest.param(
             "function_raises_exception",
@@ -108,14 +108,15 @@ def test_is_class(matcher_case, expected_result):
             id="ensure does not match if does not raise",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_raises_exception(matcher_case, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.raises_exception())
+def test_raises_exception(usecase_wrapper, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.raises_exception())
     assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "type_matcher", "expected_result"),
+    ("usecase_wrapper", "type_matcher", "expected_result"),
     [
         pytest.param(
             "function_single_line",
@@ -136,14 +137,15 @@ def test_raises_exception(matcher_case, expected_result):
             id="ensure does not match if function does not have the specified return type",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_has_return_type(matcher_case, type_matcher, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.has_return_type(type_matcher))
+def test_has_return_type(usecase_wrapper, type_matcher, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.has_return_type(type_matcher))
     assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "type_matcher", "expected_result"),
+    ("usecase_wrapper", "type_matcher", "expected_result"),
     [
         pytest.param(
             "global_assignment_with_type_hint",
@@ -164,14 +166,15 @@ def test_has_return_type(matcher_case, type_matcher, expected_result):
             id="ensure does not match if has no type hint",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_assignment_has_type_hint(matcher_case, type_matcher, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.assignment_has_type_hint(type_matcher))
+def test_assignment_has_type_hint(usecase_wrapper, type_matcher, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.assignment_has_type_hint(type_matcher))
     assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "type_matcher", "expected_result"),
+    ("usecase_wrapper", "type_matcher", "expected_result"),
     [
         pytest.param(
             "function_single_line",
@@ -192,14 +195,15 @@ def test_assignment_has_type_hint(matcher_case, type_matcher, expected_result):
             id="ensure does not match if has no type hint",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_param_has_type_hint(matcher_case, type_matcher, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.param_has_type_hint(type_matcher))
+def test_param_has_type_hint(usecase_wrapper, type_matcher, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.param_has_type_hint(type_matcher))
     assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "type_matcher", "expected_result"),
+    ("usecase_wrapper", "type_matcher", "expected_result"),
     [
         pytest.param(
             "calls_print",
@@ -220,14 +224,15 @@ def test_param_has_type_hint(matcher_case, type_matcher, expected_result):
             id="ensure does not match if has no call",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_is_call_with_name(matcher_case, type_matcher, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.is_call_with_name(type_matcher))
+def test_is_call_with_name(usecase_wrapper, type_matcher, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.is_call_with_name(type_matcher))
     assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "type_matcher", "expected_result"),
+    ("usecase_wrapper", "type_matcher", "expected_result"),
     [
         pytest.param(
             "print_with_fstring",
@@ -248,14 +253,15 @@ def test_is_call_with_name(matcher_case, type_matcher, expected_result):
             id="ensure does not match if string does not match",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_is_fstring_with_text(matcher_case, type_matcher, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.is_fstring_with_text(type_matcher))
+def test_is_fstring_with_text(usecase_wrapper, type_matcher, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.is_fstring_with_text(type_matcher))
     assert bool(results) == expected_result
 
 
 @pytest.mark.parametrize(
-    ("matcher_case", "type_matcher", "expected_result"),
+    ("usecase_wrapper", "type_matcher", "expected_result"),
     [
         pytest.param(
             "print_with_fstring",
@@ -276,7 +282,8 @@ def test_is_fstring_with_text(matcher_case, type_matcher, expected_result):
             id="ensure does not match if string does not match",
         ),
     ],
+    indirect=["usecase_wrapper"],
 )
-def test_is_fstring_with_placeholder(matcher_case, type_matcher, expected_result):
-    results = _get_node_collecter_results(matcher_case, mat.is_fstring_with_placeholder(type_matcher))
+def test_is_fstring_with_placeholder(usecase_wrapper, type_matcher, expected_result):
+    results = _get_node_collecter_results(usecase_wrapper, mat.is_fstring_with_placeholder(type_matcher))
     assert bool(results) == expected_result
