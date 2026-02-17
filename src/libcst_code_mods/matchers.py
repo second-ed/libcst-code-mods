@@ -13,15 +13,22 @@ class HasAny:
         return bool(m.findall(node, self.match_cond))
 
 
-def is_function() -> m.FunctionDef:
-    return m.FunctionDef()
+def is_function(name: m.Name | None = None) -> m.FunctionDef:
+    name = name or m.DoNotCare()
+    return m.FunctionDef(name=name)
 
 
-def is_class() -> m.ClassDef:
-    return m.ClassDef()
+def is_nested_function(name: m.Name | None = None) -> m.FunctionDef:
+    name = name or m.DoNotCare()
+    return m.FunctionDef(name=name, body=m.MatchIfTrue(HasAny(m.FunctionDef())))
 
 
-def raises_exception(exc: m.Name | None = None) -> m.BaseMatcherNode:
+def is_class(name: m.Name | None = None) -> m.ClassDef:
+    name = name or m.DoNotCare()
+    return m.ClassDef(name=name)
+
+
+def raises_exception(exc: m.Name | None = None) -> m.FunctionDef:
     exc = exc or m.DoNotCare()
     return m.FunctionDef(body=m.MatchIfTrue(HasAny(m.Raise(exc=exc))))
 

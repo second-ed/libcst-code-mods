@@ -1,15 +1,29 @@
+from functools import lru_cache
+
 import libcst.matchers as m
 import pytest
+from libcst.metadata.wrapper import MetadataWrapper
 
 import libcst_code_mods.matchers as mat
 from libcst_code_mods.apply import get_manager
 from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.node_collector import NodeCollector, NodeMetadata
 
+MATCHER_TEST_ROOT = f"{REPO_ROOT}/tests/test_examples"
+
+
+@lru_cache
+def _get_test_manager():
+    return get_manager(MATCHER_TEST_ROOT)
+
+
+@lru_cache
+def _get_usecase_wrapper(usecase: str) -> MetadataWrapper:
+    return _get_test_manager().get_metadata_wrapper_for_path(f"{MATCHER_TEST_ROOT}/{usecase}.py")
+
 
 def _get_node_collecter_results(usecase: str, type_matcher: m.BaseMatcherNode) -> list[NodeMetadata]:
-    root = f"{REPO_ROOT}/tests/test_examples"
-    wrapper = get_manager(root).get_metadata_wrapper_for_path(f"{root}/{usecase}.py")
+    wrapper = _get_usecase_wrapper(usecase)
     collector = NodeCollector(type_matcher)
     wrapper.visit(collector)
     return collector.results
@@ -32,6 +46,26 @@ def _get_node_collecter_results(usecase: str, type_matcher: m.BaseMatcherNode) -
 )
 def test_is_function(matcher_case, expected_result):
     results = _get_node_collecter_results(matcher_case, mat.is_function())
+    assert bool(results) == expected_result
+
+
+@pytest.mark.parametrize(
+    ("matcher_case", "expected_result"),
+    [
+        pytest.param(
+            "function_nested_function",
+            True,
+            id="ensure matches on function",
+        ),
+        pytest.param(
+            "function_single_line",
+            False,
+            id="ensure does not match on not function",
+        ),
+    ],
+)
+def test_is_nested_function(matcher_case, expected_result):
+    results = _get_node_collecter_results(matcher_case, mat.is_nested_function())
     assert bool(results) == expected_result
 
 
