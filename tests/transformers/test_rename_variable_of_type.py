@@ -6,7 +6,7 @@ import pytest
 import libcst_code_mods.matchers as mat
 from libcst_code_mods.apply import apply_code_mod
 from libcst_code_mods.constants import REPO_ROOT
-from libcst_code_mods.transformers import RenameVariableOfType
+from libcst_code_mods.transformers.rename_variable_of_type import RenameVariableOfType
 
 
 @pytest.mark.parametrize(

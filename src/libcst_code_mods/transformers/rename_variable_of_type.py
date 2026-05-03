@@ -5,12 +5,7 @@ import libcst as cst
 import libcst.matchers as m
 
 import libcst_code_mods.matchers as mat
-from libcst_code_mods.node_collector import NodeMetadata
-
-
-@attrs.define
-class BaseMetadataTransformer(cst.CSTTransformer):
-    collected_nodes: list[NodeMetadata] = attrs.field(init=False)
+from libcst_code_mods.transformers._base import BaseMetadataTransformer
 
 
 @attrs.define
