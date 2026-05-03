@@ -12,10 +12,10 @@ from libcst_code_mods.transformers.convert_function_signature import ConvertFunc
     ("usecase_name", "case_name", "matcher", "transformer"),
     [
         pytest.param(
-            "to_new_function",
+            "convert_function_signature",
             "case_1",
             (m.Call()),
-            ConvertFunctionSignature("add", "new_sum"),
+            ConvertFunctionSignature("new_sum", {0: "a", 1: "b"}, {"a": "value_1", "b": "value_2"}),
         ),
     ],
 )

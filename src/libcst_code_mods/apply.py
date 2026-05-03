@@ -5,19 +5,20 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 
 import attrs
-import libcst as cst
+import black
 import libcst.matchers as m
 from libcst.metadata import FullRepoManager
 
 from libcst_code_mods.constants import METADATA_DEPS
 from libcst_code_mods.node_collector import NodeCollector, NodeMetadata
+from libcst_code_mods.transformers._base import BaseAttrsTransformer
 
 
 def apply_code_mod(
     root: str,
     path: str,
     collecter_matcher: m.BaseMatcherNode,
-    transformer: cst.CSTTransformer,
+    transformer: BaseAttrsTransformer,
     filter_fns: Sequence[Callable[[NodeMetadata], bool]] | None = None,
 ) -> str:
     wrapper = get_manager(root).get_metadata_wrapper_for_path(path)
@@ -31,7 +32,9 @@ def apply_code_mod(
         filtered = collector.results
 
     transformer.collected_nodes = filtered
-    return wrapper.module.visit(transformer).code
+    return black.format_str(
+        wrapper.module.visit(transformer).code, mode=black.FileMode(line_length=100, magic_trailing_comma=False)
+    )
 
 
 def get_manager(root: str) -> FullRepoManager:
