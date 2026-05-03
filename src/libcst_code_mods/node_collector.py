@@ -1,3 +1,5 @@
+# repo-map-desc: the pre-pass stage that collects the context before the transformation
+
 import attrs
 import libcst as cst
 import libcst.matchers as m

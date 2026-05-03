@@ -1,3 +1,4 @@
+# repo-map-desc: main entrypoint to the code mods
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence

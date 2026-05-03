@@ -1,3 +1,11 @@
+"""repo-map-desc: Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
+
+Modifies on three cases:
+1. an assignment with a type hint
+2. a parameter with a type hint
+3. a name that has been previously updated by 1. or 2.
+"""
+
 from __future__ import annotations
 
 import attrs

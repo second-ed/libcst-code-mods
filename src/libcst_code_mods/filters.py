@@ -1,3 +1,5 @@
+# repo-map-desc: simple filters that are applied before the transformation
+
 import libcst as cst
 
 from libcst_code_mods.node_collector import NodeMetadata

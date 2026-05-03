@@ -25,5 +25,6 @@ dev = [
     "pre-commit>=4.5.1",
     "pytest>=9.0.2",
     "pytest-cov>=7.0.0",
+    "repo-mapper-rs>=0.4.1",
     "ruff>=0.15.0",
 ]
