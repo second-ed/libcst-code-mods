@@ -10,6 +10,7 @@
 │       ├── transformers
 │       │   ├── __init__.py
 │       │   ├── _base.py
+│       │   ├── convert_function_signature.py
 │       │   └── rename_variable_of_type.py       # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
 │       ├── __init__.py
 │       ├── apply.py                             # main entrypoint to the code mods
@@ -30,13 +31,20 @@
 │   │   ├── global_assignment_with_type_hint.py
 │   │   └── print_with_fstring.py
 │   ├── test_transformer_cases
+│   │   ├── convert_function_signature
+│   │   │   └── case_1
+│   │   │       ├── __init__.py
+│   │   │       ├── after.py
+│   │   │       └── before.py
 │   │   ├── rename_variables_of_same_type
-│   │   │   ├── __init__.py
-│   │   │   ├── after.py
-│   │   │   └── before.py
+│   │   │   └── case_1
+│   │   │       ├── __init__.py
+│   │   │       ├── after.py
+│   │   │       └── before.py
 │   │   └── __init__.py
 │   ├── transformers
 │   │   ├── __init__.py
+│   │   ├── test_convert_function_signature.py
 │   │   └── test_rename_variable_of_type.py
 │   ├── __init__.py
 │   └── test_matchers.py

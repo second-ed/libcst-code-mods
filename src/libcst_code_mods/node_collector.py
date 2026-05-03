@@ -21,11 +21,11 @@ class MetadataBase(cst.CSTVisitor):
 
 @attrs.define
 class NodeCollector(MetadataBase):
-    matcher: m.BaseMatcherNode
+    matcher: m.BaseMatcherNode | None
     results: list[NodeMetadata] = attrs.field(factory=list)
 
     def on_visit(self, node: cst.CSTNode) -> bool:
-        if not m.matches(node, self.matcher):
+        if self.matcher is not None and not m.matches(node, self.matcher):
             return True
 
         self.results.append(

@@ -3,27 +3,23 @@ from pathlib import Path
 import libcst.matchers as m
 import pytest
 
-import libcst_code_mods.matchers as mat
 from libcst_code_mods.apply import apply_code_mod
 from libcst_code_mods.constants import REPO_ROOT
-from libcst_code_mods.transformers.rename_variable_of_type import RenameVariableOfType
+from libcst_code_mods.transformers.convert_function_signature import ConvertFunctionSignature
 
 
 @pytest.mark.parametrize(
     ("usecase_name", "case_name", "matcher", "transformer"),
     [
         pytest.param(
-            "rename_variables_of_same_type",
+            "to_new_function",
             "case_1",
-            (
-                mat.assignment_has_type_hint(m.Name("CustomLoggingHandler"))
-                | mat.param_has_type_hint(m.Name("CustomLoggingHandler"))
-            ),
-            RenameVariableOfType("CustomLoggingHandler", "custom_handler"),
+            (m.Call()),
+            ConvertFunctionSignature("add", "new_sum"),
         ),
     ],
 )
-def test_rename_variables_of_same_type(usecase_name, case_name, matcher, transformer):
+def test_to_new_function(usecase_name, case_name, matcher, transformer) -> None:
     usecase_root = f"{REPO_ROOT}/tests/test_transformer_cases/{usecase_name}/{case_name}"
     before_path = f"{usecase_root}/before.py"
     after_path = f"{usecase_root}/after.py"
