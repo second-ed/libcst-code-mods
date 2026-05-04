@@ -14,7 +14,7 @@ from libcst_code_mods.transformers.convert_function_signature import ConvertFunc
         pytest.param(
             "convert_function_signature",
             "case_1",
-            (m.Call()),
+            m.Call(m.Name(value="add")),
             ConvertFunctionSignature("new_sum", {0: "a", 1: "b"}, {"a": "value_1", "b": "value_2"}),
         ),
     ],

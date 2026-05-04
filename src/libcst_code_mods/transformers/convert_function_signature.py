@@ -1,5 +1,6 @@
 import attrs
 import libcst as cst
+import libcst.matchers as m
 
 from libcst_code_mods.transformers._base import BaseAttrsTransformer
 
@@ -10,9 +11,8 @@ class ConvertFunctionSignature(BaseAttrsTransformer):
     positional_map: dict[int, str]
     param_map: dict[str, str]
 
-    def on_leave(self, original_node: cst.CSTNode, updated_node: cst.CSTNode) -> cst.CSTNode:  # noqa: ARG002
-
-        if not isinstance(updated_node, cst.Call):
+    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:  # noqa: N802
+        if self.matcher is None or not m.matches(original_node, self.matcher):
             return updated_node
 
         new_args: list[cst.Arg] = []

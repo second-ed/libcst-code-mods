@@ -32,8 +32,9 @@ def apply_code_mod(
         filtered = collector.results
 
     transformer.collected_nodes = filtered
+    transformer.matcher = collector.matcher
     return black.format_str(
-        wrapper.module.visit(transformer).code, mode=black.FileMode(line_length=100, magic_trailing_comma=False)
+        wrapper.visit(transformer).code, mode=black.FileMode(line_length=100, magic_trailing_comma=False)
     )
 
 

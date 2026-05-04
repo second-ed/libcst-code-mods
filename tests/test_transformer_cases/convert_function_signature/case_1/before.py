@@ -9,5 +9,5 @@ def new_sum(value_1: int, value_2: int) -> int:
 def main():
     x = add(1, 2)
     y = add(2, b=2)
-
+    print(y)
     return x + y + add(a=-1, b=-1)
