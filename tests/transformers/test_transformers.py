@@ -8,6 +8,7 @@ from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.transform import transform_code
 from libcst_code_mods.transformers.convert_function_signature import ConvertFunctionSignature
 from libcst_code_mods.transformers.rename_variable_of_type import RenameVariableOfType
+from libcst_code_mods.transformers.reorder_params import ReorderParams
 from libcst_code_mods.transformers.replace_param_type_hint import ReplaceParamTypeHint
 from libcst_code_mods.transformers.replace_return_type_hint import ReplaceReturnTypeHint
 
@@ -50,6 +51,7 @@ from libcst_code_mods.transformers.replace_return_type_hint import ReplaceReturn
             "case_1",
             [ReplaceParamTypeHint(None, "int", "float"), ReplaceReturnTypeHint(None, "int", "float")],
         ),
+        pytest.param("reorder_params", "case_1", [ReorderParams(None, "func", ["c", "b", "a"])]),
     ],
 )
 def test_transformers(usecase_name, case_name, transformers) -> None:

@@ -15,6 +15,7 @@
 │       │   ├── _base.py
 │       │   ├── convert_function_signature.py
 │       │   ├── rename_variable_of_type.py       # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
+│       │   ├── reorder_params.py
 │       │   ├── replace_param_type_hint.py
 │       │   └── replace_return_type_hint.py
 │       ├── __init__.py
@@ -48,6 +49,10 @@
 │   │   ├── rename_variables_of_same_type
 │   │   │   └── case_1
 │   │   │       ├── __init__.py
+│   │   │       ├── after.py
+│   │   │       └── before.py
+│   │   ├── reorder_params
+│   │   │   └── case_1
 │   │   │       ├── after.py
 │   │   │       └── before.py
 │   │   ├── replace_param_type_hint
