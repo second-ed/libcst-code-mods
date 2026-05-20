@@ -25,7 +25,7 @@ from libcst_code_mods.transformers.rename_variable_of_type import RenameVariable
                     "custom_handler",
                 )
             ],
-        ),
+        )
     ],
 )
 def test_rename_variables_of_same_type(usecase_name, case_name, transformers):
