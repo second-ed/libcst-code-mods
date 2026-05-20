@@ -49,7 +49,10 @@ from libcst_code_mods.transformers.replace_return_type_hint import ReplaceReturn
         pytest.param(
             "combinations",
             "case_1",
-            [ReplaceParamTypeHint(None, "int", "float"), ReplaceReturnTypeHint(None, "int", "float")],
+            [
+                ReplaceParamTypeHint(None, "int", "float"),
+                ReplaceReturnTypeHint(m.FunctionDef(m.Name("func_single_line")), "int", "float"),
+            ],
         ),
         pytest.param("reorder_params", "case_1", [ReorderParams(None, "func", ["c", "b", "a"])]),
     ],
