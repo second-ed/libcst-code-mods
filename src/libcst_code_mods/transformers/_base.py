@@ -5,7 +5,6 @@ import libcst as cst
 import libcst.matchers as m
 
 from libcst_code_mods.constants import METADATA_DEPS
-from libcst_code_mods.node_collector import NodeMetadata
 
 
 class BaseMetadataTransformer(cst.CSTTransformer):
@@ -14,5 +13,7 @@ class BaseMetadataTransformer(cst.CSTTransformer):
 
 @attrs.define
 class BaseAttrsTransformer(BaseMetadataTransformer):
-    collected_nodes: list[NodeMetadata] = attrs.field(init=False)
-    matcher: m.BaseMatcherNode | None = attrs.field(init=False)
+    matcher: m.BaseMatcherNode | None
+
+    def __call__(self, wrapper: cst.MetadataWrapper) -> cst.Module:
+        return wrapper.visit(self)

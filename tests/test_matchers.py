@@ -3,9 +3,9 @@ import pytest
 from libcst.metadata.wrapper import MetadataWrapper
 
 import libcst_code_mods.matchers as mat
-from libcst_code_mods.apply import get_manager
 from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.node_collector import NodeCollector, NodeMetadata
+from libcst_code_mods.transform import get_manager
 
 MATCHER_TEST_ROOT = f"{REPO_ROOT}/tests/test_examples"
 

@@ -13,11 +13,11 @@
 │       │   ├── convert_function_signature.py
 │       │   └── rename_variable_of_type.py       # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
 │       ├── __init__.py
-│       ├── apply.py                             # main entrypoint to the code mods
 │       ├── constants.py
 │       ├── filters.py                           # simple filters that are applied before the transformation
 │       ├── matchers.py                          # some basic matchers
-│       └── node_collector.py                    # the pre-pass stage that collects the context before the transformation
+│       ├── node_collector.py                    # the pre-pass stage that collects the context before the transformation
+│       └── transform.py                         # main entrypoint to the code mods
 ├── tests
 │   ├── test_examples
 │   │   ├── __init__.py
