@@ -47,7 +47,10 @@
 │   │   │       ├── after.py
 │   │   │       └── before.py
 │   │   ├── replace_param_type_hint
-│   │   │   └── case_1
+│   │   │   ├── case_1
+│   │   │   │   ├── after.py
+│   │   │   │   └── before.py
+│   │   │   └── case_2
 │   │   │       ├── after.py
 │   │   │       └── before.py
 │   │   ├── replace_return_type_hint
@@ -57,10 +60,7 @@
 │   │   └── __init__.py
 │   ├── transformers
 │   │   ├── __init__.py
-│   │   ├── test_convert_function_signature.py
-│   │   ├── test_rename_variable_of_type.py
-│   │   ├── test_replace_param_type_hint.py
-│   │   └── test_replace_return_type_hint.py
+│   │   └── test_transformers.py
 │   ├── __init__.py
 │   └── test_matchers.py
 ├── .pre-commit-config.yaml

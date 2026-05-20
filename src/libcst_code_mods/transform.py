@@ -14,9 +14,11 @@ from libcst_code_mods.transformers._base import BaseAttrsTransformer
 def transform_code(root: str, path: str, transformers: list[BaseAttrsTransformer]) -> str:
     wrapper = get_manager(root).get_metadata_wrapper_for_path(path)
 
+    cache = wrapper._cache  # noqa: SLF001
+
     for transformer in transformers:
         module = transformer(wrapper)
-        wrapper = cst.MetadataWrapper(module)
+        wrapper = cst.MetadataWrapper(module, cache=cache)
 
     return black.format_str(wrapper.module.code, mode=black.FileMode(line_length=120, magic_trailing_comma=False))
 
