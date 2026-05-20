@@ -36,6 +36,10 @@
 │   │   ├── global_assignment_with_type_hint.py
 │   │   └── print_with_fstring.py
 │   ├── test_transformer_cases
+│   │   ├── combinations
+│   │   │   └── case_1
+│   │   │       ├── after.py
+│   │   │       └── before.py
 │   │   ├── convert_function_signature
 │   │   │   └── case_1
 │   │   │       ├── __init__.py

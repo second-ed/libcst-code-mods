@@ -45,6 +45,11 @@ from libcst_code_mods.transformers.replace_return_type_hint import ReplaceReturn
             [ReplaceParamTypeHint(None, "int", "str", function_name="not_present_function")],
         ),
         pytest.param("replace_return_type_hint", "case_1", [ReplaceReturnTypeHint(None, "int", "float")]),
+        pytest.param(
+            "combinations",
+            "case_1",
+            [ReplaceParamTypeHint(None, "int", "float"), ReplaceReturnTypeHint(None, "int", "float")],
+        ),
     ],
 )
 def test_transformers(usecase_name, case_name, transformers) -> None:

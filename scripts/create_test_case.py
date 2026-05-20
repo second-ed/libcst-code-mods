@@ -10,8 +10,6 @@ def create_test_case(transformer_name: str, case_num: int) -> None:
     for file in ["before", "after"]:
         (root / f"{file}.py").touch()
 
-    (REPO_ROOT / f"tests/transformers/test_{transformer_name}.py").touch()
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(allow_abbrev=False)
