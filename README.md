@@ -15,7 +15,8 @@
 │       │   ├── _base.py
 │       │   ├── convert_function_signature.py
 │       │   ├── rename_variable_of_type.py       # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
-│       │   └── replace_param_type_hint.py
+│       │   ├── replace_param_type_hint.py
+│       │   └── replace_return_type_hint.py
 │       ├── __init__.py
 │       ├── constants.py
 │       ├── filters.py                           # simple filters that are applied before the transformation
@@ -49,12 +50,17 @@
 │   │   │   └── case_1
 │   │   │       ├── after.py
 │   │   │       └── before.py
+│   │   ├── replace_return_type_hint
+│   │   │   └── case_1
+│   │   │       ├── after.py
+│   │   │       └── before.py
 │   │   └── __init__.py
 │   ├── transformers
 │   │   ├── __init__.py
 │   │   ├── test_convert_function_signature.py
 │   │   ├── test_rename_variable_of_type.py
-│   │   └── test_replace_param_type_hint.py
+│   │   ├── test_replace_param_type_hint.py
+│   │   └── test_replace_return_type_hint.py
 │   ├── __init__.py
 │   └── test_matchers.py
 ├── .pre-commit-config.yaml

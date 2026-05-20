@@ -4,14 +4,14 @@ import pytest
 
 from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.transform import transform_code
-from libcst_code_mods.transformers.replace_param_type_hint import ReplaceParamTypeHint
+from libcst_code_mods.transformers.replace_return_type_hint import ReplaceReturnTypeHint
 
 
 @pytest.mark.parametrize(
     ("usecase_name", "case_name", "transformers"),
-    [pytest.param("replace_param_type_hint", "case_1", [ReplaceParamTypeHint(None, "int", "str")])],
+    [pytest.param("replace_return_type_hint", "case_1", [ReplaceReturnTypeHint(None, "int", "float")])],
 )
-def test_replace_param_type_hint(usecase_name, case_name, transformers):
+def test_replace_return_type_hint(usecase_name, case_name, transformers):
     usecase_root = f"{REPO_ROOT}/tests/test_transformer_cases/{usecase_name}/{case_name}"
     before_path = f"{usecase_root}/before.py"
     after_path = f"{usecase_root}/after.py"

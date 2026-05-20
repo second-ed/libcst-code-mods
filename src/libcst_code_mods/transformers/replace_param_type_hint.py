@@ -8,7 +8,7 @@ from libcst_code_mods.transformers._base import BaseAttrsTransformer
 
 
 @attrs.define
-class ReplaceTypeHint(BaseAttrsTransformer):
+class ReplaceParamTypeHint(BaseAttrsTransformer):
     old: str
     new: str
 
