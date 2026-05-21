@@ -1,3 +1,26 @@
+# Arch
+
+```mermaid
+flowchart TD
+
+A[RefactoringRule] --> B[RULE_MAPPING]
+B --> C[CstRule]
+C --> D[CstVisitor factory]
+C --> E[CstTransformer factory]
+F[CstContext]
+F --> D
+F --> E
+D --> G[LibCST Visitor traversal]
+G --> H[context.data populated]
+E --> I[LibCST Transformer traversal]
+H --> I
+I --> L[Transformed CST Module]
+
+%% notes
+note1((Visitor writes facts)) --- H
+note2((Transformer consumes facts)) --- I
+note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
+```
 
 
 # Repo map
@@ -10,6 +33,16 @@
 │   └── create_test_case.py
 ├── src
 │   └── libcst_code_mods
+│       ├── core
+│       │   ├── __init__.py
+│       │   ├── base_cst_transformer.py
+│       │   ├── base_cst_visitor.py
+│       │   ├── cst_context.py
+│       │   ├── cst_rule.py
+│       │   └── refactoring_rule.py
+│       ├── rules
+│       │   ├── __init__.py
+│       │   └── rule_mapping.py
 │       ├── transformers
 │       │   ├── __init__.py
 │       │   ├── _base.py
@@ -23,7 +56,8 @@
 │       ├── filters.py                           # simple filters that are applied before the transformation
 │       ├── matchers.py                          # some basic matchers
 │       ├── node_collector.py                    # the pre-pass stage that collects the context before the transformation
-│       └── transform.py                         # main entrypoint to the code mods
+│       ├── transform.py                         # main entrypoint to the code mods
+│       └── transform_v2.py                      # main entrypoint to the code mods
 ├── tests
 │   ├── test_examples
 │   │   ├── __init__.py
