@@ -21,7 +21,7 @@ from libcst_code_mods.transformers.replace_return_type_hint import ReplaceReturn
             "case_1",
             [
                 ConvertFunctionSignature(
-                    m.Call(m.Name(value="add")), "new_sum", {0: "a", 1: "b"}, {"a": "value_1", "b": "value_2"}
+                    mat.is_call_with_name(m.Name("add")), "new_sum", {0: "a", 1: "b"}, {"a": "value_1", "b": "value_2"}
                 )
             ],
         ),
@@ -51,7 +51,7 @@ from libcst_code_mods.transformers.replace_return_type_hint import ReplaceReturn
             "case_1",
             [
                 ReplaceParamTypeHint(None, "int", "float"),
-                ReplaceReturnTypeHint(m.FunctionDef(m.Name("func_single_line")), "int", "float"),
+                ReplaceReturnTypeHint(mat.is_function(m.Name("func_single_line")), "int", "float"),
             ],
         ),
         pytest.param("reorder_params", "case_1", [ReorderParams(None, "func", ["c", "b", "a"])]),

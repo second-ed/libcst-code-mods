@@ -30,5 +30,4 @@ class ReplaceParamTypeHint(BaseAttrsTransformer):
 
         if updated_node.annotation and m.matches(updated_node.annotation.annotation, m.Name(self.old)):
             return updated_node.with_changes(annotation=cst.Annotation(cst.Name(self.new)))
-
         return updated_node
