@@ -13,11 +13,11 @@ import libcst as cst
 import libcst.matchers as m
 
 import libcst_code_mods.matchers as mat
-from libcst_code_mods.transformers._base import BaseAttrsTransformer
+from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 
 
 @attrs.define
-class RenameVariableOfType(BaseAttrsTransformer):
+class RenameVariableOfType(BaseCstTransformer):
     type_hint: str
     new_variable_name: str
     replaced_names: list[str] = attrs.field(factory=list)

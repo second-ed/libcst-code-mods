@@ -2,23 +2,25 @@ import attrs
 import libcst as cst
 import libcst.matchers as m
 
-from libcst_code_mods.transformers._base import BaseAttrsTransformer
+import libcst_code_mods.matchers as mat
+from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 
 
 @attrs.define
-class ConvertFunctionSignature(BaseAttrsTransformer):
+class ConvertFunctionSignature(BaseCstTransformer):
+    function_name: str
     new_name: str
     positional_map: dict[int, str]
     param_map: dict[str, str]
 
-    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:  # noqa: N802
-        if self.matcher is None or not m.matches(original_node, self.matcher):
+    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:  # noqa: N802 ARG002
+        if not m.matches(updated_node, mat.is_call_with_name(m.Name(self.function_name))):
             return updated_node
 
         new_args: list[cst.Arg] = []
 
         for i, arg in enumerate(updated_node.args):
-            if arg.star or (arg.keyword and arg.keyword.value.startswith("**")):
+            if arg.star:
                 new_args.append(arg)
                 continue
 

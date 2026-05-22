@@ -4,11 +4,11 @@ import attrs
 import libcst as cst
 import libcst.matchers as m
 
-from libcst_code_mods.transformers._base import BaseAttrsTransformer
+from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 
 
 @attrs.define
-class ReplaceParamTypeHint(BaseAttrsTransformer):
+class ReplaceParamTypeHint(BaseCstTransformer):
     old: str
     new: str
     function_name: str | None = None
@@ -23,9 +23,6 @@ class ReplaceParamTypeHint(BaseAttrsTransformer):
 
     def leave_Param(self, original_node: cst.Param, updated_node: cst.Param) -> cst.Param:  # noqa: N802 ARG002
         if self.function_name is not None and self._current_function != self.function_name:
-            return updated_node
-
-        if self.matcher is not None and not m.matches(updated_node, self.matcher):
             return updated_node
 
         if updated_node.annotation and m.matches(updated_node.annotation.annotation, m.Name(self.old)):

@@ -44,7 +44,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── __init__.py
 │       │   ├── _rule_mapping.py
 │       │   └── convert_function_signature.py
-│       ├── transformers
+│       ├── single_file_transformers
 │       │   ├── __init__.py
 │       │   ├── _base.py
 │       │   ├── convert_function_signature.py

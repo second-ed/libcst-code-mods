@@ -8,16 +8,16 @@ import libcst as cst
 from libcst.metadata import FullRepoManager
 
 from libcst_code_mods.constants import METADATA_DEPS
-from libcst_code_mods.transformers._base import BaseAttrsTransformer
+from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 
 
-def transform_code(root: str, path: str, transformers: list[BaseAttrsTransformer]) -> str:
+def transform_code(root: str, path: str, transformers: list[BaseCstTransformer]) -> str:
     wrapper = get_manager(root).get_metadata_wrapper_for_path(path)
 
     cache = wrapper._cache  # noqa: SLF001
 
     for transformer in transformers:
-        module = transformer(wrapper)
+        module = wrapper.visit(transformer)
         wrapper = cst.MetadataWrapper(module, cache=cache)
 
     return black.format_str(wrapper.module.code, mode=black.FileMode(line_length=120, magic_trailing_comma=False))

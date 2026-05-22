@@ -4,11 +4,11 @@ import attrs
 import libcst as cst
 import libcst.matchers as m
 
-from libcst_code_mods.transformers._base import BaseAttrsTransformer
+from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 
 
 @attrs.define
-class ReorderParams(BaseAttrsTransformer):
+class ReorderParams(BaseCstTransformer):
     function_name: str
     new_order: list[str]
 
