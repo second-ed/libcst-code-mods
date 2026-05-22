@@ -42,23 +42,28 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   └── refactoring_rule.py
 │       ├── rules
 │       │   ├── __init__.py
-│       │   └── rule_mapping.py
+│       │   ├── _rule_mapping.py
+│       │   └── convert_function_signature.py
 │       ├── transformers
 │       │   ├── __init__.py
 │       │   ├── _base.py
 │       │   ├── convert_function_signature.py
-│       │   ├── rename_variable_of_type.py       # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
+│       │   ├── rename_variable_of_type.py          # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
 │       │   ├── reorder_params.py
 │       │   ├── replace_param_type_hint.py
 │       │   └── replace_return_type_hint.py
 │       ├── __init__.py
 │       ├── constants.py
-│       ├── filters.py                           # simple filters that are applied before the transformation
-│       ├── matchers.py                          # some basic matchers
-│       ├── node_collector.py                    # the pre-pass stage that collects the context before the transformation
-│       ├── transform.py                         # main entrypoint to the code mods
-│       └── transform_v2.py                      # main entrypoint to the code mods
+│       ├── filters.py                              # simple filters that are applied before the transformation
+│       ├── matchers.py                             # some basic matchers
+│       ├── node_collector.py                       # the pre-pass stage that collects the context before the transformation
+│       ├── transform.py                            # main entrypoint to the code mods
+│       └── transform_v2.py                         # main entrypoint to the code mods
 ├── tests
+│   ├── rules
+│   │   └── convert_function_signature
+│   │       ├── __init__.py
+│   │       └── test_convert_function_signature.py
 │   ├── test_examples
 │   │   ├── __init__.py
 │   │   ├── calls_print.py

@@ -13,7 +13,7 @@ class BaseMetadataTransformer(cst.CSTTransformer):
     METADATA_DEPENDENCIES = METADATA_DEPS
 
 
-@attrs.define(frozen=True)
+@attrs.define
 class BaseCstTransformer(BaseMetadataTransformer):
     @classmethod
     def from_context(cls, context: CstContext) -> Self:
