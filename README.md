@@ -30,6 +30,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       └── ci_tests.yaml
 ├── scripts
 │   ├── __init__.py
+│   ├── create_compiler_style_test_case.py
 │   └── create_test_case.py
 ├── src
 │   └── libcst_code_mods
@@ -62,6 +63,16 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 ├── tests
 │   ├── rules
 │   │   └── convert_function_signature
+│   │       ├── cases
+│   │       │   └── case_1
+│   │       │       ├── after
+│   │       │       │   ├── __init__.py
+│   │       │       │   ├── file_1.py
+│   │       │       │   └── file_2.py
+│   │       │       └── before
+│   │       │           ├── __init__.py
+│   │       │           ├── file_1.py
+│   │       │           └── file_2.py
 │   │       ├── __init__.py
 │   │       └── test_convert_function_signature.py
 │   ├── test_examples
