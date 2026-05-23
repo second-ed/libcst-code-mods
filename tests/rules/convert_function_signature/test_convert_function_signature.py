@@ -5,7 +5,7 @@ import pytest
 from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
 from libcst_code_mods.rules.convert_function_signature import ConvertFunctionSignature
-from libcst_code_mods.transform_v2 import multi_file_refactor
+from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.utils import diff_code_maps, paths_to_code_map
 
 
