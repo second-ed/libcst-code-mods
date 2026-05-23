@@ -1,52 +1,62 @@
 # repo-map-desc: main entrypoint to the code mods
 from __future__ import annotations
 
-from collections import defaultdict
+from collections.abc import Collection
 from pathlib import Path
-from types import MappingProxyType
 
-import black
 import libcst as cst
 from libcst.metadata import FullRepoManager
 
 from libcst_code_mods.constants import METADATA_DEPS
-from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
-from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.cst_context import CstContext
-from libcst_code_mods.core.cst_rule import CstRule
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
-from libcst_code_mods.rules._rule_mapping import make_rule_mapping_immutable
+from libcst_code_mods.rules._rule_mapping import RULE_MAPPING, RuleMapping, make_rule_mapping_immutable
+from libcst_code_mods.utils import black_format
 
 
-def transform_code(
-    root: str,
-    path: str,
-    refactorings: list[RefactoringRule],
-    rule_mapping: defaultdict[type[RefactoringRule], dict[str, type[BaseCstTransformer | BaseCstVisitor]]],
-) -> str:
-    wrapper = get_manager(root).get_metadata_wrapper_for_path(path)
+def multi_file_refactor(
+    root: Path | str,
+    paths: list[Path],
+    refactoring_rules: list[RefactoringRule],
+    rule_mapping: RuleMapping = RULE_MAPPING,
+    specific_paths: Collection = (),
+) -> dict[Path, str]:
     immutable_rule_mapping = make_rule_mapping_immutable(rule_mapping)
-    cache = wrapper._cache  # noqa: SLF001
 
-    for rule in refactorings:
-        module = apply_rule(wrapper, rule, immutable_rule_mapping)
-        wrapper = cst.MetadataWrapper(module, cache=cache)
+    manager = get_manager(str(root))
+    if specific_paths:
+        paths = [p for p in paths if str(p) in specific_paths]
 
-    return black.format_str(wrapper.module.code, mode=black.FileMode(line_length=120, magic_trailing_comma=False))
+    cache = {}
 
+    contexts = {
+        type(refactoring_rule): CstContext(refactoring_rule.to_dict()) for refactoring_rule in refactoring_rules
+    }
 
-def apply_rule(
-    wrapper: cst.MetadataWrapper,
-    refactoring_rule: RefactoringRule,
-    rule_mapping: MappingProxyType[type[RefactoringRule], CstRule],
-) -> cst.Module:
-    context = CstContext(refactoring_rule.to_dict())
-    cst_rule = rule_mapping[type(refactoring_rule)]
+    for path in paths:
+        wrapper = manager.get_metadata_wrapper_for_path(str(path))
+        cache = {**cache, **wrapper._cache}  # noqa: SLF001
 
-    if cst_rule.visitor_factory:
-        wrapper.visit(cst_rule.visitor_factory.from_context(context))
+        for refactoring_rule in refactoring_rules:
+            cst_rule = immutable_rule_mapping[type(refactoring_rule)]
+            if cst_rule.visitor_factory:
+                visitor = cst_rule.visitor_factory.from_context(contexts[type(refactoring_rule)])
+                wrapper.visit(visitor)
 
-    return wrapper.visit(cst_rule.transformer_factory.from_context(context))
+    refactored_code = {}
+
+    for path in paths:
+        wrapper = manager.get_metadata_wrapper_for_path(str(path))
+        cache = {**cache, **wrapper._cache}  # noqa: SLF001
+
+        for refactoring_rule in refactoring_rules:
+            cst_rule = immutable_rule_mapping[type(refactoring_rule)]
+            module = wrapper.visit(cst_rule.transformer_factory.from_context(contexts[type(refactoring_rule)]))
+            wrapper = cst.MetadataWrapper(module, cache=cache)
+
+        refactored_code[path] = black_format(wrapper.module.code)
+
+    return refactored_code
 
 
 def get_manager(root: str) -> FullRepoManager:

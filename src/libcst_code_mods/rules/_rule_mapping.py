@@ -1,20 +1,18 @@
 from collections import defaultdict
 from collections.abc import Callable
 from types import MappingProxyType
+from typing import TypeAlias
 
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.cst_rule import CstRule
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 
-RULE_MAPPING: defaultdict[type[RefactoringRule], dict[str, type[BaseCstTransformer] | type[BaseCstVisitor]]] = (
-    defaultdict(dict)
-)
+RuleMapping: TypeAlias = defaultdict[type[RefactoringRule], dict[str, type[BaseCstTransformer | BaseCstVisitor]]]
+RULE_MAPPING: RuleMapping = defaultdict(dict)
 
 
-def make_rule_mapping_immutable(
-    rule_mapping: defaultdict[type[RefactoringRule], dict[str, type[BaseCstTransformer] | type[BaseCstVisitor]]],
-) -> MappingProxyType[type[RefactoringRule], CstRule]:
+def make_rule_mapping_immutable(rule_mapping: RuleMapping) -> MappingProxyType[type[RefactoringRule], CstRule]:
     return MappingProxyType({k: CstRule(**v) for k, v in rule_mapping.items()})
 
 

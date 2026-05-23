@@ -34,6 +34,7 @@ ignore = [
 ]
 "conf.py" = ["ALL"]
 "tests/test_transformer_cases/**.py" = ["ALL"]
+"tests/rules/**.py" = ["ALL"]
 
 [format]
 quote-style = "double"
