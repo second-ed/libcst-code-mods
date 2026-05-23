@@ -4,7 +4,6 @@ import pytest
 
 from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.single_file_transformers.rename_variable_of_type import RenameVariableOfType
-from libcst_code_mods.single_file_transformers.reorder_params import ReorderParams
 from libcst_code_mods.single_file_transformers.replace_param_type_hint import ReplaceParamTypeHint
 from libcst_code_mods.single_file_transformers.replace_return_type_hint import ReplaceReturnTypeHint
 from libcst_code_mods.transform import transform_code
@@ -29,7 +28,6 @@ from libcst_code_mods.transform import transform_code
                 ReplaceReturnTypeHint("int", "float", fn_name="func_single_line"),
             ],
         ),
-        pytest.param("reorder_params", "case_1", [ReorderParams("func", ["c", "b", "a"])]),
     ],
 )
 def test_transformers(usecase_name, case_name, transformers) -> None:

@@ -15,6 +15,8 @@ def create_test_case(transformer_name: str, case_num: int) -> None:
             new_file.parent.mkdir(parents=True, exist_ok=True)
             new_file.touch()
 
+    (Path(REPO_ROOT) / f"tests/rules/{transformer_name}/test_{transformer_name}.py").touch()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(allow_abbrev=False)

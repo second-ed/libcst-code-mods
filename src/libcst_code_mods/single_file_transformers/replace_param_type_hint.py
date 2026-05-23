@@ -12,17 +12,17 @@ class ReplaceParamTypeHint(BaseCstTransformer):
     old: str
     new: str
     fn_name: str | None = None
-    _current_function: str | None = attrs.field(init=False, default=None)
+    _curr_fn: str | None = attrs.field(init=False, default=None)
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
-        self._current_function = node.name.value
+        self._curr_fn = node.name.value
 
     def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: N802 ARG002
-        self._current_function = None
+        self._curr_fn = None
         return updated_node
 
     def leave_Param(self, original_node: cst.Param, updated_node: cst.Param) -> cst.Param:  # noqa: N802 ARG002
-        if self.fn_name is not None and self._current_function != self.fn_name:
+        if self.fn_name is not None and self._curr_fn != self.fn_name:
             return updated_node
 
         if updated_node.annotation and m.matches(updated_node.annotation.annotation, m.Name(self.old)):

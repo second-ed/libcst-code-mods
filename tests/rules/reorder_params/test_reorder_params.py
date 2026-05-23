@@ -4,19 +4,17 @@ import pytest
 
 from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
-from libcst_code_mods.rules.convert_function_signature import ConvertFunctionSignature
+from libcst_code_mods.rules.reorder_params import ReorderParams
 from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.utils import diff_code_maps, paths_to_code_map
-
 
 PARENT = Path(__file__).parent
 
 
 @pytest.mark.parametrize(
-    ("case_name", "transformers"),
-    [pytest.param("case_1", [ConvertFunctionSignature("add", "new_sum", {"a": "value_1", "b": "value_2"})])],
+    ("case_name", "transformers"), [pytest.param("case_1", [ReorderParams("func", ["c", "b", "a"])])]
 )
-def test_convert_function_signature(case_name, transformers) -> None:
+def test_reorder_params(case_name, transformers) -> None:
     usecase_root = f"{PARENT}/cases/{case_name}"
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
     after_paths = list(Path(f"{usecase_root}/after").rglob("**/*.py"))

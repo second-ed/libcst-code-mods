@@ -43,12 +43,13 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   └── refactoring_rule.py
 │       ├── rules
 │       │   ├── __init__.py
+│       │   ├── _cst_utils.py
 │       │   ├── _rule_mapping.py
-│       │   └── convert_function_signature.py
+│       │   ├── convert_function_signature.py
+│       │   └── reorder_params.py
 │       ├── single_file_transformers
 │       │   ├── __init__.py
 │       │   ├── rename_variable_of_type.py          # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
-│       │   ├── reorder_params.py
 │       │   ├── replace_param_type_hint.py
 │       │   └── replace_return_type_hint.py
 │       ├── __init__.py
@@ -61,7 +62,20 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       └── utils.py
 ├── tests
 │   ├── rules
-│   │   └── convert_function_signature
+│   │   ├── convert_function_signature
+│   │   │   ├── cases
+│   │   │   │   └── case_1
+│   │   │   │       ├── after
+│   │   │   │       │   ├── __init__.py
+│   │   │   │       │   ├── file_1.py
+│   │   │   │       │   └── file_2.py
+│   │   │   │       └── before
+│   │   │   │           ├── __init__.py
+│   │   │   │           ├── file_1.py
+│   │   │   │           └── file_2.py
+│   │   │   ├── __init__.py
+│   │   │   └── test_convert_function_signature.py
+│   │   └── reorder_params
 │   │       ├── cases
 │   │       │   └── case_1
 │   │       │       ├── after
@@ -72,8 +86,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │       │           ├── __init__.py
 │   │       │           ├── file_1.py
 │   │       │           └── file_2.py
-│   │       ├── __init__.py
-│   │       └── test_convert_function_signature.py
+│   │       └── test_reorder_params.py
 │   ├── test_examples
 │   │   ├── __init__.py
 │   │   ├── calls_print.py
@@ -93,10 +106,6 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   ├── rename_variables_of_same_type
 │   │   │   └── case_1
 │   │   │       ├── __init__.py
-│   │   │       ├── after.py
-│   │   │       └── before.py
-│   │   ├── reorder_params
-│   │   │   └── case_1
 │   │   │       ├── after.py
 │   │   │       └── before.py
 │   │   ├── replace_param_type_hint
