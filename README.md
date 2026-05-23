@@ -45,6 +45,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── __init__.py
 │       │   ├── _cst_utils.py
 │       │   ├── _rule_mapping.py
+│       │   ├── add_kwargs.py
 │       │   ├── convert_function_signature.py
 │       │   └── reorder_params.py
 │       ├── single_file_transformers
@@ -62,6 +63,18 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       └── utils.py
 ├── tests
 │   ├── rules
+│   │   ├── add_kwargs
+│   │   │   ├── cases
+│   │   │   │   └── case_1
+│   │   │   │       ├── after
+│   │   │   │       │   ├── __init__.py
+│   │   │   │       │   ├── file_1.py
+│   │   │   │       │   └── file_2.py
+│   │   │   │       └── before
+│   │   │   │           ├── __init__.py
+│   │   │   │           ├── file_1.py
+│   │   │   │           └── file_2.py
+│   │   │   └── test_add_kwargs.py
 │   │   ├── convert_function_signature
 │   │   │   ├── cases
 │   │   │   │   └── case_1

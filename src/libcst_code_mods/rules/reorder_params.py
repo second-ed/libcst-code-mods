@@ -23,13 +23,12 @@ class ReorderParamsVisitor(BaseCstVisitor):
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
         if m.matches(node.name, m.Name(self.fn_name)):
             param_order = [p.name.value for p in node.params.params]
-            index_map = [param_order.index(name) for name in self.new_order]
 
             if not set(param_order) == set(self.new_order):
                 raise ValueError(
                     f"new_order does not have all of the parameters to be able to reorder {self.new_order = } {param_order = }"
                 )
-            self.context.data["index_map"] = index_map
+            self.context.data["index_map"] = [param_order.index(name) for name in self.new_order]
 
 
 @register_rule_transformer(ReorderParams)
