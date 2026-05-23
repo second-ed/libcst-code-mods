@@ -11,10 +11,10 @@ from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 class ReplaceReturnTypeHint(BaseCstTransformer):
     old: str
     new: str
-    function_name: str | None = None
+    fn_name: str | None = None
 
     def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: N802 ARG002
-        if self.function_name is not None and not m.matches(updated_node.name, m.Name(self.function_name)):
+        if self.fn_name is not None and not m.matches(updated_node.name, m.Name(self.fn_name)):
             return updated_node
 
         if updated_node.returns and m.matches(updated_node.returns.annotation, m.Name(self.old)):

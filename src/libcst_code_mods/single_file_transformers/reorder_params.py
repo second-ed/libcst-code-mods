@@ -9,16 +9,16 @@ from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 
 @attrs.define
 class ReorderParams(BaseCstTransformer):
-    function_name: str
+    fn_name: str
     new_order: list[str]
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
-        if node.name.value == self.function_name:
+        if node.name.value == self.fn_name:
             self.param_order = [p.name.value for p in node.params.params]
             self.index_map = [self.param_order.index(name) for name in self.new_order]
 
     def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: N802
-        if original_node.name.value != self.function_name:
+        if original_node.name.value != self.fn_name:
             return updated_node
 
         return updated_node.with_changes(
@@ -26,7 +26,7 @@ class ReorderParams(BaseCstTransformer):
         )
 
     def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:  # noqa: N802 ARG002
-        if not m.matches(updated_node, m.Call(m.Name(self.function_name))):
+        if not m.matches(updated_node, m.Call(m.Name(self.fn_name))):
             return updated_node
 
         args = list(updated_node.args)
