@@ -47,19 +47,20 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── _rule_mapping.py
 │       │   ├── add_kwargs.py
 │       │   ├── convert_function_signature.py
+│       │   ├── remove_kwargs_if_default_value.py
 │       │   └── reorder_params.py
 │       ├── single_file_transformers
 │       │   ├── __init__.py
-│       │   ├── rename_variable_of_type.py          # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
+│       │   ├── rename_variable_of_type.py              # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
 │       │   ├── replace_param_type_hint.py
 │       │   └── replace_return_type_hint.py
 │       ├── __init__.py
 │       ├── constants.py
-│       ├── engine.py                               # main entrypoint to the code mods
-│       ├── filters.py                              # simple filters that are applied before the transformation
-│       ├── matchers.py                             # some basic matchers
-│       ├── node_collector.py                       # the pre-pass stage that collects the context before the transformation
-│       ├── transform.py                            # main entrypoint to the code mods
+│       ├── engine.py                                   # main entrypoint to the code mods
+│       ├── filters.py                                  # simple filters that are applied before the transformation
+│       ├── matchers.py                                 # some basic matchers
+│       ├── node_collector.py                           # the pre-pass stage that collects the context before the transformation
+│       ├── transform.py                                # main entrypoint to the code mods
 │       └── utils.py
 ├── tests
 │   ├── rules
@@ -88,6 +89,30 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │   │           └── file_2.py
 │   │   │   ├── __init__.py
 │   │   │   └── test_convert_function_signature.py
+│   │   ├── function_call_graph
+│   │   │   ├── cases
+│   │   │   │   └── case_1
+│   │   │   │       ├── after
+│   │   │   │       │   ├── __init__.py
+│   │   │   │       │   ├── file_1.py
+│   │   │   │       │   └── file_2.py
+│   │   │   │       └── before
+│   │   │   │           ├── __init__.py
+│   │   │   │           ├── file_1.py
+│   │   │   │           └── file_2.py
+│   │   │   └── test_function_call_graph.py
+│   │   ├── remove_kwargs_if_default_value
+│   │   │   ├── cases
+│   │   │   │   └── case_1
+│   │   │   │       ├── after
+│   │   │   │       │   ├── __init__.py
+│   │   │   │       │   ├── file_1.py
+│   │   │   │       │   └── file_2.py
+│   │   │   │       └── before
+│   │   │   │           ├── __init__.py
+│   │   │   │           ├── file_1.py
+│   │   │   │           └── file_2.py
+│   │   │   └── test_remove_kwargs_if_default_value.py
 │   │   └── reorder_params
 │   │       ├── cases
 │   │       │   └── case_1
