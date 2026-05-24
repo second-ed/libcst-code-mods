@@ -17,5 +17,5 @@ def _(node: cst.Name) -> m.Name | m.DoNotCareSentinel:
 
 
 @to_matcher.register(cst.Attribute)
-def _(node: cst.Attribute) -> m.Name | m.DoNotCareSentinel:
+def _(node: cst.Attribute) -> m.Attribute:
     return m.Attribute(value=to_matcher(node.value), attr=to_matcher(node.attr))
