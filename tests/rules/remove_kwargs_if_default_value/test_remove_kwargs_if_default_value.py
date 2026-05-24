@@ -19,5 +19,4 @@ def test_reorder_params(case_name, transformers) -> None:
 
     refactored_code = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
     diffs = diff_code_maps(paths_to_code_map(after_paths), refactored_code)
-    print(diffs)
     assert diffs == {}
