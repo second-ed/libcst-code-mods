@@ -18,41 +18,40 @@ def multi_file_refactor(
     root: Path | str,
     paths: list[Path],
     refactoring_rules: list[RefactoringRule],
-    rule_mapping: RuleMapping = RULE_MAPPING,
+    rule_mapping: RuleMapping | None = None,
     specific_paths: Collection = (),
 ) -> dict[Path, str]:
+    rule_mapping = rule_mapping if rule_mapping is not None else RULE_MAPPING
     immutable_rule_mapping = make_rule_mapping_immutable(rule_mapping)
 
     manager = get_manager(str(root))
     if specific_paths:
         paths = [p for p in paths if str(p) in specific_paths]
 
-    cache = {}
-
     contexts = {
         type(refactoring_rule): CstContext(refactoring_rule.to_dict()) for refactoring_rule in refactoring_rules
     }
 
-    for path in paths:
-        wrapper = manager.get_metadata_wrapper_for_path(str(path))
-        cache = {**cache, **wrapper._cache}  # noqa: SLF001
+    for refactoring_rule in refactoring_rules:
+        cst_rule = immutable_rule_mapping[type(refactoring_rule)]
+        if not cst_rule.visitor_factory:
+            continue
 
-        for refactoring_rule in refactoring_rules:
-            cst_rule = immutable_rule_mapping[type(refactoring_rule)]
-            if cst_rule.visitor_factory:
-                visitor = cst_rule.visitor_factory.from_context(contexts[type(refactoring_rule)])
-                wrapper.visit(visitor)
+        visitor = cst_rule.visitor_factory.from_context(contexts[type(refactoring_rule)])
+
+        for path in paths:
+            wrapper = manager.get_metadata_wrapper_for_path(str(path))
+            wrapper.visit(visitor)
 
     refactored_code = {}
 
     for path in paths:
         wrapper = manager.get_metadata_wrapper_for_path(str(path))
-        cache = {**cache, **wrapper._cache}  # noqa: SLF001
 
         for refactoring_rule in refactoring_rules:
             cst_rule = immutable_rule_mapping[type(refactoring_rule)]
             module = wrapper.visit(cst_rule.transformer_factory.from_context(contexts[type(refactoring_rule)]))
-            wrapper = cst.MetadataWrapper(module, cache=cache)
+            wrapper = cst.MetadataWrapper(module)
 
         refactored_code[path] = black_format(wrapper.module.code)
 
