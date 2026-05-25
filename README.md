@@ -48,6 +48,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── _rule_mapping.py
 │       │   ├── add_kwargs.py
 │       │   ├── convert_function_signature.py
+│       │   ├── make_dependent_on_args.py
 │       │   ├── remove_kwargs_if_default_value.py
 │       │   ├── reorder_params.py
 │       │   └── replace_mutable_defaults_with_guard_clause.py
@@ -103,6 +104,18 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │   │           ├── file_1.py
 │   │   │   │           └── file_2.py
 │   │   │   └── test_function_call_graph.py
+│   │   ├── make_dependent_on_args
+│   │   │   ├── cases
+│   │   │   │   └── case_1
+│   │   │   │       ├── after
+│   │   │   │       │   ├── __init__.py
+│   │   │   │       │   ├── file_1.py
+│   │   │   │       │   └── file_2.py
+│   │   │   │       └── before
+│   │   │   │           ├── __init__.py
+│   │   │   │           ├── file_1.py
+│   │   │   │           └── file_2.py
+│   │   │   └── test_make_dependent_on_args.py
 │   │   ├── remove_kwargs_if_default_value
 │   │   │   ├── cases
 │   │   │   │   └── case_1

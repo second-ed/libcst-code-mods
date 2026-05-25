@@ -7,6 +7,7 @@ METADATA_DEPS = (
     cst.metadata.ScopeProvider,
     cst.metadata.FullyQualifiedNameProvider,
     cst.metadata.ExpressionContextProvider,
+    cst.metadata.FilePathProvider,
 )
 
 REPO_ROOT = Path(__file__).parents[2]
