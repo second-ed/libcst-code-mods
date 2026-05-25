@@ -127,18 +127,19 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │   │           ├── file_1.py
 │   │   │   │           └── file_2.py
 │   │   │   └── test_reorder_params.py
-│   │   └── replace_mutable_defaults_with_guard_clause
-│   │       ├── cases
-│   │       │   └── case_1
-│   │       │       ├── after
-│   │       │       │   ├── __init__.py
-│   │       │       │   ├── file_1.py
-│   │       │       │   └── file_2.py
-│   │       │       └── before
-│   │       │           ├── __init__.py
-│   │       │           ├── file_1.py
-│   │       │           └── file_2.py
-│   │       └── test_replace_mutable_defaults_with_guard_clause.py
+│   │   ├── replace_mutable_defaults_with_guard_clause
+│   │   │   ├── cases
+│   │   │   │   └── case_1
+│   │   │   │       ├── after
+│   │   │   │       │   ├── __init__.py
+│   │   │   │       │   ├── file_1.py
+│   │   │   │       │   └── file_2.py
+│   │   │   │       └── before
+│   │   │   │           ├── __init__.py
+│   │   │   │           ├── file_1.py
+│   │   │   │           └── file_2.py
+│   │   │   └── test_replace_mutable_defaults_with_guard_clause.py
+│   │   └── test_cst_to_matcher.py
 │   ├── test_examples
 │   │   ├── __init__.py
 │   │   ├── calls_print.py
