@@ -6,7 +6,6 @@ METADATA_DEPS = (
     cst.metadata.PositionProvider,
     cst.metadata.ScopeProvider,
     cst.metadata.FullyQualifiedNameProvider,
-    cst.metadata.ExpressionContextProvider,
     cst.metadata.FilePathProvider,
 )
 
