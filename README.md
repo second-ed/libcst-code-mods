@@ -57,6 +57,9 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── rename_variable_of_type.py                          # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
 │       │   ├── replace_param_type_hint.py
 │       │   └── replace_return_type_hint.py
+│       ├── visitors
+│       │   ├── __init__.py
+│       │   └── scope_visitor.py
 │       ├── __init__.py
 │       ├── constants.py
 │       ├── engine.py                                               # main entrypoint to the code mods
