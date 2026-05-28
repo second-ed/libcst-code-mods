@@ -32,11 +32,8 @@ class ScopeVisitor(BaseCstVisitor):
 
     def visit_Module(self, node: cst.Module) -> bool | None:  # noqa: N802
         self._file_path = self.get_metadata(cst.metadata.FilePathProvider, node, "FAILED_TO_GET_FILEPATH")
-
-        self._record_scope(
-            kind=ScopeType.MODULE,
-            name=str(self._file_path.relative_to(self.root)).replace("/", ".").removesuffix(".py"),
-        )
+        module_name = str(self._file_path.relative_to(self.root)).replace("/", ".").removesuffix(".py")
+        self._record_scope(kind=ScopeType.MODULE, name=module_name)
         return super().visit_Module(node)
 
     def leave_Module(self, original_node: cst.Module) -> None:  # noqa: N802
@@ -92,9 +89,10 @@ class ScopeVisitor(BaseCstVisitor):
         self._scope_stack.pop()
         return super().leave_GeneratorExp(original_node)
 
-    def _current_scope(self) -> str:
-        return ".".join(frame.name for frame in self._scope_stack) if self._scope_stack else "<module>"
-
     def _record_scope(self, kind: ScopeType, name: str) -> None:
         self._scope_stack.append(ScopeFrame(kind=kind, name=name))
-        self.context.data[self._current_scope()] = {"file": self._file_path}
+        self.context.data[self.current_scope] = {"file": self._file_path}
+
+    @property
+    def current_scope(self) -> str:
+        return ".".join(frame.name for frame in self._scope_stack) if self._scope_stack else "<module>"
