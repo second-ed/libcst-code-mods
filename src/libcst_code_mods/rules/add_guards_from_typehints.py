@@ -32,7 +32,10 @@ class AddGuardsFromTypehintsTransformer(BaseCstTransformer):
     param_types: dict[str, dict[str, str]]
 
     def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: N802 ARG002
-        if (fn_param_map := self.param_types.get(updated_node.name.value)) is None:
+        if (
+            updated_node.name.value not in self.fn_names
+            or (fn_param_map := self.param_types.get(updated_node.name.value)) is None
+        ):
             return updated_node
 
         isinstance_checks, type_err_expected = [], []
