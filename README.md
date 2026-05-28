@@ -46,6 +46,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── _cst_to_matcher.py
 │       │   ├── _cst_utils.py
 │       │   ├── _rule_mapping.py
+│       │   ├── add_guards_from_typehints.py
 │       │   ├── add_kwargs.py
 │       │   ├── convert_function_signature.py
 │       │   ├── make_dependent_on_args.py
@@ -70,6 +71,18 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       └── utils.py
 ├── tests
 │   ├── rules
+│   │   ├── add_guards_from_typehints
+│   │   │   ├── cases
+│   │   │   │   └── case_1
+│   │   │   │       ├── after
+│   │   │   │       │   ├── __init__.py
+│   │   │   │       │   ├── file_1.py
+│   │   │   │       │   └── file_2.py
+│   │   │   │       └── before
+│   │   │   │           ├── __init__.py
+│   │   │   │           ├── file_1.py
+│   │   │   │           └── file_2.py
+│   │   │   └── test_add_guards_from_typehints.py
 │   │   ├── add_kwargs
 │   │   │   ├── cases
 │   │   │   │   └── case_1
