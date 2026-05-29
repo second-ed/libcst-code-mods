@@ -49,6 +49,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── add_guards_from_typehints.py
 │       │   ├── add_kwargs.py
 │       │   ├── convert_function_signature.py
+│       │   ├── invert_guards.py
 │       │   ├── make_dependent_on_args.py
 │       │   ├── remove_kwargs_if_default_value.py
 │       │   ├── reorder_params.py
@@ -120,6 +121,16 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │   │           ├── file_1.py
 │   │   │   │           └── file_2.py
 │   │   │   └── test_function_call_graph.py
+│   │   ├── invert_guards
+│   │   │   ├── cases
+│   │   │   │   └── case_1
+│   │   │   │       ├── after
+│   │   │   │       │   ├── __init__.py
+│   │   │   │       │   └── file_1.py
+│   │   │   │       └── before
+│   │   │   │           ├── __init__.py
+│   │   │   │           └── file_1.py
+│   │   │   └── test_invert_guards.py
 │   │   ├── make_dependent_on_args
 │   │   │   ├── cases
 │   │   │   │   └── case_1
