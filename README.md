@@ -109,18 +109,6 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │   │           └── file_2.py
 │   │   │   ├── __init__.py
 │   │   │   └── test_convert_function_signature.py
-│   │   ├── function_call_graph
-│   │   │   ├── cases
-│   │   │   │   └── case_1
-│   │   │   │       ├── after
-│   │   │   │       │   ├── __init__.py
-│   │   │   │       │   ├── file_1.py
-│   │   │   │       │   └── file_2.py
-│   │   │   │       └── before
-│   │   │   │           ├── __init__.py
-│   │   │   │           ├── file_1.py
-│   │   │   │           └── file_2.py
-│   │   │   └── test_function_call_graph.py
 │   │   ├── invert_guards
 │   │   │   ├── cases
 │   │   │   │   └── case_1
