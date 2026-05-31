@@ -38,3 +38,13 @@ def inverts_if_else_returns_with_multiple_failure_stmts(a: int, b: int) -> float
         print("invalid b value")
         return b
     return modified_a / b
+
+
+def leaves_elif_func_unchanged(a: int, b: int) -> float:
+    if b == 0:
+        b += 1
+    elif a == 0:
+        a += 2
+    else:
+        a += 1
+    return a / b
