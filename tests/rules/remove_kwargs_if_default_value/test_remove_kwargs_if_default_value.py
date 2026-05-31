@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pytest
 
-from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
 from libcst_code_mods.rules.remove_kwargs_if_default_value import RemoveKwargsIfDefaultValue
 from libcst_code_mods.engine import multi_file_refactor
