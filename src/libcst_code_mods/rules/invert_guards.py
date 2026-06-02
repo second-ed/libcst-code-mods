@@ -23,6 +23,15 @@ GUARD_MATCHER = m.If(
     ),
 )
 
+COMPARISON_INVERSES = {
+    cst.Equal: cst.NotEqual,
+    cst.NotEqual: cst.Equal,
+    cst.Is: cst.IsNot,
+    cst.IsNot: cst.Is,
+    cst.In: cst.NotIn,
+    cst.NotIn: cst.In,
+}
+
 
 @register_rule_transformer(InvertGuards)
 @attrs.define
@@ -50,8 +59,23 @@ class InvertGuardsTransformer(BaseCstTransformer):
 
 
 def invert_condition(expr: cst.BaseExpression) -> cst.BaseExpression:
-    return (
-        expr.expression
-        if m.matches(expr, m.UnaryOperation(operator=m.Not()))
-        else cst.UnaryOperation(operator=cst.Not(), expression=expr)
-    )
+    if m.matches(expr, m.UnaryOperation(m.Not())):
+        return expr.expression
+
+    if m.matches(expr, m.Comparison()):
+        return invert_comparison(expr)
+
+    return cst.UnaryOperation(operator=cst.Not(), expression=expr)
+
+
+def invert_comparison(expr: cst.Comparison) -> cst.BaseExpression:
+    if len(expr.comparisons) != 1:
+        return cst.UnaryOperation(operator=cst.Not(), expression=expr)
+
+    target = expr.comparisons[0]
+    inverse = COMPARISON_INVERSES.get(type(target.operator))
+
+    if inverse is None:
+        return cst.UnaryOperation(operator=cst.Not(), expression=expr)
+
+    return expr.with_changes(comparisons=[target.with_changes(operator=inverse())])
