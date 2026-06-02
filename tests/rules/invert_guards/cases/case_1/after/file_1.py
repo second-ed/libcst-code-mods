@@ -44,3 +44,9 @@ def leaves_elif_func_unchanged(a: int, b: int) -> float:
     else:
         a += 1
     return a / b
+
+
+def invert_not_correctly() -> int | None:
+    if 1:
+        return 1
+    print("blah")

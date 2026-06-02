@@ -50,4 +50,8 @@ class InvertGuardsTransformer(BaseCstTransformer):
 
 
 def invert_condition(expr: cst.BaseExpression) -> cst.BaseExpression:
-    return cst.UnaryOperation(operator=cst.Not(), expression=expr)
+    return (
+        expr.expression
+        if m.matches(expr, m.UnaryOperation(operator=m.Not()))
+        else cst.UnaryOperation(operator=cst.Not(), expression=expr)
+    )
