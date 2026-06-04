@@ -39,14 +39,14 @@ class InvertLoopGuardsTransformer(BaseCstTransformer):
         if not extracted:
             return updated_node
 
-        condition = extracted["condition"]
-        success_body = list(extracted["success_body"].body)
-        failure_body = list(extracted["failure_body"].body)
-
         block_body = list(updated_node.body.body)
 
         if block_body[-1] != extracted["if_node"]:
             return updated_node
+
+        condition = extracted["condition"]
+        success_body = list(extracted["success_body"].body)
+        failure_body = list(extracted["failure_body"].body)
 
         guard = cst.If(
             test=invert_condition(condition),
