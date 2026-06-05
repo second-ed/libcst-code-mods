@@ -3,19 +3,23 @@ from pathlib import Path
 import pytest
 
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
-from libcst_code_mods.rules.invert_loop_guards import InvertLoopGuards
+from libcst_code_mods.rules.general.passive.replace_mutable_defaults_with_guard_clause import (
+    ReplaceMutableDefaultsWithGuardClause,
+)
 from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.utils import diff_code_maps, paths_to_code_map
 
 PARENT = Path(__file__).parent
 
 
-@pytest.mark.parametrize(("case_name", "transformers"), [pytest.param("case_1", [InvertLoopGuards()])])
-def test_reorder_params(case_name, transformers) -> None:
+@pytest.mark.parametrize(
+    ("case_name", "transformers"), [pytest.param("case_1", [ReplaceMutableDefaultsWithGuardClause()])]
+)
+def test_replace_mutable_defaults_with_guard_clause(case_name, transformers) -> None:
     usecase_root = f"{PARENT}/cases/{case_name}"
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
     after_paths = list(Path(f"{usecase_root}/after").rglob("**/*.py"))
 
     refactored_code = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
-
-    assert diff_code_maps(paths_to_code_map(after_paths), refactored_code) == {}
+    diffs = diff_code_maps(paths_to_code_map(after_paths), refactored_code)
+    assert diffs == {}
