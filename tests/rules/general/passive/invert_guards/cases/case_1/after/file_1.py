@@ -50,3 +50,36 @@ def invert_not_correctly() -> int | None:
     if 1:
         return 1
     print("blah")
+
+
+def nested_if(x: bool, y: bool) -> None:
+    if x:
+        if not y:
+            raise ValueError()
+        print("ok")
+
+
+def double_raise_case(a: bool, b: bool) -> None:
+    if not a:
+        raise RuntimeError()
+    if not b:
+        raise ValueError()
+    print("b")
+
+
+def sibling_nested(a: bool, b: bool) -> None:
+    if a:
+        print("before")
+        if not b:
+            raise ValueError()
+        print("ok")
+
+        print("after")
+
+
+def double_nested(a: bool, b: bool, c: bool) -> None:
+    if a:
+        if b:
+            if not c:
+                raise ValueError()
+            print("ok")

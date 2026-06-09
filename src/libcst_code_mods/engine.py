@@ -47,13 +47,16 @@ def multi_file_refactor(
 
     for path in paths:
         wrapper = manager.get_metadata_wrapper_for_path(str(path))
+        original_code = wrapper.module.code
 
         for refactoring_rule in refactoring_rules:
             cst_rule = immutable_rule_mapping[type(refactoring_rule)]
             module = wrapper.visit(cst_rule.transformer_factory.from_context(contexts[type(refactoring_rule)]))
-            wrapper = cst.MetadataWrapper(module)
+            wrapper = cst.MetadataWrapper(module, cache=wrapper._cache)  # noqa: SLF001
 
-        refactored_code[path] = black_format(wrapper.module.code)
+        new_code = wrapper.module.code
+        if new_code != original_code:
+            refactored_code[path] = black_format(new_code)
 
     return refactored_code
 
