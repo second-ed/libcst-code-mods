@@ -94,3 +94,13 @@ def double_nested(a: bool, b: bool, c: bool) -> None:
                 print("ok")
             else:
                 raise ValueError()
+
+
+def leaves_elif_return_func_unchanged(a: int, b: int) -> float:
+    if b == 0:
+        b += 1
+    elif a == 0:
+        a += 2
+    else:
+        return a / b
+    return a * b

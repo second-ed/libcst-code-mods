@@ -28,7 +28,12 @@ GUARD_MATCHER = m.If(
 @register_rule_transformer(InvertGuards)
 @attrs.define
 class InvertGuardsTransformer(BaseCstTransformer):
-    def leave_If(self, original_node: cst.If, updated_node: cst.If) -> cst.If | cst.FlattenSentinel:  # noqa: N802 ARG002
+    def leave_If(self, original_node: cst.If, updated_node: cst.If) -> cst.If | cst.FlattenSentinel:  # noqa: N802
+        parent = self.get_metadata(cst.metadata.ParentNodeProvider, original_node)
+
+        if isinstance(parent, cst.If) and parent.orelse is original_node:
+            return updated_node
+
         extracted = m.extract(updated_node, GUARD_MATCHER)
 
         if not extracted:
