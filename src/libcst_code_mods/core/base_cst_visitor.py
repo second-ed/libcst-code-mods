@@ -9,7 +9,7 @@ from libcst_code_mods.constants import METADATA_DEPS
 from libcst_code_mods.core.cst_context import CstContext
 
 
-class BaseMetadataVisitor(cst.CSTVisitor):
+class BaseMetadataVisitor(cst.BatchableCSTVisitor):
     METADATA_DEPENDENCIES = METADATA_DEPS
 
 

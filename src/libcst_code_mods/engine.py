@@ -32,16 +32,16 @@ def multi_file_refactor(
         type(refactoring_rule): CstContext(refactoring_rule.to_dict()) for refactoring_rule in refactoring_rules
     }
 
-    for refactoring_rule in refactoring_rules:
-        cst_rule = immutable_rule_mapping[type(refactoring_rule)]
-        if not cst_rule.visitor_factory:
-            continue
+    for path in paths:
+        wrapper = manager.get_metadata_wrapper_for_path(str(path))
 
-        visitor = cst_rule.visitor_factory.from_context(contexts[type(refactoring_rule)])
+        visitors = [
+            visitor_factory.from_context(contexts[type(rule)])
+            for rule in refactoring_rules
+            if (visitor_factory := immutable_rule_mapping[type(rule)].visitor_factory) is not None
+        ]
 
-        for path in paths:
-            wrapper = manager.get_metadata_wrapper_for_path(str(path))
-            wrapper.visit(visitor)
+        wrapper.visit_batched(visitors)
 
     refactored_code = {}
 
