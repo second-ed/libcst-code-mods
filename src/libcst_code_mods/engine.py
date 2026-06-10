@@ -40,8 +40,8 @@ def multi_file_refactor(
             for rule in refactoring_rules
             if (visitor_factory := immutable_rule_mapping[type(rule)].visitor_factory) is not None
         ]
-
-        wrapper.visit_batched(visitors)
+        if visitors:
+            wrapper.visit_batched(visitors)
 
     refactored_code = {}
 
