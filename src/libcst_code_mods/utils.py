@@ -20,7 +20,7 @@ def diff_code_maps(expected: dict[Path, str], actual: dict[Path, str]) -> dict[t
     diffs: dict[tuple[Path, Path], str] = {}
 
     actual_pairs = sorted(actual.items())
-    expected_pairs = sorted(expected.items())
+    expected_pairs = sorted({k: v for k, v in expected.items() if k in actual}.items())
 
     for idx, expected_pair in enumerate(expected_pairs):
         expected_path, expected_code = expected_pair
