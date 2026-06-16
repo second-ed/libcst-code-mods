@@ -60,7 +60,9 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── pyspark
 │       │   │   └── passive
 │       │   │       ├── __init__.py
-│       │   │       └── replace_multiple_with_column_calls.py
+│       │   │       ├── _replace_multiple_with_column_calls.py
+│       │   │       ├── replace_multiple_with_column_calls.py
+│       │   │       └── replace_multiple_with_column_renamed_calls.py
 │       │   ├── __init__.py
 │       │   ├── _cst_to_matcher.py
 │       │   ├── _cst_utils.py
@@ -194,7 +196,17 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │           └── test_replace_mutable_defaults_with_guard_clause.py
 │   │   ├── pyspark
 │   │   │   └── passive
-│   │   │       └── replace_multiple_with_column_calls
+│   │   │       ├── replace_multiple_with_column_calls
+│   │   │       │   ├── cases
+│   │   │       │   │   └── case_1
+│   │   │       │   │       ├── after
+│   │   │       │   │       │   ├── __init__.py
+│   │   │       │   │       │   └── file_1.py
+│   │   │       │   │       └── before
+│   │   │       │   │           ├── __init__.py
+│   │   │       │   │           └── file_1.py
+│   │   │       │   └── test_replace_multiple_with_column_calls.py
+│   │   │       └── replace_multiple_with_column_renamed_calls
 │   │   │           ├── cases
 │   │   │           │   └── case_1
 │   │   │           │       ├── after
@@ -203,7 +215,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │           │       └── before
 │   │   │           │           ├── __init__.py
 │   │   │           │           └── file_1.py
-│   │   │           └── test_replace_multiple_with_column_calls.py
+│   │   │           └── test_replace_multiple_with_column_renamed_calls.py
 │   │   └── test_cst_to_matcher.py
 │   ├── test_examples
 │   │   ├── __init__.py

@@ -10,20 +10,20 @@ from ._replace_multiple_with_column_calls import update_multiple_with_column_cal
 
 
 @attrs.define(frozen=True)
-class ReplaceMultipleWithColumnCalls(RefactoringRule):
+class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
     pass
 
 
-WITH_COLUMN_ATTR = m.Attribute(attr=m.Name("withColumn"))
+WITH_COLUMN_ATTR = m.Attribute(attr=m.Name("withColumnRenamed"))
 WITH_COLUMN_CALL = m.Call(func=WITH_COLUMN_ATTR)
 
 
-@register_rule_transformer(ReplaceMultipleWithColumnCalls)
+@register_rule_transformer(ReplaceMultipleWithColumnRenamedCalls)
 @attrs.define
-class ReplaceMultipleWithColumnCallsTransformer(BaseCstTransformer):
+class ReplaceMultipleWithColumnRenamedCallsTransformer(BaseCstTransformer):
     def leave_Call(  # noqa: N802
         self, original_node: cst.Call, updated_node: cst.Call
     ) -> cst.BaseExpression:
         return update_multiple_with_column_calls(
-            self, original_node, updated_node, WITH_COLUMN_CALL, WITH_COLUMN_ATTR, "withColumns"
+            self, original_node, updated_node, WITH_COLUMN_CALL, WITH_COLUMN_ATTR, "withColumnsRenamed"
         )

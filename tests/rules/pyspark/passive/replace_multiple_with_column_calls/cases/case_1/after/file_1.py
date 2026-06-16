@@ -20,3 +20,7 @@ def with_column_chain_inside_return() -> None:
 
 def with_column_chain_followed_by_select() -> None:
     df.withColumns({"a": lit(1), "b": col("blah")}).select("a", "b")
+
+
+def leaves_function_unchanged(x: int, y: int) -> int:
+    return x + y
