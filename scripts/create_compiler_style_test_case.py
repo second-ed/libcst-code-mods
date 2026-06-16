@@ -22,7 +22,7 @@ def test_reorder_params(case_name, transformers) -> None:
     after_paths = list(Path(f"{{usecase_root}}/after").rglob("**/*.py"))
 
     refactored_code = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
-
+    assert refactored_code
     assert diff_code_maps(paths_to_code_map(after_paths), refactored_code) == {{}}
 
 """

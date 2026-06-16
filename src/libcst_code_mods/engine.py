@@ -56,6 +56,7 @@ def multi_file_refactor(
 
         new_code = wrapper.module.code
         if new_code != original_code:
+            print(f"Modified: {path}")  # noqa: T201
             refactored_code[path] = black_format(new_code)
 
     return refactored_code

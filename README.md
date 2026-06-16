@@ -57,6 +57,10 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   │   │   ├── invert_loop_guards.py
 │       │   │   │   └── replace_mutable_defaults_with_guard_clause.py
 │       │   │   └── __init__.py
+│       │   ├── pyspark
+│       │   │   └── passive
+│       │   │       ├── __init__.py
+│       │   │       └── replace_multiple_with_column_calls.py
 │       │   ├── __init__.py
 │       │   ├── _cst_to_matcher.py
 │       │   ├── _cst_utils.py
@@ -188,6 +192,18 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │           │           ├── file_1.py
 │   │   │           │           └── file_2.py
 │   │   │           └── test_replace_mutable_defaults_with_guard_clause.py
+│   │   ├── pyspark
+│   │   │   └── passive
+│   │   │       └── replace_multiple_with_column_calls
+│   │   │           ├── cases
+│   │   │           │   └── case_1
+│   │   │           │       ├── after
+│   │   │           │       │   ├── __init__.py
+│   │   │           │       │   └── file_1.py
+│   │   │           │       └── before
+│   │   │           │           ├── __init__.py
+│   │   │           │           └── file_1.py
+│   │   │           └── test_replace_multiple_with_column_calls.py
 │   │   └── test_cst_to_matcher.py
 │   ├── test_examples
 │   │   ├── __init__.py
