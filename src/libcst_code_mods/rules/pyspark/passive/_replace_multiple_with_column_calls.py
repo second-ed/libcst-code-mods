@@ -28,6 +28,9 @@ def update_multiple_with_column_calls(  # noqa: PLR0913
         columns.append((current.args[0].value, current.args[1].value))
         current = current.func.value
 
+    if len(columns) == 1:
+        return updated_node
+
     columns.reverse()
 
     return cst.Call(

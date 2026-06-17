@@ -1,3 +1,7 @@
+def one_with_column_call_unchanged() -> None:
+    df.withColumn("a", lit(1))
+
+
 def two_with_column_calls_in_a_row() -> None:
     df.withColumns({"a": lit(1), "b": col("blah")})
 

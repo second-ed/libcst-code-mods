@@ -1,3 +1,7 @@
+def one_with_column_renamed_call_left_unchanged() -> None:
+    df.withColumnRenamed("a", "x")
+
+
 def two_with_column_renamed_calls_in_a_row() -> None:
     df.withColumnRenamed("a", "x").withColumnRenamed("b", "y")
 
