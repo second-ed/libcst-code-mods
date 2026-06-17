@@ -10,8 +10,6 @@ from libcst_code_mods.rules.pyspark.passive.replace_multiple_with_column_renamed
 from libcst_code_mods.engine import multi_file_refactor
 from tests.conftest import code_map_to_rows, diff_code_lfs, paths_to_rows, rows_to_lf
 
-from tests.conftest import code_map_to_rows, diff_code_lfs, paths_to_rows, rows_to_lf
-
 PARENT = Path(__file__).parent
 
 
