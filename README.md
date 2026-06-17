@@ -255,8 +255,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   └── test_transformers.py
 │   ├── __init__.py
 │   ├── conftest.py
-│   ├── test_matchers.py
-│   └── test_utils.py
+│   └── test_matchers.py
 ├── .pre-commit-config.yaml
 ├── README.md
 ├── pyproject.toml
