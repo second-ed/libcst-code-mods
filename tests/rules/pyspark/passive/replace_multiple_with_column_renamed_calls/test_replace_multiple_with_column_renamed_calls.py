@@ -8,7 +8,9 @@ from libcst_code_mods.rules.pyspark.passive.replace_multiple_with_column_renamed
     ReplaceMultipleWithColumnRenamedCalls,
 )
 from libcst_code_mods.engine import multi_file_refactor
-from libcst_code_mods.utils import diff_code_maps, paths_to_code_map
+from tests.conftest import code_map_to_rows, diff_code_lfs, paths_to_rows, rows_to_lf
+
+from tests.conftest import code_map_to_rows, diff_code_lfs, paths_to_rows, rows_to_lf
 
 PARENT = Path(__file__).parent
 
@@ -23,4 +25,10 @@ def test_replace_multiple_with_column_renamed_calls(case_name, transformers) -> 
 
     refactored_code = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
     assert refactored_code
-    assert diff_code_maps(paths_to_code_map(after_paths), refactored_code) == {}
+    assert (
+        diff_code_lfs(
+            rows_to_lf(paths_to_rows(after_paths, "expected"), usecase_root),
+            rows_to_lf(code_map_to_rows(refactored_code, "actual"), usecase_root),
+        )
+        == {}
+    )

@@ -15,15 +15,15 @@ def with_column_renamed_chain_assigned() -> None:
 
 
 def with_column_renamed_chain_after_filter() -> None:
-    df.filter(col("active")).withColumnRenamed({"a": "x", "b": "y"})
+    df.filter(col("active")).withColumnsRenamed({"a": "x", "b": "y"})
 
 
 def with_column_renamed_chain_inside_return() -> None:
-    return df.withColumnRenamed({"a": "x", "b": "y", "c": "z"})
+    return df.withColumnsRenamed({"a": "x", "b": "y", "c": "z"})
 
 
 def with_column_renamed_chain_followed_by_select() -> None:
-    df.withColumnRenamed({"a": "x", "b": "y"}).select("x", "y")
+    df.withColumnsRenamed({"a": "x", "b": "y"}).select("x", "y")
 
 
 def leaves_function_unchanged(x: int, y: int) -> int:
