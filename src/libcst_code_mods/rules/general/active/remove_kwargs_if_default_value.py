@@ -23,6 +23,11 @@ class RemoveKwargsIfDefaultValueVisitor(BaseCstVisitor):
             self.context.data.setdefault("default_params", {})[node.name.value] = {
                 p.name.value: p.default for p in node.params.params if p.default is not None
             }
+            self.context.paths.add(self.path)
+
+    def visit_Call(self, node: cst.Call) -> None:  # noqa: N802
+        if node.func.value in self.fn_names:
+            self.context.paths.add(self.path)
 
 
 @register_rule_transformer(RemoveKwargsIfDefaultValue)

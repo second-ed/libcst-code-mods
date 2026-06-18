@@ -22,6 +22,12 @@ class AddKwargsVisitor(BaseCstVisitor):
             param_names = [p.name.value for p in node.params.params]
 
             self.context.data.setdefault("param_names", {})[node.name.value] = param_names
+            self.context.paths.add(self.path)
+
+    def visit_Call(self, node: cst.Call) -> bool | None:  # noqa: N802
+        if node.func.value in self.fn_names:
+            self.context.paths.add(self.path)
+        return super().visit_Call(node)
 
 
 @register_rule_transformer(AddKwargs)

@@ -28,6 +28,8 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
                 self.mutable_params.setdefault(node.name.value, {})
                 self.mutable_params[node.name.value][param.name.value] = normalise(param.default)
 
+        if self.mutable_params:
+            self.context.paths.add(self.path)
         self.context.data["mutable_params"] = self.mutable_params
 
 

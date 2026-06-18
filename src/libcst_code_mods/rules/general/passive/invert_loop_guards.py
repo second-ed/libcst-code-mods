@@ -3,9 +3,10 @@ import libcst as cst
 import libcst.matchers as m
 
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
+from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._cst_utils import invert_condition
-from libcst_code_mods.rules._rule_mapping import register_rule_transformer
+from libcst_code_mods.rules._rule_mapping import register_rule_transformer, register_rule_visitor
 
 
 @attrs.define(frozen=True)
@@ -28,6 +29,15 @@ GUARD_MATCHER = m.For(
         ]
     )
 )
+
+
+@register_rule_visitor(InvertLoopGuards)
+@attrs.define
+class InvertLoopGuardsVisitor(BaseCstVisitor):
+    def visit_For(self, node: cst.For) -> bool | None:  # noqa: N802
+        if m.matches(node, GUARD_MATCHER):
+            self.context.paths.add(self.path)
+        return super().visit_For(node)
 
 
 @register_rule_transformer(InvertLoopGuards)

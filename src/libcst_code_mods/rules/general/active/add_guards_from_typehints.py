@@ -16,13 +16,18 @@ class AddGuardsFromTypehints(RefactoringRule):
 @register_rule_visitor(AddGuardsFromTypehints)
 @attrs.define
 class AddGuardsFromTypehintsVisitor(BaseCstVisitor):
+    fn_names: list[str]
+
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
+        if node.name.value not in self.fn_names:
+            return
         param_types = self.context.data.setdefault("param_types", {})
         param_types[node.name.value] = {
             p.name.value: p.annotation.annotation.value
             for p in node.params.params
             if m.matches(p.annotation, m.Annotation(m.Name()))
         }
+        self.context.paths.add(self.path)
 
 
 @register_rule_transformer(AddGuardsFromTypehints)

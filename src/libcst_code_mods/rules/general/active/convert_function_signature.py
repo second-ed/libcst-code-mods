@@ -27,6 +27,13 @@ class ConvertFunctionSignatureVisitor(BaseCstVisitor):
 
         positional_map: dict[int, str] = {i: param.name.value for i, param in enumerate(node.params.params)}
         self.context.data["positional_map"] = positional_map
+        self.context.paths.add(self.path)
+
+    def visit_Call(self, node: cst.Call) -> bool | None:  # noqa: N802
+        if not m.matches(node, mat.is_call_with_name(m.Name(self.fn_name))):
+            return None
+        self.context.paths.add(self.path)
+        return super().visit_Call(node)
 
 
 @register_rule_transformer(ConvertFunctionSignature)

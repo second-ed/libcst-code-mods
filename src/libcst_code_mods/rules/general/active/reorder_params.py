@@ -29,6 +29,7 @@ class ReorderParamsVisitor(BaseCstVisitor):
                     f"new_order does not have all of the parameters to be able to reorder {self.new_order = } {param_order = }"
                 )
             self.context.data["index_map"] = [param_order.index(name) for name in self.new_order]
+            self.context.paths.add(self.path)
 
 
 @register_rule_transformer(ReorderParams)

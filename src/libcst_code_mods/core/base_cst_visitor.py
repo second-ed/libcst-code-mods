@@ -15,9 +15,10 @@ class BaseMetadataVisitor(cst.BatchableCSTVisitor):
 
 @attrs.define
 class BaseCstVisitor(BaseMetadataVisitor):
+    path: str
     context: CstContext
 
     @classmethod
-    def from_context(cls, context: CstContext) -> Self:
+    def from_context(cls, path: str, context: CstContext) -> Self:
         filtered = {f.name: context.data[f.name] for f in attrs.fields(cls) if f.name in context.data}
-        return cls(context, **filtered)
+        return cls(path=path, context=context, **filtered)

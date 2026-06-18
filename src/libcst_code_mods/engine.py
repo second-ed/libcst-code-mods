@@ -29,14 +29,15 @@ def multi_file_refactor(
         paths = [p for p in paths if str(p) in specific_paths]
 
     contexts = {
-        type(refactoring_rule): CstContext(refactoring_rule.to_dict()) for refactoring_rule in refactoring_rules
+        type(refactoring_rule): CstContext(data=refactoring_rule.to_dict()) for refactoring_rule in refactoring_rules
     }
 
     for path in paths:
-        wrapper = manager.get_metadata_wrapper_for_path(str(path))
+        str_path = str(path)
+        wrapper = manager.get_metadata_wrapper_for_path(str_path)
 
         visitors = [
-            visitor_factory.from_context(contexts[type(rule)])
+            visitor_factory.from_context(str_path, contexts[type(rule)])
             for rule in refactoring_rules
             if (visitor_factory := immutable_rule_mapping[type(rule)].visitor_factory) is not None
         ]
@@ -46,12 +47,19 @@ def multi_file_refactor(
     refactored_code = {}
 
     for path in paths:
-        wrapper = manager.get_metadata_wrapper_for_path(str(path))
+        str_path = str(path)
+        wrapper = manager.get_metadata_wrapper_for_path(str_path)
         original_code = wrapper.module.code
 
         for refactoring_rule in refactoring_rules:
+            rule_context = contexts[type(refactoring_rule)]
+
+            if str_path not in rule_context.paths:
+                continue
+
             cst_rule = immutable_rule_mapping[type(refactoring_rule)]
-            module = wrapper.visit(cst_rule.transformer_factory.from_context(contexts[type(refactoring_rule)]))
+
+            module = wrapper.visit(cst_rule.transformer_factory.from_context(rule_context))
             wrapper = cst.MetadataWrapper(module, cache=wrapper._cache)  # noqa: SLF001
 
         new_code = wrapper.module.code

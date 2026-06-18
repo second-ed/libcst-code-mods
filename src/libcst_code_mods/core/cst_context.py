@@ -7,4 +7,5 @@ import attrs
 
 @attrs.define(frozen=True)
 class CstContext:
+    paths: set[str] = attrs.field(factory=set)
     data: dict[str, Any] = attrs.field(factory=dict)
