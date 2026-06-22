@@ -67,11 +67,6 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── _cst_to_matcher.py
 │       │   ├── _cst_utils.py
 │       │   └── _rule_mapping.py
-│       ├── single_file_transformers
-│       │   ├── __init__.py
-│       │   ├── rename_variable_of_type.py                                  # Rename all variables of a certain type with the same name, this is useful for custom objects that there will only be 1 instances of at a time.
-│       │   ├── replace_param_type_hint.py
-│       │   └── replace_return_type_hint.py
 │       ├── visitors
 │       │   ├── __init__.py
 │       │   └── scope_visitor.py
@@ -228,31 +223,6 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   ├── global_assignment.py
 │   │   ├── global_assignment_with_type_hint.py
 │   │   └── print_with_fstring.py
-│   ├── test_transformer_cases
-│   │   ├── combinations
-│   │   │   └── case_1
-│   │   │       ├── after.py
-│   │   │       └── before.py
-│   │   ├── rename_variables_of_same_type
-│   │   │   └── case_1
-│   │   │       ├── __init__.py
-│   │   │       ├── after.py
-│   │   │       └── before.py
-│   │   ├── replace_param_type_hint
-│   │   │   ├── case_1
-│   │   │   │   ├── after.py
-│   │   │   │   └── before.py
-│   │   │   └── case_2
-│   │   │       ├── after.py
-│   │   │       └── before.py
-│   │   ├── replace_return_type_hint
-│   │   │   └── case_1
-│   │   │       ├── after.py
-│   │   │       └── before.py
-│   │   └── __init__.py
-│   ├── transformers
-│   │   ├── __init__.py
-│   │   └── test_transformers.py
 │   ├── __init__.py
 │   ├── conftest.py
 │   └── test_matchers.py

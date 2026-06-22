@@ -20,41 +20,55 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
     mutable_params: dict[str, dict[str, str]] = attrs.field(factory=dict)
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
+        qualified_names = self.get_metadata(cst.metadata.FullyQualifiedNameProvider, node, set())
+
+        if not qualified_names:
+            return
+
+        fqn = next(iter(qualified_names))
+
+        if not isinstance(fqn, cst.metadata.QualifiedName):
+            return
 
         for param in node.params.params:
             if param.default is not None and m.matches(
                 param.default, m.OneOf(m.List(), m.Dict(), m.Set(), m.Call(m.Name("list")), m.Call(m.Name("set")))
             ):
-                self.mutable_params.setdefault(node.name.value, {})
-                self.mutable_params[node.name.value][param.name.value] = normalise(param.default)
+                self.mutable_params.setdefault(fqn.name, {})
+                self.mutable_params[fqn.name][param.name.value] = normalise(param.default)
 
         if self.mutable_params:
             self.context.paths.add(self.path)
-        self.context.data["mutable_params"] = self.mutable_params
+            self.context.data.setdefault("mutable_params", {}).update(self.mutable_params)
 
 
 @register_rule_transformer(ReplaceMutableDefaultsWithGuardClause)
 @attrs.define
 class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
-    mutable_params: dict[str, list[str]]
+    mutable_params: dict[str, dict[str, str]]
 
-    def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: ARG002 N802
-        if updated_node.name.value not in self.mutable_params:
+    def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: N802
+        qualified_names = self.get_metadata(cst.metadata.FullyQualifiedNameProvider, original_node, set())
+
+        if not qualified_names:
             return updated_node
 
-        params = self._update_params(updated_node)
+        fqn = next(iter(qualified_names))
+
+        if not isinstance(fqn, cst.metadata.QualifiedName) or fqn.name not in self.mutable_params:
+            return updated_node
+
+        params = self._update_params(updated_node, self.mutable_params[fqn.name])
         guards = [
             cst.parse_statement(f"{name} = {name} if {name} is not None else {default}")
-            for name, default in self.mutable_params[updated_node.name.value].items()
+            for name, default in self.mutable_params[fqn.name].items()
         ]
         new_body = [*guards, *updated_node.body.body]
         return updated_node.with_changes(
             params=updated_node.params.with_changes(params=params), body=updated_node.body.with_changes(body=new_body)
         )
 
-    def _update_params(self, updated_node: cst.FunctionDef) -> list[cst.Param]:
-        fn_param_map = self.mutable_params[updated_node.name.value]
-
+    def _update_params(self, updated_node: cst.FunctionDef, fn_param_map: dict[str, str]) -> list[cst.Param]:
         new_params = []
 
         for param in updated_node.params.params:
