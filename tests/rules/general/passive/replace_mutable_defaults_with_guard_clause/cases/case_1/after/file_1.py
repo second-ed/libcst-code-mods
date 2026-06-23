@@ -1,4 +1,4 @@
-def func(a: int, b: list | None = None) -> None:
+def func(a: int, b: list[int] | None = None) -> None:
     b = b if b is not None else []
     pass
 

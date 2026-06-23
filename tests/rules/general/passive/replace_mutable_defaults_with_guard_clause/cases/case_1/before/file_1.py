@@ -1,4 +1,4 @@
-def func(a: int, b: list = []) -> None:
+def func(a: int, b: list[int] = []) -> None:
     pass
 
 
