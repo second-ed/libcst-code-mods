@@ -42,6 +42,9 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
             self.context.data.setdefault("mutable_params", {}).update(self.mutable_params)
 
 
+REPLACEMENTS: dict[str, str] = {"list()": "[]", "dict()": "{}"}
+
+
 @register_rule_transformer(ReplaceMutableDefaultsWithGuardClause)
 @attrs.define
 class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
@@ -60,7 +63,7 @@ class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
 
         params = self._update_params(updated_node, self.mutable_params[fqn.name])
         guards = [
-            cst.parse_statement(f"{name} = {name} if {name} is not None else {default}")
+            cst.parse_statement(f"{name} = {name} if {name} is not None else {REPLACEMENTS.get(default, default)}")
             for name, default in self.mutable_params[fqn.name].items()
         ]
         new_body = [*guards, *updated_node.body.body]
