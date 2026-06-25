@@ -6,9 +6,10 @@ from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._cst_utils import invert_condition
-from libcst_code_mods.rules._rule_mapping import register_rule_transformer, register_rule_visitor
+from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 
+@register_rule
 @attrs.define(frozen=True)
 class InvertLoopGuards(RefactoringRule):
     pass
