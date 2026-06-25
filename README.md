@@ -71,6 +71,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── __init__.py
 │       │   └── scope_visitor.py
 │       ├── __init__.py
+│       ├── __main__.py
 │       ├── constants.py
 │       ├── engine.py                                                       # main entrypoint to the code mods
 │       ├── matchers.py                                                     # some basic matchers
@@ -229,6 +230,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 ├── .pre-commit-config.yaml
 ├── README.md
 ├── pyproject.toml
+├── refactoring-rules-config.yaml
 ├── ruff.toml
 └── uv.lock
 

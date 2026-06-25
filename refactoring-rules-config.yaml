@@ -1,0 +1,5 @@
+invert_loop_guards: {}
+invert_guards: {}
+replace_mutable_defaults_with_guard_clause: {}
+replace_multiple_with_column_renamed_calls: {}
+replace_multiple_with_column_calls: {}

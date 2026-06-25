@@ -1,7 +1,6 @@
 # repo-map-desc: main entrypoint to the code mods
 from __future__ import annotations
 
-from collections.abc import Collection
 from pathlib import Path
 
 import libcst as cst
@@ -19,7 +18,7 @@ def multi_file_refactor(
     paths: list[Path],
     refactoring_rules: list[RefactoringRule],
     rule_mapping: RuleMapping | None = None,
-    specific_paths: Collection = (),
+    specific_paths: list[str] | None = None,
 ) -> dict[Path, str]:
     rule_mapping = rule_mapping if rule_mapping is not None else RULE_MAPPING
     immutable_rule_mapping = make_rule_mapping_immutable(rule_mapping)
@@ -64,7 +63,6 @@ def multi_file_refactor(
 
         new_code = wrapper.module.code
         if new_code != original_code:
-            print(f"Modified: {path}")  # noqa: T201
             refactored_code[path] = black_format(new_code)
 
     return refactored_code

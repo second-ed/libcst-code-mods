@@ -2,9 +2,7 @@ import re
 from collections import defaultdict
 from collections.abc import Callable
 from types import MappingProxyType
-from typing import Any, TypeAlias
-
-import attrs
+from typing import TypeAlias
 
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
@@ -19,11 +17,11 @@ def make_rule_mapping_immutable(rule_mapping: RuleMapping) -> MappingProxyType[t
     return MappingProxyType({k: CstRule(**v) for k, v in rule_mapping.items()})
 
 
-RULES: dict[str, dict[str, Any]] = {}
+RULES: dict[str, type[RefactoringRule]] = {}
 
 
 def register_rule(cls: type[RefactoringRule]) -> type[RefactoringRule]:
-    RULES[camel_to_snake(cls.__name__)] = {k: v.type() for k, v in attrs.fields_dict(cls).items()}
+    RULES[camel_to_snake(cls.__name__)] = cls
     return cls
 
 
