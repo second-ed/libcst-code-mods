@@ -3,14 +3,17 @@ from pathlib import Path
 import yaml
 
 from libcst_code_mods.engine import multi_file_refactor
-from libcst_code_mods.rules._rule_mapping import RULES
+from libcst_code_mods.rules import RULES
 
 
-def main(inp_root: str, specific_paths: list[str] | None = None) -> None:
+def main(inp_root: Path | str, specific_paths: list[str] | None = None, config_path: Path | str | None = None) -> None:
     root = Path(inp_root)
     paths = list(root.rglob("**/*.py"))
 
-    config = yaml.safe_load(next(root.glob("refactoring-rules-config.yaml")).read_text())
+    if config_path is None:
+        config_path = next(root.glob("refactoring-rules-config.yaml"))
+
+    config = yaml.safe_load(Path(config_path).read_text())
 
     refactoring_rules = [RULES[k].from_dict(v) for k, v in config.items() if k in RULES]
     refactored_code = multi_file_refactor(

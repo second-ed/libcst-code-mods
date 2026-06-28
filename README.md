@@ -28,6 +28,17 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 ├── .github
 │   └── workflows
 │       └── ci_tests.yaml
+├── mock_package
+│   ├── after
+│   │   └── src
+│   │       ├── __init__.py
+│   │       ├── file_1.py
+│   │       └── file_2.py
+│   └── before
+│       └── src
+│           ├── __init__.py
+│           ├── file_1.py
+│           └── file_2.py
 ├── scripts
 │   ├── __init__.py
 │   ├── create_compiler_style_test_case.py
@@ -226,6 +237,8 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   └── print_with_fstring.py
 │   ├── __init__.py
 │   ├── conftest.py
+│   ├── test-refactoring-rules-config.yaml
+│   ├── test_main.py
 │   └── test_matchers.py
 ├── .pre-commit-config.yaml
 ├── README.md
