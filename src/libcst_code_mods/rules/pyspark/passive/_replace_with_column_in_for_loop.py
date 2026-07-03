@@ -4,7 +4,7 @@ import libcst.matchers as m
 
 def for_loop_matcher(fn_name: str) -> m.For:
     return m.For(
-        target=m.SaveMatchedNode(m.Name(), "loop"),
+        target=m.SaveMatchedNode(m.DoNotCare(), "loop"),
         iter=m.SaveMatchedNode(m.DoNotCare(), "iterable"),
         body=m.IndentedBlock(
             body=[

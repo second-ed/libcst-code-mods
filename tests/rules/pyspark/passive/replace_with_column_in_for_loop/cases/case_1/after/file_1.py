@@ -5,3 +5,7 @@ def should_update_this_function() -> None:
 def unrelated_for_loop() -> None:
     for i in range(10):
         print(i)
+
+
+def correctly_updates_iterating_over_mapping() -> None:
+    df = df.withColumns({col: expr for col, expr in mapping.items()})
