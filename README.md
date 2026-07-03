@@ -80,9 +80,6 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── _cst_to_matcher.py
 │       │   ├── _cst_utils.py
 │       │   └── _rule_mapping.py
-│       ├── visitors
-│       │   ├── __init__.py
-│       │   └── scope_visitor.py
 │       ├── __init__.py
 │       ├── __main__.py
 │       ├── constants.py
