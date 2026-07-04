@@ -11,3 +11,15 @@ def unrelated_for_loop() -> None:
 def correctly_updates_iterating_over_mapping() -> None:
     for col, expr in mapping.items():
         df = df.withColumn(col, expr)
+
+
+def ignores_if_line_before_with_column_call() -> None:
+    for col, expr in mapping.items():
+        print(col)
+        df = df.withColumn(col, expr)
+
+
+def ignores_if_line_after_with_column_call() -> None:
+    for col, expr in mapping.items():
+        df = df.withColumn(col, expr)
+        print(col)
