@@ -16,7 +16,7 @@ class ReplaceMultipleFunctionCallsInCompWithWalrus(RefactoringRule):
 
 LIST_COMP_MATCHER = m.ListComp(
     elt=m.SaveMatchedNode(m.Call(), "elt_call"),
-    for_in=m.CompFor(ifs=[m.CompIf(test=m.SaveMatchedNode(m.Call(), "if_call"))]),
+    for_in=m.CompFor(ifs=[m.CompIf(test=m.SaveMatchedNode(m.DoNotCare(), "if_cond"))]),
 )
 
 
@@ -39,7 +39,7 @@ class ReplaceMultipleFunctionCallsInCompWithWalrusTransformer(BaseCstTransformer
             return updated_node
 
         elt = extracted["elt_call"]
-        cond = extracted["if_call"]
+        cond = extracted["if_cond"]
 
         tmp = cst.Name("__code_mod_tmp")
         walrus = cst.NamedExpr(target=tmp, value=elt, lpar=[cst.LeftParen()], rpar=[cst.RightParen()])
