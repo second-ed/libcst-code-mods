@@ -66,6 +66,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   │   │   ├── __init__.py
 │       │   │   │   ├── invert_guards.py
 │       │   │   │   ├── invert_loop_guards.py
+│       │   │   │   ├── replace_multiple_function_calls_in_comp_with_walrus.py
 │       │   │   │   └── replace_mutable_defaults_with_guard_clause.py
 │       │   │   └── __init__.py
 │       │   ├── pyspark
@@ -84,9 +85,9 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       ├── __init__.py
 │       ├── __main__.py
 │       ├── constants.py
-│       ├── engine.py                                                       # main entrypoint to the code mods
-│       ├── matchers.py                                                     # some basic matchers
-│       ├── node_collector.py                                               # the pre-pass stage that collects the context before the transformation
+│       ├── engine.py                                                                # main entrypoint to the code mods
+│       ├── matchers.py                                                              # some basic matchers
+│       ├── node_collector.py                                                        # the pre-pass stage that collects the context before the transformation
 │       └── utils.py
 ├── tests
 │   ├── rules
@@ -188,6 +189,16 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │       │   │           ├── file_1.py
 │   │   │       │   │           └── file_2.py
 │   │   │       │   └── test_invert_loop_guards.py
+│   │   │       ├── replace_multiple_function_calls_in_comp_with_walrus
+│   │   │       │   ├── cases
+│   │   │       │   │   └── case_1
+│   │   │       │   │       ├── after
+│   │   │       │   │       │   ├── __init__.py
+│   │   │       │   │       │   └── file_1.py
+│   │   │       │   │       └── before
+│   │   │       │   │           ├── __init__.py
+│   │   │       │   │           └── file_1.py
+│   │   │       │   └── test_replace_multiple_function_calls_in_comp_with_walrus.py
 │   │   │       └── replace_mutable_defaults_with_guard_clause
 │   │   │           ├── cases
 │   │   │           │   └── case_1

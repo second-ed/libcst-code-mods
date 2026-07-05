@@ -17,7 +17,7 @@ PARENT = Path(__file__).parent
 
 
 @pytest.mark.parametrize(("case_name", "transformers"), [pytest.param("case_1", [{cls_name}()])])
-def test_reorder_params(case_name, transformers) -> None:
+def test_{rule_name}(case_name, transformers) -> None:
     usecase_root = f"{{PARENT}}/cases/{{case_name}}"
     before_paths = list(Path(f"{{usecase_root}}/before").rglob("**/*.py"))
     after_paths = list(Path(f"{{usecase_root}}/after").rglob("**/*.py"))
