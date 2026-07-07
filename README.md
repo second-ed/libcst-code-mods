@@ -42,7 +42,8 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 ├── scripts
 │   ├── __init__.py
 │   ├── create_compiler_style_test_case.py
-│   └── create_test_case.py
+│   ├── create_test_case.py
+│   └── visitor_helpers.py
 ├── src
 │   └── libcst_code_mods
 │       ├── core
