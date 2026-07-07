@@ -1,21 +1,23 @@
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.5.26
+    rev: 0.11.27
     hooks:
       - id: uv-lock
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-toml
+      - id: check-yaml
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.20
+    hooks:
+    - id: ruff
+      args: [ --fix ]
+    - id: ruff-format
   - repo: local
     hooks:
-      - id: ruff
-        name: ruff
-        entry: ruff check
-        language: system
-        types_or: [ python, pyi, jupyter ]
-        args: [ --fix ]
-      - id: ruff
-        name: ruff
-        entry: ruff format
-        language: system
-        types_or: [ python, pyi, jupyter ]
       - id: pytest
         name: pytest
         entry: uv run pytest -vv --cov=src --cov-report term-missing:skip-covered --cov-report=json:coverage.json
