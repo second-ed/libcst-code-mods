@@ -24,11 +24,20 @@ class AddGuardsFromTypehintsVisitor(BaseCstVisitor):
             return
         param_types = self.context.data.setdefault("param_types", {})
         param_types[node.name.value] = {
-            p.name.value: p.annotation.annotation.value
+            p.name.value: _extract_type_hint(p.annotation.annotation)
             for p in node.params.params
-            if m.matches(p.annotation, m.Annotation(m.Name()))
+            if p.annotation is not None
         }
         self.context.paths.add(self.path)
+
+
+def _extract_type_hint(annotation: cst.Annotation) -> str | None:
+    if isinstance(annotation, cst.Name):
+        return annotation.value
+
+    if m.matches(annotation, m.Subscript(m.Name())):
+        return annotation.value.value
+    return None
 
 
 @register_rule_transformer(AddGuardsFromTypehints)

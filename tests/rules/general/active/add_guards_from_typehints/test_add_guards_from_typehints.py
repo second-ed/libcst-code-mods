@@ -12,7 +12,7 @@ PARENT = Path(__file__).parent
 
 
 @pytest.mark.parametrize(
-    ("case_name", "transformers"), [pytest.param("case_1", [AddGuardsFromTypehints(["add", "func"])])]
+    ("case_name", "transformers"), [pytest.param("case_1", [AddGuardsFromTypehints(["add", "func", "big_func"])])]
 )
 def test_add_guards_from_typehints(case_name, transformers) -> None:
     usecase_root = f"{PARENT}/cases/{case_name}"

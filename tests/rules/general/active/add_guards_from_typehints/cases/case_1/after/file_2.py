@@ -6,3 +6,11 @@ def add(a: int, b: int) -> int:
 
 def new_sum(value_1: int, value_2: int) -> int:
     return value_1 + value_2
+
+
+def big_func(a: int, b: list[str], c: dict[int, str], d: set[float]) -> None:
+    if not all([isinstance(a, int), isinstance(b, list), isinstance(c, dict), isinstance(d, set)]):
+        raise TypeError(
+            f"Invalid arg types:\n`a` expected `int` got `{type(a)}`\n`b` expected `list` got `{type(b)}`\n`c` expected `dict` got `{type(c)}`\n`d` expected `set` got `{type(d)}`"
+        )
+    pass
