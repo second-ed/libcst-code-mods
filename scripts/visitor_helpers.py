@@ -9,11 +9,14 @@ def get_populated_visitor(root: str, visitor: BaseCstVisitor) -> BaseCstVisitor:
     paths = Path(root).rglob("**/*.py")
 
     manager = get_manager(str(root))
-    context = CstContext({"root": Path(root)})
+    cache = {}
 
-    visitor = visitor.from_context(context)
+    context = CstContext()
 
     for path in paths:
         wrapper = manager.get_metadata_wrapper_for_path(str(path))
-        wrapper.visit(visitor)
+        cache = {**cache, **wrapper._cache}  # noqa: SLF001
+
+        visitor = visitor.from_context(path, context)
+        wrapper.visit_batched([visitor])
     return visitor
