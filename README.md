@@ -59,6 +59,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   │   │   ├── __init__.py
 │       │   │   │   ├── add_guards_from_typehints.py
 │       │   │   │   ├── add_kwargs.py
+│       │   │   │   ├── add_logger_debugs_for_args.py
 │       │   │   │   ├── convert_function_signature.py
 │       │   │   │   ├── make_dependent_on_args.py
 │       │   │   │   ├── remove_kwargs_if_default_value.py
@@ -118,6 +119,18 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │   │   │   │           ├── file_1.py
 │   │   │   │   │   │           └── file_2.py
 │   │   │   │   │   └── test_add_kwargs.py
+│   │   │   │   ├── add_logger_debugs_for_args
+│   │   │   │   │   ├── cases
+│   │   │   │   │   │   └── case_1
+│   │   │   │   │   │       ├── after
+│   │   │   │   │   │       │   ├── __init__.py
+│   │   │   │   │   │       │   ├── file_1.py
+│   │   │   │   │   │       │   └── file_2.py
+│   │   │   │   │   │       └── before
+│   │   │   │   │   │           ├── __init__.py
+│   │   │   │   │   │           ├── file_1.py
+│   │   │   │   │   │           └── file_2.py
+│   │   │   │   │   └── test_add_logger_debugs_for_args.py
 │   │   │   │   ├── convert_function_signature
 │   │   │   │   │   ├── cases
 │   │   │   │   │   │   └── case_1
