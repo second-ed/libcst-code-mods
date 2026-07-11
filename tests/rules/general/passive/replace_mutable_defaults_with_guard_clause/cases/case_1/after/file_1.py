@@ -1,6 +1,9 @@
-def func(a: int, b: list[int] | None = None) -> None:
+def func(a: int, b: list[int] | None = None) -> list[int]:
+    """some docstring"""
     b = b if b is not None else []
-    pass
+    x = 1
+    b.extend([a, x])
+    return b
 
 
 def func_2(a: int, b: dict | None = None) -> None:

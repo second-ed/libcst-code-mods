@@ -5,7 +5,7 @@ import libcst.matchers as m
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
-from libcst_code_mods.rules._cst_utils import normalise
+from libcst_code_mods.rules._cst_utils import extract_docstring_node_and_idx, normalise
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 
@@ -67,7 +67,8 @@ class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
             cst.parse_statement(f"{name} = {name} if {name} is not None else {REPLACEMENTS.get(default, default)}")
             for name, default in self.mutable_params[fqn.name].items()
         ]
-        new_body = [*guards, *updated_node.body.body]
+        docstring_nodes, slice_idx = extract_docstring_node_and_idx(updated_node)
+        new_body = [*docstring_nodes, *guards, *updated_node.body.body[slice_idx:]]
         return updated_node.with_changes(
             params=updated_node.params.with_changes(params=params), body=updated_node.body.with_changes(body=new_body)
         )

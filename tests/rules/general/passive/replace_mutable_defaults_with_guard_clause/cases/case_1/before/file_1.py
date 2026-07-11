@@ -1,5 +1,8 @@
-def func(a: int, b: list[int] = []) -> None:
-    pass
+def func(a: int, b: list[int] = []) -> list[int]:
+    """some docstring"""
+    x = 1
+    b.extend([a, x])
+    return b
 
 
 def func_2(a: int, b: dict = {}) -> None:
