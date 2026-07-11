@@ -4,6 +4,7 @@ import libcst as cst
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
+from libcst_code_mods.rules._cst_utils import extract_docstring_node_and_idx
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 
@@ -46,4 +47,8 @@ class AddLoggerDebugsForArgsTransformer(BaseCstTransformer):
         msg = "".join(msg_parts)
         debugs = cst.parse_statement(f"logger.debug({msg})")
 
-        return updated_node.with_changes(body=updated_node.body.with_changes(body=[debugs, *updated_node.body.body]))
+        docstring_nodes, slice_idx = extract_docstring_node_and_idx(updated_node)
+
+        return updated_node.with_changes(
+            body=updated_node.body.with_changes(body=[*docstring_nodes, debugs, *updated_node.body.body[slice_idx:]])
+        )

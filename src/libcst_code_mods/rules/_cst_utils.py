@@ -37,3 +37,18 @@ def invert_comparison(expr: cst.Comparison) -> cst.BaseExpression:
         return cst.UnaryOperation(operator=cst.Not(), expression=expr)
 
     return expr.with_changes(comparisons=[target.with_changes(operator=inverse())])
+
+
+def extract_docstring_node_and_idx(
+    node: cst.FunctionDef,
+) -> tuple[tuple[cst.BaseStatement | cst.BaseSmallStatement] | tuple, int]:
+    if has_docstring(node):
+        return (node.body.body[0],), 1
+    return (), 0
+
+
+def has_docstring(node: cst.FunctionDef) -> bool:
+    if not node.body.body:
+        return False
+
+    return m.matches(node.body.body[0], m.SimpleStatementLine([m.Expr(m.SimpleString())]))
