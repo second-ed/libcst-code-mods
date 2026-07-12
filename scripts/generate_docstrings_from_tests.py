@@ -11,21 +11,35 @@ from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.rules._cst_utils import normalise
 
 EXAMPLES_RE = re.compile(r"\n*Examples:\n.*?^\s*::\s*$", re.MULTILINE | re.DOTALL)
+DOC_TEMP = """Case:
+
+Pre-transformer:
+
+.. code-block:: python
+
+{before_code}
+
+Post-transformer:
+
+.. code-block:: python
+
+{after_code}
+"""
 
 
 def main(
     src_root: Path = REPO_ROOT / "src/libcst_code_mods/rules", test_root: Path = REPO_ROOT / "tests/rules"
 ) -> None:
     src_df = (
-        paths_to_df(src_root)
-        .pipe(add_domain_and_active_cols)
+        _paths_to_df(src_root)
+        .pipe(_add_domain_and_active_cols)
         .with_columns(rule_name=pl.col("basename").str.strip_suffix(".py"))
     )
 
     tests_df = (
-        paths_to_df(test_root)
+        _paths_to_df(test_root)
         .filter(pl.col("path_parts").list.len() > 1)
-        .pipe(add_domain_and_active_cols)
+        .pipe(_add_domain_and_active_cols)
         .with_columns(before_or_after=pl.col("path_parts").list.get(-2), rule_name=pl.col("path_parts").list.get(2))
         .filter(pl.col("basename").is_in(["file_1.py", "file_2.py"]))
         .select("rule_name", "basename", "before_or_after", "path")
@@ -36,8 +50,8 @@ def main(
     df = (
         tests_df.join(src_df, on="rule_name", how="left", suffix="_src")
         .with_columns(
-            before_code=pl.col("before").map_elements(read_code, pl.String()),
-            after_code=pl.col("after").map_elements(read_code, pl.String()),
+            before_code=pl.col("before").map_elements(_read_code, pl.String()),
+            after_code=pl.col("after").map_elements(_read_code, pl.String()),
         )
         .with_columns(before_after=pl.struct(pl.col("before_code"), pl.col("after_code")))
         .with_columns(examples=pl.col("before_after").map_elements(create_examples, pl.List(pl.String())))
@@ -51,13 +65,78 @@ def main(
         path = Path(row["path"])
         tree = cst.parse_module(path.read_text())
         original_code = tree.code
-        updated_code = tree.visit(AddDocstringExamples(row["examples"])).code
+        updated_code = tree.visit(_AddDocstringExamples(row["examples"])).code
         if original_code != updated_code:
             path.write_text(updated_code)
 
 
+def _paths_to_df(root: Path) -> pl.DataFrame:
+    return (
+        pl.DataFrame({"path": map(str, root.rglob("*.py"))})
+        .with_columns(rule_path=pl.col("path").str.strip_prefix(str(root)).str.strip_chars("/"))
+        .with_columns(path_parts=pl.col("rule_path").str.split("/"))
+        .with_columns(basename=pl.col("path_parts").list.get(-1))
+        .filter(~pl.col("basename").str.starts_with("_"))
+    )
+
+
+def _add_domain_and_active_cols(df: pl.DataFrame) -> pl.DataFrame:
+    return df.with_columns(domain=pl.col("path_parts").list.get(0), active=pl.col("path_parts").list.get(1))
+
+
+def _read_code(path: str) -> str:
+    return Path(path).read_text()
+
+
+def create_examples(struct: dict[str, str]) -> list[str]:
+    changes = _add_indent_to_examples(_get_changed_code(struct))
+    return [_add_indent(DOC_TEMP.format(**v)) for v in changes.values()]
+
+
+def _get_changed_code(struct: dict[str, str]) -> dict[str, dict[str, str]]:
+    diffs = _fn_diffs(struct)
+    return {
+        fn_name: code_states
+        for fn_name, code_states in diffs.items()
+        if code_states.get("before_code", f"no code for {fn_name}")
+        != code_states.get("after_code", f"no code for {fn_name}")
+    }
+
+
+def _add_indent_to_examples(changes: dict[str, dict[str, str]], indent: str = "    ") -> dict[str, dict[str, str]]:
+    indented = {}
+    for fn_name, code_states in changes.items():
+        for state, code in code_states.items():
+            indented.setdefault(fn_name, {})[state] = _add_indent(code, indent)
+    return indented
+
+
+def _add_indent(code: str, indent: str = "    ") -> str:
+    return "".join(indent + line for line in code.splitlines(keepends=True))
+
+
+def _fn_diffs(struct: dict[str, str]) -> dict[str, dict[str, str]]:
+    visitor = _FnVisitor()
+
+    for state in ["before_code", "after_code"]:
+        visitor.state = state
+        tree = cst.parse_module(struct[state])
+        tree.visit(visitor)
+    return visitor.fns
+
+
 @attrs.define
-class AddDocstringExamples(BaseCstTransformer):
+class _FnVisitor(cst.CSTVisitor):
+    state: str = attrs.field(default="")
+    fns: dict[str, dict[str, str]] = attrs.field(factory=dict)
+
+    def visit_FunctionDef(self, node: cst.FunctionDef) -> bool | None:  # noqa: N802
+        self.fns.setdefault(node.name.value, {})[self.state] = normalise(node).strip()
+        return super().visit_FunctionDef(node)
+
+
+@attrs.define
+class _AddDocstringExamples(BaseCstTransformer):
     examples: str
     decorator: str = "register_rule"
 
@@ -85,84 +164,3 @@ class AddDocstringExamples(BaseCstTransformer):
             body.insert(0, cst.SimpleStatementLine(body=[cst.Expr(cst.SimpleString(value=f"'''{examples_block}'''"))]))
 
         return updated_node.with_changes(body=updated_node.body.with_changes(body=body))
-
-
-def paths_to_df(root: Path) -> pl.DataFrame:
-    return (
-        pl.DataFrame({"path": map(str, root.rglob("*.py"))})
-        .with_columns(rule_path=pl.col("path").str.strip_prefix(str(root)).str.strip_chars("/"))
-        .with_columns(path_parts=pl.col("rule_path").str.split("/"))
-        .with_columns(basename=pl.col("path_parts").list.get(-1))
-        .filter(~pl.col("basename").str.starts_with("_"))
-    )
-
-
-def add_domain_and_active_cols(df: pl.DataFrame) -> pl.DataFrame:
-    return df.with_columns(domain=pl.col("path_parts").list.get(0), active=pl.col("path_parts").list.get(1))
-
-
-def read_code(path: str) -> str:
-    return Path(path).read_text()
-
-
-def fn_diffs(struct: dict[str, str]) -> dict[str, dict[str, str]]:
-    visitor = FnVisitor()
-
-    for state in ["before_code", "after_code"]:
-        visitor.state = state
-        tree = cst.parse_module(struct[state])
-        tree.visit(visitor)
-    return visitor.fns
-
-
-@attrs.define
-class FnVisitor(cst.CSTVisitor):
-    state: str = attrs.field(default="")
-    fns: dict[str, dict[str, str]] = attrs.field(factory=dict)
-
-    def visit_FunctionDef(self, node: cst.FunctionDef) -> bool | None:  # noqa: N802
-        self.fns.setdefault(node.name.value, {})[self.state] = normalise(node).strip()
-        return super().visit_FunctionDef(node)
-
-
-def get_changed_code(struct: dict[str, str]) -> dict[str, dict[str, str]]:
-    diffs = fn_diffs(struct)
-    return {
-        fn_name: code_states
-        for fn_name, code_states in diffs.items()
-        if code_states.get("before_code", f"no code for {fn_name}")
-        != code_states.get("after_code", f"no code for {fn_name}")
-    }
-
-
-def add_indent_to_examples(changes: dict[str, dict[str, str]], indent: str = "    ") -> dict[str, dict[str, str]]:
-    indented = {}
-    for fn_name, code_states in changes.items():
-        for state, code in code_states.items():
-            indented.setdefault(fn_name, {})[state] = add_indent(code, indent)
-    return indented
-
-
-def add_indent(code: str, indent: str = "    ") -> str:
-    return "".join(indent + line for line in code.splitlines(keepends=True))
-
-
-DOC_TEMP = """Case:
-
-Pre-transformer:
-
-.. code-block:: python
-
-{before_code}
-
-Post-transformer:
-
-.. code-block:: python
-
-{after_code}
-"""
-
-
-def create_examples(struct: dict[str, str]) -> list[str]:
-    changes = add_indent_to_examples(get_changed_code(struct))
-    return [add_indent(DOC_TEMP.format(**v)) for v in changes.values()]
