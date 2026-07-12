@@ -43,6 +43,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   ├── __init__.py
 │   ├── create_compiler_style_test_case.py
 │   ├── create_test_case.py
+│   ├── generate_docstrings_from_tests.py
 │   └── visitor_helpers.py
 ├── src
 │   └── libcst_code_mods
@@ -144,18 +145,6 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │   │   │   │           └── file_2.py
 │   │   │   │   │   ├── __init__.py
 │   │   │   │   │   └── test_convert_function_signature.py
-│   │   │   │   ├── make_dependent_on_args
-│   │   │   │   │   ├── cases
-│   │   │   │   │   │   └── case_1
-│   │   │   │   │   │       ├── after
-│   │   │   │   │   │       │   ├── __init__.py
-│   │   │   │   │   │       │   ├── file_1.py
-│   │   │   │   │   │       │   └── file_2.py
-│   │   │   │   │   │       └── before
-│   │   │   │   │   │           ├── __init__.py
-│   │   │   │   │   │           ├── file_1.py
-│   │   │   │   │   │           └── file_2.py
-│   │   │   │   │   └── test_make_dependent_on_args.py
 │   │   │   │   ├── remove_kwargs_if_default_value
 │   │   │   │   │   ├── cases
 │   │   │   │   │   │   └── case_1

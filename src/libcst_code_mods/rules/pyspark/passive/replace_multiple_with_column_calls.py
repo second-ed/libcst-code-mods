@@ -13,7 +13,112 @@ from ._replace_multiple_with_column_calls import update_multiple_with_column_cal
 @register_rule
 @attrs.define(frozen=True)
 class ReplaceMultipleWithColumnCalls(RefactoringRule):
-    pass
+    """Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def two_with_column_calls_in_a_row() -> None:
+                df.withColumn("a", lit(1)).withColumn("b", col("blah"))
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def two_with_column_calls_in_a_row() -> None:
+                df.withColumns({"a": lit(1), "b": col("blah")})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def three_with_column_calls_in_a_row() -> None:
+                df.withColumn("a", lit(1)).withColumn("b", col("blah")).withColumn("c", lit(3))
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def three_with_column_calls_in_a_row() -> None:
+                df.withColumns({"a": lit(1), "b": col("blah"), "c": lit(3)})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def with_column_chain_assigned() -> None:
+                result = df.withColumn("a", lit(1)).withColumn("b", col("blah")).withColumn("c", upper(col("name")))
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def with_column_chain_assigned() -> None:
+                result = df.withColumns({"a": lit(1), "b": col("blah"), "c": upper(col("name"))})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def with_column_chain_after_filter() -> None:
+                df.filter(col("active")).withColumn("a", lit(1)).withColumn("b", col("blah"))
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def with_column_chain_after_filter() -> None:
+                df.filter(col("active")).withColumns({"a": lit(1), "b": col("blah")})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def with_column_chain_inside_return() -> None:
+                return (
+                    df.withColumn("a", lit(1)).withColumn("b", col("blah")).withColumn("c", concat(col("x"), col("y")))
+                )
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def with_column_chain_inside_return() -> None:
+                return df.withColumns({"a": lit(1), "b": col("blah"), "c": concat(col("x"), col("y"))})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def with_column_chain_followed_by_select() -> None:
+                df.withColumn("a", lit(1)).withColumn("b", col("blah")).select("a", "b")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def with_column_chain_followed_by_select() -> None:
+                df.withColumns({"a": lit(1), "b": col("blah")}).select("a", "b")
+    ::
+    """
 
 
 WITH_COLUMN_ATTR = m.Attribute(attr=m.Name("withColumn"))

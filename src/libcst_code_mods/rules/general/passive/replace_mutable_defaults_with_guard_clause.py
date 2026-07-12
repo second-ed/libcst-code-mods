@@ -12,7 +12,107 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 @register_rule
 @attrs.define(frozen=True)
 class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
-    pass
+    '''Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def func(a: int, b: list[int] = []) -> list[int]:
+                """some docstring"""
+                x = 1
+                b.extend([a, x])
+                return b
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def func(a: int, b: list[int] | None = None) -> list[int]:
+                """some docstring"""
+                b = b if b is not None else []
+                x = 1
+                b.extend([a, x])
+                return b
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def func_2(a: int, b: dict = {}) -> None:
+                pass
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def func_2(a: int, b: dict | None = None) -> None:
+                b = b if b is not None else {}
+                pass
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def func_3(a: int, b: set = set()) -> None:
+                pass
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def func_3(a: int, b: set | None = None) -> None:
+                b = b if b is not None else set()
+                pass
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def func_4(a: int, b: list = list()) -> None:
+                pass
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def func_4(a: int, b: list | None = None) -> None:
+                b = b if b is not None else []
+                pass
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def big_func(a: int, b: list = [], c: dict = {}, d: set = set(), e: list = list()) -> None:
+                pass
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def big_func(a: int, b: list | None = None, c: dict | None = None, d: set | None = None, e: list | None = None) -> None:
+                b = b if b is not None else []
+                c = c if c is not None else {}
+                d = d if d is not None else set()
+                e = e if e is not None else []
+                pass
+    ::
+    '''
 
 
 @register_rule_visitor(ReplaceMutableDefaultsWithGuardClause)

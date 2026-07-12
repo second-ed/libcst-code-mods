@@ -11,6 +11,30 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 @register_rule
 @attrs.define(frozen=True)
 class RemoveKwargsIfDefaultValue(RefactoringRule):
+    """Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def main() -> None:
+                func(0, "a", 2.0)
+                func(2, c=0.0, b="b")
+                func(a=4, b="c", c=4.0)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def main() -> None:
+                func(0, "a", 2.0)
+                func(2)
+                func(a=4, b="c", c=4.0)
+    ::
+    """
+
     fn_names: list[str]
 
 

@@ -12,7 +12,238 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 @register_rule
 @attrs.define(frozen=True)
 class InvertGuards(RefactoringRule):
-    pass
+    """Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def inverts_if_else_raise(a: int, b: int) -> float:
+                if b != 0:
+                    modified_a = a + 1
+                else:
+                    raise ValueError("b must not be 0")
+                return modified_a / b
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def inverts_if_else_raise(a: int, b: int) -> float:
+                if b == 0:
+                    raise ValueError("b must not be 0")
+                modified_a = a + 1
+                return modified_a / b
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def inverts_if_else_raise_with_multiple_failure_stmts(a: int, b: int) -> float:
+                if b != 0:
+                    modified_a = a + 1
+                else:
+                    print("invalid b value")
+                    raise ValueError("b must not be 0")
+                return modified_a / b
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def inverts_if_else_raise_with_multiple_failure_stmts(a: int, b: int) -> float:
+                if b == 0:
+                    print("invalid b value")
+                    raise ValueError("b must not be 0")
+                modified_a = a + 1
+                return modified_a / b
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def inverts_if_else_returns(a: int, b: int) -> float:
+                if b != 0:
+                    modified_a = a + 1
+                else:
+                    return b
+                return modified_a / b
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def inverts_if_else_returns(a: int, b: int) -> float:
+                if b == 0:
+                    return b
+                modified_a = a + 1
+                return modified_a / b
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def inverts_if_else_returns_with_multiple_failure_stmts(a: int, b: int) -> float:
+                if b != 0:
+                    modified_a = a + 1
+                else:
+                    print("invalid b value")
+                    return b
+                return modified_a / b
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def inverts_if_else_returns_with_multiple_failure_stmts(a: int, b: int) -> float:
+                if b == 0:
+                    print("invalid b value")
+                    return b
+                modified_a = a + 1
+                return modified_a / b
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def invert_not_correctly() -> int | None:
+                if not 1:
+                    print("blah")
+                else:
+                    return 1
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def invert_not_correctly() -> int | None:
+                if 1:
+                    return 1
+                print("blah")
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def nested_if(x: bool, y: bool) -> None:
+                if x:
+                    if y:
+                        print("ok")
+                    else:
+                        raise ValueError()
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def nested_if(x: bool, y: bool) -> None:
+                if x:
+                    if not y:
+                        raise ValueError()
+                    print("ok")
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def double_raise_case(a: bool, b: bool) -> None:
+                if a:
+                    if b:
+                        print("b")
+                    else:
+                        raise ValueError()
+                else:
+                    raise RuntimeError()
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def double_raise_case(a: bool, b: bool) -> None:
+                if not a:
+                    raise RuntimeError()
+                if not b:
+                    raise ValueError()
+                print("b")
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def sibling_nested(a: bool, b: bool) -> None:
+                if a:
+                    print("before")
+
+                    if b:
+                        print("ok")
+                    else:
+                        raise ValueError()
+
+                    print("after")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def sibling_nested(a: bool, b: bool) -> None:
+                if a:
+                    print("before")
+                    if not b:
+                        raise ValueError()
+                    print("ok")
+
+                    print("after")
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def double_nested(a: bool, b: bool, c: bool) -> None:
+                if a:
+                    if b:
+                        if c:
+                            print("ok")
+                        else:
+                            raise ValueError()
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def double_nested(a: bool, b: bool, c: bool) -> None:
+                if a:
+                    if b:
+                        if not c:
+                            raise ValueError()
+                        print("ok")
+    ::
+    """
 
 
 GUARD_MATCHER = m.If(

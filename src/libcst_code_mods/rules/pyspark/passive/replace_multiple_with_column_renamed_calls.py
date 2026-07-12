@@ -13,7 +13,110 @@ from ._replace_multiple_with_column_calls import update_multiple_with_column_cal
 @register_rule
 @attrs.define(frozen=True)
 class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
-    pass
+    """Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def two_with_column_renamed_calls_in_a_row() -> None:
+                df.withColumnRenamed("a", "x").withColumnRenamed("b", "y")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def two_with_column_renamed_calls_in_a_row() -> None:
+                df.withColumnsRenamed({"a": "x", "b": "y"})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def three_with_column_renamed_calls_in_a_row() -> None:
+                df.withColumnRenamed("a", "x").withColumnRenamed("b", "y").withColumnRenamed("c", "z")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def three_with_column_renamed_calls_in_a_row() -> None:
+                df.withColumnsRenamed({"a": "x", "b": "y", "c": "z"})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def with_column_renamed_chain_assigned() -> None:
+                result = df.withColumnRenamed("first_name", "forename").withColumnRenamed("last_name", "surname")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def with_column_renamed_chain_assigned() -> None:
+                result = df.withColumnsRenamed({"first_name": "forename", "last_name": "surname"})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def with_column_renamed_chain_after_filter() -> None:
+                df.filter(col("active")).withColumnRenamed("a", "x").withColumnRenamed("b", "y")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def with_column_renamed_chain_after_filter() -> None:
+                df.filter(col("active")).withColumnsRenamed({"a": "x", "b": "y"})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def with_column_renamed_chain_inside_return() -> None:
+                return df.withColumnRenamed("a", "x").withColumnRenamed("b", "y").withColumnRenamed("c", "z")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def with_column_renamed_chain_inside_return() -> None:
+                return df.withColumnsRenamed({"a": "x", "b": "y", "c": "z"})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def with_column_renamed_chain_followed_by_select() -> None:
+                df.withColumnRenamed("a", "x").withColumnRenamed("b", "y").select("x", "y")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def with_column_renamed_chain_followed_by_select() -> None:
+                df.withColumnsRenamed({"a": "x", "b": "y"}).select("x", "y")
+    ::
+    """
 
 
 WITH_COLUMN_ATTR = m.Attribute(attr=m.Name("withColumnRenamed"))

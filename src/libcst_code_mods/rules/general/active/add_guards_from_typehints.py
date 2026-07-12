@@ -12,6 +12,96 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 @register_rule
 @attrs.define(frozen=True)
 class AddGuardsFromTypehints(RefactoringRule):
+    '''Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def func(a: int, b: str, c: float) -> str:
+                """some test multi line docstring
+
+                Args:
+                    a (int): _description_
+                    b (str): _description_
+                    c (float): _description_
+
+                Returns:
+                    str: _description_
+                """
+                if a % 2 == 0:
+                    return b + str(c)
+                return str(c)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def func(a: int, b: str, c: float) -> str:
+                """some test multi line docstring
+
+                Args:
+                    a (int): _description_
+                    b (str): _description_
+                    c (float): _description_
+
+                Returns:
+                    str: _description_
+                """
+                if not all([isinstance(a, int), isinstance(b, str), isinstance(c, float)]):
+                    raise TypeError(
+                        f"Invalid arg types:\n`a` expected `int` got `{type(a)}`\n`b` expected `str` got `{type(b)}`\n`c` expected `float` got `{type(c)}`"
+                    )
+                if a % 2 == 0:
+                    return b + str(c)
+                return str(c)
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def add(a: int, b: int) -> int:
+                return a + b
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def add(a: int, b: int) -> int:
+                if not all([isinstance(a, int), isinstance(b, int)]):
+                    raise TypeError(
+                        f"Invalid arg types:\n`a` expected `int` got `{type(a)}`\n`b` expected `int` got `{type(b)}`"
+                    )
+                return a + b
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def big_func(a: int, b: list[str], c: dict[int, str], d: set[float]) -> None:
+                pass
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def big_func(a: int, b: list[str], c: dict[int, str], d: set[float]) -> None:
+                if not all([isinstance(a, int), isinstance(b, list), isinstance(c, dict), isinstance(d, set)]):
+                    raise TypeError(
+                        f"Invalid arg types:\n`a` expected `int` got `{type(a)}`\n`b` expected `list` got `{type(b)}`\n`c` expected `dict` got `{type(c)}`\n`d` expected `set` got `{type(d)}`"
+                    )
+                pass
+    ::
+    '''
+
     fn_names: list[str]
 
 

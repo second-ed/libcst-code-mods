@@ -12,6 +12,32 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 @register_rule
 @attrs.define(frozen=True)
 class ConvertFunctionSignature(RefactoringRule):
+    """Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def main():
+                x = add(1, 2)
+                y = add(2, b=2)
+                print(y)
+                return x + y + add(a=-1, b=-1)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def main():
+                x = new_sum(value_1=1, value_2=2)
+                y = new_sum(value_1=2, value_2=2)
+                print(y)
+                return x + y + new_sum(value_1=-1, value_2=-1)
+    ::
+    """
+
     fn_name: str
     new_name: str
     param_map: dict[str, str]

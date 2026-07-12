@@ -12,7 +12,64 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 @register_rule
 @attrs.define(frozen=True)
 class InvertLoopGuards(RefactoringRule):
-    pass
+    """Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def simple_loop_with_if_else() -> None:
+                for i in range(10):
+                    if i % 2 == 0:
+                        print(f"{i} is even")
+                    else:
+                        print(f"{i} is odd")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def simple_loop_with_if_else() -> None:
+                for i in range(10):
+                    if i % 2 != 0:
+                        print(f"{i} is odd")
+                        continue
+                    print(f"{i} is even")
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def loop_with_extra_statements_and_if_else() -> None:
+                for i in range(10):
+                    x = 2
+                    y = 0
+                    y += x
+                    if i % 2 == 0:
+                        print(f"{i} is even")
+                    else:
+                        print(f"{i} is odd")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def loop_with_extra_statements_and_if_else() -> None:
+                for i in range(10):
+                    x = 2
+                    y = 0
+                    y += x
+                    if i % 2 != 0:
+                        print(f"{i} is odd")
+                        continue
+                    print(f"{i} is even")
+    ::
+    """
 
 
 GUARD_MATCHER = m.For(

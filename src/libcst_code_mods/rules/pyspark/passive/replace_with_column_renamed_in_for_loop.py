@@ -13,7 +13,44 @@ from ._replace_with_column_in_for_loop import for_loop_matcher, update_with_colu
 @register_rule
 @attrs.define(frozen=True)
 class ReplaceWithColumnRenamedInForLoop(RefactoringRule):
-    pass
+    """Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def should_update_this_function() -> None:
+                for col in ["a", "b", "c"]:
+                    df = df.withColumnRenamed(col, f"{col}_new")
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def should_update_this_function() -> None:
+                df = df.withColumnsRenamed({col: f"{col}_new" for col in ["a", "b", "c"]})
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def correctly_updates_iterating_over_mapping() -> None:
+                for old, new in mapping.items():
+                    df = df.withColumnRenamed(old, new)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def correctly_updates_iterating_over_mapping() -> None:
+                df = df.withColumnsRenamed({old: new for old, new in mapping.items()})
+    ::
+    """
 
 
 WITH_COLUMN_FOR_LOOP = for_loop_matcher("withColumnRenamed")

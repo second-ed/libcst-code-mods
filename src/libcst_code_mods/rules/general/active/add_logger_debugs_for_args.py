@@ -11,6 +11,51 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 @register_rule
 @attrs.define(frozen=True)
 class AddLoggerDebugsForArgs(RefactoringRule):
+    '''Examples:
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def func(a: int, b: str, c: float) -> str:
+                """some random docstring"""
+                if a % 2 == 0:
+                    return b + str(c)
+                return str(c)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def func(a: int, b: str, c: float) -> str:
+                """some random docstring"""
+                logger.debug(f"{a = } {b = } {c = } ")
+                if a % 2 == 0:
+                    return b + str(c)
+                return str(c)
+
+
+        Case:
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def new_sum(value_1: int, value_2: int) -> int:
+                return value_1 + value_2
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def new_sum(value_1: int, value_2: int) -> int:
+                logger.debug(f"{value_1 = } {value_2 = } ")
+                return value_1 + value_2
+    ::
+    '''
+
     fn_names: list[str]
 
 
