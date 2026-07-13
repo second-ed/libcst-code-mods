@@ -14,7 +14,8 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 class ConvertFunctionSignature(RefactoringRule):
     """Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -35,7 +36,7 @@ class ConvertFunctionSignature(RefactoringRule):
                 y = new_sum(value_1=2, value_2=2)
                 print(y)
                 return x + y + new_sum(value_1=-1, value_2=-1)
-    ::
+    ---
     """
 
     fn_name: str

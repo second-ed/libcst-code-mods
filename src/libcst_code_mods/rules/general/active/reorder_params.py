@@ -13,7 +13,8 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 class ReorderParams(RefactoringRule):
     """Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -33,8 +34,8 @@ class ReorderParams(RefactoringRule):
                 func(c=3.0, b="b", a=2)
                 func(c=4.0, b="c", a=4)
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -53,7 +54,7 @@ class ReorderParams(RefactoringRule):
                 if a % 2 == 0:
                     return b + str(c)
                 return str(c)
-    ::
+    ---
     """
 
     fn_name: str

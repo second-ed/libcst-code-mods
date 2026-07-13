@@ -15,7 +15,8 @@ from ._replace_with_column_in_for_loop import for_loop_matcher, update_with_colu
 class ReplaceWithColumnInForLoop(RefactoringRule):
     """Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -32,8 +33,8 @@ class ReplaceWithColumnInForLoop(RefactoringRule):
             def should_update_this_function() -> None:
                 df = df.withColumns({col: lit(0) for col in ["a", "b", "c"]})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -49,7 +50,7 @@ class ReplaceWithColumnInForLoop(RefactoringRule):
 
             def correctly_updates_iterating_over_mapping() -> None:
                 df = df.withColumns({col: expr for col, expr in mapping.items()})
-    ::
+    ---
     """
 
 

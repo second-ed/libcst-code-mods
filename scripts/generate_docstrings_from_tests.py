@@ -1,4 +1,5 @@
 import re
+import sys
 from pathlib import Path
 
 import attrs
@@ -9,9 +10,12 @@ import polars as pl
 from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.rules._cst_utils import normalise
+from libcst_code_mods.utils import black_format
 
-EXAMPLES_RE = re.compile(r"\n*Examples:\n.*?^\s*::\s*$", re.MULTILINE | re.DOTALL)
-DOC_TEMP = """Case:
+END_MARKER = "---"
+EXAMPLES_RE = re.compile(rf"\n*Examples:\n.*?^\s*{END_MARKER}\s*$", re.MULTILINE | re.DOTALL)
+DOC_TEMP = """Case
+----
 
 Pre-transformer:
 
@@ -27,9 +31,7 @@ Post-transformer:
 """
 
 
-def main(
-    src_root: Path = REPO_ROOT / "src/libcst_code_mods/rules", test_root: Path = REPO_ROOT / "tests/rules"
-) -> None:
+def main(src_root: Path = REPO_ROOT / "src/libcst_code_mods/rules", test_root: Path = REPO_ROOT / "tests/rules") -> int:
     src_df = (
         _paths_to_df(src_root)
         .pipe(_add_domain_and_active_cols)
@@ -61,13 +63,19 @@ def main(
         .filter(pl.col("examples") != "")
     )
 
+    exit_int = 0
+
     for row in df.iter_rows(named=True):
         path = Path(row["path"])
         tree = cst.parse_module(path.read_text())
         original_code = tree.code
         updated_code = tree.visit(_AddDocstringExamples(row["examples"])).code
-        if original_code != updated_code:
-            path.write_text(updated_code)
+        if black_format(original_code) != black_format(updated_code):
+            path.write_text(f"{updated_code.strip()}\n")
+            print(f"Modified {path.relative_to(REPO_ROOT)}")  # noqa: T201
+            exit_int += 1
+
+    return exit_int
 
 
 def _paths_to_df(root: Path) -> pl.DataFrame:
@@ -112,7 +120,7 @@ def _add_indent_to_examples(changes: dict[str, dict[str, str]], indent: str = " 
 
 
 def _add_indent(code: str, indent: str = "    ") -> str:
-    return "".join(indent + line for line in code.splitlines(keepends=True))
+    return "\n".join((indent + line).rstrip() for line in code.splitlines())
 
 
 def _fn_diffs(struct: dict[str, str]) -> dict[str, dict[str, str]]:
@@ -146,7 +154,7 @@ class _AddDocstringExamples(BaseCstTransformer):
 
         body = list(updated_node.body.body)
 
-        examples_block = f"Examples:\n\n{self.examples}::\n"
+        examples_block = f"Examples:\n\n{self.examples}\n{END_MARKER}\n"
 
         if (
             body
@@ -159,8 +167,24 @@ class _AddDocstringExamples(BaseCstTransformer):
             existing_docstring = EXAMPLES_RE.sub("", existing_docstring).rstrip()
 
             new_docstring = f"{existing_docstring}\n\n{examples_block}" if existing_docstring else examples_block
-            body[0] = cst.SimpleStatementLine(body=[cst.Expr(cst.SimpleString(value=f"'''{new_docstring}'''"))])
+            str_marker = self.get_str_marker(new_docstring)
+            body[0] = cst.SimpleStatementLine(
+                body=[cst.Expr(cst.SimpleString(value=f"{str_marker}{new_docstring}{str_marker}"))]
+            )
         else:
-            body.insert(0, cst.SimpleStatementLine(body=[cst.Expr(cst.SimpleString(value=f"'''{examples_block}'''"))]))
+            str_marker = self.get_str_marker(examples_block)
+            body.insert(
+                0,
+                cst.SimpleStatementLine(
+                    body=[cst.Expr(cst.SimpleString(value=f"{str_marker}{examples_block}{str_marker}"))]
+                ),
+            )
 
         return updated_node.with_changes(body=updated_node.body.with_changes(body=body))
+
+    def get_str_marker(self, docstring: str) -> str:
+        return '"""' if '"""' not in docstring else "'''"
+
+
+if __name__ == "__main__":
+    sys.exit(main())

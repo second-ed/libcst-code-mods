@@ -28,6 +28,9 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 ├── .github
 │   └── workflows
 │       └── ci_tests.yaml
+├── docs
+│   └── source
+│       └── conf.py
 ├── mock_package
 │   ├── after
 │   │   └── src

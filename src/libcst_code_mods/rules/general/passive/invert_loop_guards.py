@@ -14,7 +14,8 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 class InvertLoopGuards(RefactoringRule):
     """Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -38,8 +39,8 @@ class InvertLoopGuards(RefactoringRule):
                         continue
                     print(f"{i} is even")
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -68,7 +69,7 @@ class InvertLoopGuards(RefactoringRule):
                         print(f"{i} is odd")
                         continue
                     print(f"{i} is even")
-    ::
+    ---
     """
 
 

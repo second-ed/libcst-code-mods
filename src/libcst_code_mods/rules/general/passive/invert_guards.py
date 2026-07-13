@@ -14,7 +14,8 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 class InvertGuards(RefactoringRule):
     """Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -37,8 +38,8 @@ class InvertGuards(RefactoringRule):
                 modified_a = a + 1
                 return modified_a / b
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -63,8 +64,8 @@ class InvertGuards(RefactoringRule):
                 modified_a = a + 1
                 return modified_a / b
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -87,8 +88,8 @@ class InvertGuards(RefactoringRule):
                 modified_a = a + 1
                 return modified_a / b
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -113,8 +114,8 @@ class InvertGuards(RefactoringRule):
                 modified_a = a + 1
                 return modified_a / b
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -135,8 +136,8 @@ class InvertGuards(RefactoringRule):
                     return 1
                 print("blah")
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -159,8 +160,8 @@ class InvertGuards(RefactoringRule):
                         raise ValueError()
                     print("ok")
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -186,8 +187,8 @@ class InvertGuards(RefactoringRule):
                     raise ValueError()
                 print("b")
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -217,8 +218,8 @@ class InvertGuards(RefactoringRule):
 
                     print("after")
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -242,7 +243,7 @@ class InvertGuards(RefactoringRule):
                         if not c:
                             raise ValueError()
                         print("ok")
-    ::
+    ---
     """
 
 

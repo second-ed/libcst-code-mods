@@ -15,7 +15,8 @@ from ._replace_multiple_with_column_calls import update_multiple_with_column_cal
 class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
     """Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -31,8 +32,8 @@ class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
             def two_with_column_renamed_calls_in_a_row() -> None:
                 df.withColumnsRenamed({"a": "x", "b": "y"})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -48,8 +49,8 @@ class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
             def three_with_column_renamed_calls_in_a_row() -> None:
                 df.withColumnsRenamed({"a": "x", "b": "y", "c": "z"})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -65,8 +66,8 @@ class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
             def with_column_renamed_chain_assigned() -> None:
                 result = df.withColumnsRenamed({"first_name": "forename", "last_name": "surname"})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -82,8 +83,8 @@ class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
             def with_column_renamed_chain_after_filter() -> None:
                 df.filter(col("active")).withColumnsRenamed({"a": "x", "b": "y"})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -99,8 +100,8 @@ class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
             def with_column_renamed_chain_inside_return() -> None:
                 return df.withColumnsRenamed({"a": "x", "b": "y", "c": "z"})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -115,7 +116,7 @@ class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
 
             def with_column_renamed_chain_followed_by_select() -> None:
                 df.withColumnsRenamed({"a": "x", "b": "y"}).select("x", "y")
-    ::
+    ---
     """
 
 

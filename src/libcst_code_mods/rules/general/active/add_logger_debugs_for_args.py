@@ -13,7 +13,8 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 class AddLoggerDebugsForArgs(RefactoringRule):
     '''Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -36,8 +37,8 @@ class AddLoggerDebugsForArgs(RefactoringRule):
                     return b + str(c)
                 return str(c)
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -53,7 +54,7 @@ class AddLoggerDebugsForArgs(RefactoringRule):
             def new_sum(value_1: int, value_2: int) -> int:
                 logger.debug(f"{value_1 = } {value_2 = } ")
                 return value_1 + value_2
-    ::
+    ---
     '''
 
     fn_names: list[str]

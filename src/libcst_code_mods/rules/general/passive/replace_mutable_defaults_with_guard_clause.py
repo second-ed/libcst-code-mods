@@ -14,7 +14,8 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
     '''Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -37,8 +38,8 @@ class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
                 b.extend([a, x])
                 return b
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -55,8 +56,8 @@ class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
                 b = b if b is not None else {}
                 pass
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -73,8 +74,8 @@ class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
                 b = b if b is not None else set()
                 pass
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -91,8 +92,8 @@ class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
                 b = b if b is not None else []
                 pass
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -111,7 +112,7 @@ class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
                 d = d if d is not None else set()
                 e = e if e is not None else []
                 pass
-    ::
+    ---
     '''
 
 

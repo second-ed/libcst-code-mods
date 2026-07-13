@@ -15,7 +15,8 @@ from ._replace_multiple_with_column_calls import update_multiple_with_column_cal
 class ReplaceMultipleWithColumnCalls(RefactoringRule):
     """Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -31,8 +32,8 @@ class ReplaceMultipleWithColumnCalls(RefactoringRule):
             def two_with_column_calls_in_a_row() -> None:
                 df.withColumns({"a": lit(1), "b": col("blah")})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -48,8 +49,8 @@ class ReplaceMultipleWithColumnCalls(RefactoringRule):
             def three_with_column_calls_in_a_row() -> None:
                 df.withColumns({"a": lit(1), "b": col("blah"), "c": lit(3)})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -65,8 +66,8 @@ class ReplaceMultipleWithColumnCalls(RefactoringRule):
             def with_column_chain_assigned() -> None:
                 result = df.withColumns({"a": lit(1), "b": col("blah"), "c": upper(col("name"))})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -82,8 +83,8 @@ class ReplaceMultipleWithColumnCalls(RefactoringRule):
             def with_column_chain_after_filter() -> None:
                 df.filter(col("active")).withColumns({"a": lit(1), "b": col("blah")})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -101,8 +102,8 @@ class ReplaceMultipleWithColumnCalls(RefactoringRule):
             def with_column_chain_inside_return() -> None:
                 return df.withColumns({"a": lit(1), "b": col("blah"), "c": concat(col("x"), col("y"))})
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -117,7 +118,7 @@ class ReplaceMultipleWithColumnCalls(RefactoringRule):
 
             def with_column_chain_followed_by_select() -> None:
                 df.withColumns({"a": lit(1), "b": col("blah")}).select("a", "b")
-    ::
+    ---
     """
 
 
@@ -137,9 +138,7 @@ class ReplaceMultipleWithColumnCallsVisitor(BaseCstVisitor):
 @register_rule_transformer(ReplaceMultipleWithColumnCalls)
 @attrs.define
 class ReplaceMultipleWithColumnCallsTransformer(BaseCstTransformer):
-    def leave_Call(  # noqa: N802
-        self, original_node: cst.Call, updated_node: cst.Call
-    ) -> cst.BaseExpression:
+    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.BaseExpression:  # noqa: N802
         return update_multiple_with_column_calls(
             self, original_node, updated_node, WITH_COLUMN_CALL, WITH_COLUMN_ATTR, "withColumns"
         )

@@ -6,7 +6,7 @@ repos:
   - repo: local
     hooks:
       - id: generate-docstrings-from-tests
-        name: generate_docstrings_from_tests
+        name: generate docstrings from tests
         entry: uv run -m scripts.generate_docstrings_from_tests
         language: python
         pass_filenames: false

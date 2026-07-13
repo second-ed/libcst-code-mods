@@ -30,4 +30,8 @@ dev = [
     "pytest-cov>=7.0.0",
     "repo-mapper-rs>=0.4.1",
     "ruff>=0.15.0",
+    "sphinx>=9.0.4",
 ]
+
+[tool.uv]
+exclude-newer = "1 week"

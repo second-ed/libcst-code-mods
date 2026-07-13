@@ -12,7 +12,8 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 class AddKwargs(RefactoringRule):
     """Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -31,7 +32,7 @@ class AddKwargs(RefactoringRule):
                 func(a=0, b="a", c=2.0)
                 func(a=2, b="b", c=3.0)
                 func(a=4, b="c", c=4.0)
-    ::
+    ---
     """
 
     fn_names: list[str]

@@ -14,7 +14,8 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 class AddGuardsFromTypehints(RefactoringRule):
     '''Examples:
 
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -58,8 +59,8 @@ class AddGuardsFromTypehints(RefactoringRule):
                     return b + str(c)
                 return str(c)
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -79,8 +80,8 @@ class AddGuardsFromTypehints(RefactoringRule):
                     )
                 return a + b
 
-
-        Case:
+        Case
+        ----
 
         Pre-transformer:
 
@@ -99,7 +100,7 @@ class AddGuardsFromTypehints(RefactoringRule):
                         f"Invalid arg types:\n`a` expected `int` got `{type(a)}`\n`b` expected `list` got `{type(b)}`\n`c` expected `dict` got `{type(c)}`\n`d` expected `set` got `{type(d)}`"
                     )
                 pass
-    ::
+    ---
     '''
 
     fn_names: list[str]
