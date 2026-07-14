@@ -91,9 +91,7 @@ class ReplaceMultipleWithColumnCalls(RefactoringRule):
         .. code-block:: python
 
             def with_column_chain_inside_return() -> None:
-                return (
-                    df.withColumn("a", lit(1)).withColumn("b", col("blah")).withColumn("c", concat(col("x"), col("y")))
-                )
+                return df.withColumn("a", lit(1)).withColumn("b", col("blah")).withColumn("c", concat(col("x"), col("y")))
 
         Post-transformer:
 

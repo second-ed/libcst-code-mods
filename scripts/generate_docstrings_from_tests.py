@@ -52,8 +52,12 @@ def main(src_root: Path = REPO_ROOT / "src/libcst_code_mods/rules", test_root: P
     df = (
         tests_df.join(src_df, on="rule_name", how="left", suffix="_src")
         .with_columns(
-            before_code=pl.col("before").map_elements(_read_code, pl.String()),
-            after_code=pl.col("after").map_elements(_read_code, pl.String()),
+            before_code=pl.col("before")
+            .map_elements(_read_code, pl.String())
+            .str.replace_all("\\", "\\\\", literal=True),
+            after_code=pl.col("after")
+            .map_elements(_read_code, pl.String())
+            .str.replace_all("\\", "\\\\", literal=True),
         )
         .with_columns(before_after=pl.struct(pl.col("before_code"), pl.col("after_code")))
         .with_columns(examples=pl.col("before_after").map_elements(create_examples, pl.List(pl.String())))

@@ -53,7 +53,7 @@ class AddGuardsFromTypehints(RefactoringRule):
                 """
                 if not all([isinstance(a, int), isinstance(b, str), isinstance(c, float)]):
                     raise TypeError(
-                        f"Invalid arg types:\n`a` expected `int` got `{type(a)}`\n`b` expected `str` got `{type(b)}`\n`c` expected `float` got `{type(c)}`"
+                        f"Invalid arg types:\\n`a` expected `int` got `{type(a)}`\\n`b` expected `str` got `{type(b)}`\\n`c` expected `float` got `{type(c)}`"
                     )
                 if a % 2 == 0:
                     return b + str(c)
@@ -75,9 +75,7 @@ class AddGuardsFromTypehints(RefactoringRule):
 
             def add(a: int, b: int) -> int:
                 if not all([isinstance(a, int), isinstance(b, int)]):
-                    raise TypeError(
-                        f"Invalid arg types:\n`a` expected `int` got `{type(a)}`\n`b` expected `int` got `{type(b)}`"
-                    )
+                    raise TypeError(f"Invalid arg types:\\n`a` expected `int` got `{type(a)}`\\n`b` expected `int` got `{type(b)}`")
                 return a + b
 
         Case
@@ -97,7 +95,7 @@ class AddGuardsFromTypehints(RefactoringRule):
             def big_func(a: int, b: list[str], c: dict[int, str], d: set[float]) -> None:
                 if not all([isinstance(a, int), isinstance(b, list), isinstance(c, dict), isinstance(d, set)]):
                     raise TypeError(
-                        f"Invalid arg types:\n`a` expected `int` got `{type(a)}`\n`b` expected `list` got `{type(b)}`\n`c` expected `dict` got `{type(c)}`\n`d` expected `set` got `{type(d)}`"
+                        f"Invalid arg types:\\n`a` expected `int` got `{type(a)}`\\n`b` expected `list` got `{type(b)}`\\n`c` expected `dict` got `{type(c)}`\\n`d` expected `set` got `{type(d)}`"
                     )
                 pass
     ---
