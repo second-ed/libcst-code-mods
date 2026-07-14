@@ -15,7 +15,7 @@ def main(inp_root: Path | str, specific_paths: list[str] | None = None, config_p
 
     config = yaml.safe_load(Path(config_path).read_text())
 
-    refactoring_rules = [RULES[k].from_dict(v) for k, v in config.items() if k in RULES]
+    refactoring_rules = [RULES[k].from_dict(v) for k, v in config.get("rules", {}).items() if k in RULES]
     refactored_code = multi_file_refactor(
         root, paths, refactoring_rules=refactoring_rules, specific_paths=specific_paths
     )

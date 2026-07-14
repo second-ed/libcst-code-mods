@@ -65,7 +65,6 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   │   │   ├── add_kwargs.py
 │       │   │   │   ├── add_logger_debugs_for_args.py
 │       │   │   │   ├── convert_function_signature.py
-│       │   │   │   ├── make_dependent_on_args.py
 │       │   │   │   ├── remove_kwargs_if_default_value.py
 │       │   │   │   └── reorder_params.py
 │       │   │   ├── passive
