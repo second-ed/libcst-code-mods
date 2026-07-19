@@ -2,7 +2,6 @@ import attrs
 import libcst as cst
 import libcst.matchers as m
 
-import libcst_code_mods.matchers as mat
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
@@ -50,7 +49,7 @@ class ConvertFunctionSignatureVisitor(BaseCstVisitor):
     fn_name: str
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
-        if not m.matches(node, mat.is_function(m.Name(self.fn_name))):
+        if not m.matches(node, m.FunctionDef(m.Name(self.fn_name))):
             return
 
         positional_map: dict[int, str] = {i: param.name.value for i, param in enumerate(node.params.params)}
@@ -58,7 +57,11 @@ class ConvertFunctionSignatureVisitor(BaseCstVisitor):
         self.context.paths.add(self.path)
 
     def visit_Call(self, node: cst.Call) -> bool | None:  # noqa: N802
-        if not m.matches(node, mat.is_call_with_name(m.Name(self.fn_name))):
+
+        if not m.matches(
+            node,
+            m.Call(func=m.OneOf(m.Name(self.fn_name), m.Attribute(value=m.DoNotCare(), attr=m.Name(self.fn_name)))),
+        ):
             return None
         self.context.paths.add(self.path)
         return super().visit_Call(node)
@@ -73,7 +76,10 @@ class ConvertFunctionSignatureTransformer(BaseCstTransformer):
     param_map: dict[str, str]
 
     def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:  # noqa: N802
-        if not m.matches(original_node, mat.is_call_with_name(m.Name(self.fn_name))):
+        if not m.matches(
+            original_node,
+            m.Call(func=m.OneOf(m.Name(self.fn_name), m.Attribute(value=m.DoNotCare(), attr=m.Name(self.fn_name)))),
+        ):
             return updated_node
 
         new_args: list[cst.Arg] = []

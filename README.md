@@ -56,6 +56,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── base_cst_visitor.py
 │       │   ├── cst_context.py
 │       │   ├── cst_rule.py
+│       │   ├── matchers.py                                                          # some basic matchers
 │       │   └── refactoring_rule.py
 │       ├── rules
 │       │   ├── general
@@ -84,14 +85,12 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   │       ├── replace_with_column_in_for_loop.py
 │       │   │       └── replace_with_column_renamed_in_for_loop.py
 │       │   ├── __init__.py
-│       │   ├── _cst_to_matcher.py
 │       │   ├── _cst_utils.py
 │       │   └── _rule_mapping.py
 │       ├── __init__.py
 │       ├── __main__.py
 │       ├── constants.py
 │       ├── engine.py                                                                # main entrypoint to the code mods
-│       ├── matchers.py                                                              # some basic matchers
 │       ├── node_collector.py                                                        # the pre-pass stage that collects the context before the transformation
 │       └── utils.py
 ├── tests
@@ -216,49 +215,48 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │   │   │           │           ├── file_1.py
 │   │   │           │           └── file_2.py
 │   │   │           └── test_replace_mutable_defaults_with_guard_clause.py
-│   │   ├── pyspark
-│   │   │   └── passive
-│   │   │       ├── replace_multiple_with_column_calls
-│   │   │       │   ├── cases
-│   │   │       │   │   └── case_1
-│   │   │       │   │       ├── after
-│   │   │       │   │       │   ├── __init__.py
-│   │   │       │   │       │   └── file_1.py
-│   │   │       │   │       └── before
-│   │   │       │   │           ├── __init__.py
-│   │   │       │   │           └── file_1.py
-│   │   │       │   └── test_replace_multiple_with_column_calls.py
-│   │   │       ├── replace_multiple_with_column_renamed_calls
-│   │   │       │   ├── cases
-│   │   │       │   │   └── case_1
-│   │   │       │   │       ├── after
-│   │   │       │   │       │   ├── __init__.py
-│   │   │       │   │       │   └── file_1.py
-│   │   │       │   │       └── before
-│   │   │       │   │           ├── __init__.py
-│   │   │       │   │           └── file_1.py
-│   │   │       │   └── test_replace_multiple_with_column_renamed_calls.py
-│   │   │       ├── replace_with_column_in_for_loop
-│   │   │       │   ├── cases
-│   │   │       │   │   └── case_1
-│   │   │       │   │       ├── after
-│   │   │       │   │       │   ├── __init__.py
-│   │   │       │   │       │   └── file_1.py
-│   │   │       │   │       └── before
-│   │   │       │   │           ├── __init__.py
-│   │   │       │   │           └── file_1.py
-│   │   │       │   └── test_replace_with_column_in_for_loop.py
-│   │   │       └── replace_with_column_renamed_in_for_loop
-│   │   │           ├── cases
-│   │   │           │   └── case_1
-│   │   │           │       ├── after
-│   │   │           │       │   ├── __init__.py
-│   │   │           │       │   └── file_1.py
-│   │   │           │       └── before
-│   │   │           │           ├── __init__.py
-│   │   │           │           └── file_1.py
-│   │   │           └── test_replace_with_column_renamed_in_for_loop.py
-│   │   └── test_cst_to_matcher.py
+│   │   └── pyspark
+│   │       └── passive
+│   │           ├── replace_multiple_with_column_calls
+│   │           │   ├── cases
+│   │           │   │   └── case_1
+│   │           │   │       ├── after
+│   │           │   │       │   ├── __init__.py
+│   │           │   │       │   └── file_1.py
+│   │           │   │       └── before
+│   │           │   │           ├── __init__.py
+│   │           │   │           └── file_1.py
+│   │           │   └── test_replace_multiple_with_column_calls.py
+│   │           ├── replace_multiple_with_column_renamed_calls
+│   │           │   ├── cases
+│   │           │   │   └── case_1
+│   │           │   │       ├── after
+│   │           │   │       │   ├── __init__.py
+│   │           │   │       │   └── file_1.py
+│   │           │   │       └── before
+│   │           │   │           ├── __init__.py
+│   │           │   │           └── file_1.py
+│   │           │   └── test_replace_multiple_with_column_renamed_calls.py
+│   │           ├── replace_with_column_in_for_loop
+│   │           │   ├── cases
+│   │           │   │   └── case_1
+│   │           │   │       ├── after
+│   │           │   │       │   ├── __init__.py
+│   │           │   │       │   └── file_1.py
+│   │           │   │       └── before
+│   │           │   │           ├── __init__.py
+│   │           │   │           └── file_1.py
+│   │           │   └── test_replace_with_column_in_for_loop.py
+│   │           └── replace_with_column_renamed_in_for_loop
+│   │               ├── cases
+│   │               │   └── case_1
+│   │               │       ├── after
+│   │               │       │   ├── __init__.py
+│   │               │       │   └── file_1.py
+│   │               │       └── before
+│   │               │           ├── __init__.py
+│   │               │           └── file_1.py
+│   │               └── test_replace_with_column_renamed_in_for_loop.py
 │   ├── test_examples
 │   │   ├── __init__.py
 │   │   ├── calls_print.py

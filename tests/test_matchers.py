@@ -2,7 +2,7 @@ import libcst.matchers as m
 import pytest
 from libcst.metadata.wrapper import MetadataWrapper
 
-import libcst_code_mods.matchers as mat
+import libcst_code_mods.core.matchers as mat
 from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.engine import get_manager
 from libcst_code_mods.node_collector import NodeCollector, NodeMetadata
