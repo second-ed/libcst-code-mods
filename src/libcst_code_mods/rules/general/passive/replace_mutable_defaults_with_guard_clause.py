@@ -99,18 +99,26 @@ class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
 
         .. code-block:: python
 
-            def big_func(a: int, b: list = [], c: dict = {}, d: set = set(), e: list = list()) -> None:
+            def big_func(a: int, b: list = [], c: dict = {}, d: set = set(), e: list = list(), f: dict = dict()) -> None:
                 pass
 
         Post-transformer:
 
         .. code-block:: python
 
-            def big_func(a: int, b: list | None = None, c: dict | None = None, d: set | None = None, e: list | None = None) -> None:
+            def big_func(
+                a: int,
+                b: list | None = None,
+                c: dict | None = None,
+                d: set | None = None,
+                e: list | None = None,
+                f: dict | None = None,
+            ) -> None:
                 b = b if b is not None else []
                 c = c if c is not None else {}
                 d = d if d is not None else set()
                 e = e if e is not None else []
+                f = f if f is not None else {}
                 pass
     ---
     '''
@@ -134,7 +142,10 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
 
         for param in node.params.params:
             if param.default is not None and m.matches(
-                param.default, m.OneOf(m.List(), m.Dict(), m.Set(), m.Call(m.Name("list")), m.Call(m.Name("set")))
+                param.default,
+                m.OneOf(
+                    m.List(), m.Dict(), m.Set(), m.Call(m.Name("list")), m.Call(m.Name("set")), m.Call(m.Name("dict"))
+                ),
             ):
                 self.mutable_params.setdefault(fqn.name, {})
                 self.mutable_params[fqn.name][param.name.value] = normalise(param.default)
