@@ -124,6 +124,11 @@ class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
     '''
 
 
+MUTABLE_DEFAULT = m.OneOf(
+    m.List(), m.Dict(), m.Set(), m.Call(m.Name("list")), m.Call(m.Name("set")), m.Call(m.Name("dict"))
+)
+
+
 @register_rule_visitor(ReplaceMutableDefaultsWithGuardClause)
 @attrs.define
 class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
@@ -141,12 +146,7 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
             return
 
         for param in node.params.params:
-            if param.default is not None and m.matches(
-                param.default,
-                m.OneOf(
-                    m.List(), m.Dict(), m.Set(), m.Call(m.Name("list")), m.Call(m.Name("set")), m.Call(m.Name("dict"))
-                ),
-            ):
+            if param.default is not None and m.matches(param.default, MUTABLE_DEFAULT):
                 self.mutable_params.setdefault(fqn.name, {})
                 self.mutable_params[fqn.name][param.name.value] = normalise(param.default)
 
@@ -155,7 +155,13 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
             self.context.data.setdefault("mutable_params", {}).update(self.mutable_params)
 
 
-REPLACEMENTS: dict[str, str] = {"list()": "[]", "dict()": "{}"}
+REPLACEMENTS: dict[str, cst.BaseExpression] = {
+    "[]": cst.List([]),
+    "{}": cst.Dict([]),
+    "set()": cst.Call(cst.Name("set")),
+    "list()": cst.List([]),
+    "dict()": cst.Dict([]),
+}
 
 
 @register_rule_transformer(ReplaceMutableDefaultsWithGuardClause)
@@ -175,10 +181,7 @@ class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
             return updated_node
 
         params = self._update_params(updated_node, self.mutable_params[fqn.name])
-        guards = [
-            cst.parse_statement(f"{name} = {name} if {name} is not None else {REPLACEMENTS.get(default, default)}")
-            for name, default in self.mutable_params[fqn.name].items()
-        ]
+        guards = [_make_guard(name, default) for name, default in self.mutable_params[fqn.name].items()]
         docstring_nodes, slice_idx = extract_docstring_node_and_idx(updated_node)
         new_body = [*docstring_nodes, *guards, *updated_node.body.body[slice_idx:]]
         return updated_node.with_changes(
@@ -204,3 +207,22 @@ class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
 
             new_params.append(param.with_changes(default=cst.Name("None"), annotation=annotation))
         return new_params
+
+
+def _make_guard(name: str, default: str) -> cst.SimpleStatementLine:
+    return cst.SimpleStatementLine(
+        body=[
+            cst.Assign(
+                targets=[cst.AssignTarget(target=cst.Name(name))],
+                value=cst.IfExp(
+                    test=cst.Comparison(
+                        left=cst.Name(name),
+                        comparisons=[cst.ComparisonTarget(operator=cst.IsNot(), comparator=cst.Name("None"))],
+                    ),
+                    body=cst.Name(name),
+                    # perf hack, use or short circuiting to only do the expensive parsing when the default falls through
+                    orelse=REPLACEMENTS.get(default) or cst.parse_expression(default),
+                ),
+            )
+        ]
+    )
