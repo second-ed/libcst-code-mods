@@ -23,10 +23,10 @@ def multi_file_refactor(
     rule_mapping = rule_mapping if rule_mapping is not None else RULE_MAPPING
     immutable_rule_mapping = make_rule_mapping_immutable(rule_mapping)
 
-    manager = get_manager(str(root))
     if specific_paths:
         paths = [p for p in paths if str(p) in specific_paths]
 
+    manager = get_manager(str(root), paths)
     contexts = {
         type(refactoring_rule): CstContext(data=refactoring_rule.to_dict()) for refactoring_rule in refactoring_rules
     }
@@ -68,5 +68,6 @@ def multi_file_refactor(
     return refactored_code
 
 
-def get_manager(root: str) -> FullRepoManager:
-    return FullRepoManager(root, paths=list(map(str, Path(root).rglob("**/*.py"))), providers=METADATA_DEPS)
+def get_manager(root: str, paths: list[Path] | None = None) -> FullRepoManager:
+    paths = paths if paths is not None else list(Path(root).rglob("**/*.py"))
+    return FullRepoManager(root, paths=list(map(str, paths)), providers=METADATA_DEPS)
