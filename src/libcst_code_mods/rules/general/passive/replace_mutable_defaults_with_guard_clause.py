@@ -5,7 +5,7 @@ import libcst.matchers as m
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
-from libcst_code_mods.rules._cst_utils import extract_docstring_node_and_idx, normalise
+from libcst_code_mods.rules._cst_utils import extract_docstring_node_and_idx, get_fqn, normalise
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 
@@ -135,20 +135,15 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
     mutable_params: dict[str, dict[str, str]] = attrs.field(factory=dict)
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
-        qualified_names = self.get_metadata(cst.metadata.FullyQualifiedNameProvider, node, set())
+        fqn = get_fqn(self, node)
 
-        if not qualified_names:
-            return
-
-        fqn = next(iter(qualified_names))
-
-        if not isinstance(fqn, cst.metadata.QualifiedName):
+        if fqn is None:
             return
 
         for param in node.params.params:
             if param.default is not None and m.matches(param.default, MUTABLE_DEFAULT):
-                self.mutable_params.setdefault(fqn.name, {})
-                self.mutable_params[fqn.name][param.name.value] = normalise(param.default)
+                self.mutable_params.setdefault(fqn, {})
+                self.mutable_params[fqn][param.name.value] = normalise(param.default)
 
         if self.mutable_params:
             self.context.paths.add(self.path)
@@ -170,18 +165,13 @@ class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
     mutable_params: dict[str, dict[str, str]]
 
     def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: N802
-        qualified_names = self.get_metadata(cst.metadata.FullyQualifiedNameProvider, original_node, set())
+        fqn = get_fqn(self, original_node)
 
-        if not qualified_names:
+        if fqn is None or fqn not in self.mutable_params:
             return updated_node
 
-        fqn = next(iter(qualified_names))
-
-        if not isinstance(fqn, cst.metadata.QualifiedName) or fqn.name not in self.mutable_params:
-            return updated_node
-
-        params = self._update_params(updated_node, self.mutable_params[fqn.name])
-        guards = [_make_guard(name, default) for name, default in self.mutable_params[fqn.name].items()]
+        params = self._update_params(updated_node, self.mutable_params[fqn])
+        guards = [_make_guard(name, default) for name, default in self.mutable_params[fqn].items()]
         docstring_nodes, slice_idx = extract_docstring_node_and_idx(updated_node)
         new_body = [*docstring_nodes, *guards, *updated_node.body.body[slice_idx:]]
         return updated_node.with_changes(

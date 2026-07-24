@@ -1,6 +1,9 @@
 import libcst as cst
 import libcst.matchers as m
 
+from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
+from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
+
 
 def normalise(node: cst.CSTNode | None) -> str:
     return cst.Module([]).code_for_node(node)
@@ -52,3 +55,17 @@ def has_docstring(node: cst.FunctionDef) -> bool:
         return False
 
     return m.matches(node.body.body[0], m.SimpleStatementLine([m.Expr(m.SimpleString())]))
+
+
+def get_fqn(cls: BaseCstVisitor | BaseCstTransformer, node: cst.CSTNode) -> str | None:
+    qualified_names = cls.get_metadata(cst.metadata.FullyQualifiedNameProvider, node, set())
+
+    if not qualified_names:
+        return None
+
+    fqn = next(iter(qualified_names))
+
+    if not isinstance(fqn, cst.metadata.QualifiedName):
+        return None
+
+    return fqn.name
