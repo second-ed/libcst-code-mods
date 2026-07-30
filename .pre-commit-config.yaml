@@ -41,8 +41,8 @@ repos:
           - --allowed-exts
           - py,md,yaml,toml,lock
           - --ignore-dirs
-          - .venv,target,.git,mock_data,.pytest_cache
-          # - --ignore-hidden
+          - .venv,target,.git,mock_data,.pytest_cache,cases
+          - --dirs-only
       - id: pytest
         name: pytest
         entry: uv run pytest -vv --cov=src --cov-report term-missing:skip-covered --cov-report=json:coverage.json
