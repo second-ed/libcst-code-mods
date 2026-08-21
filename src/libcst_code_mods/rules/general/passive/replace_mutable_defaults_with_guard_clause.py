@@ -99,6 +99,24 @@ class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
 
         .. code-block:: python
 
+            def kw_only_mutable_default(a: int, *, b: list[int] = []) -> None:
+                pass
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def kw_only_mutable_default(a: int, *, b: list[int] | None = None) -> None:
+                b = b if b is not None else []
+                pass
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
             def big_func(a: int, b: list = [], c: dict = {}, d: set = set(), e: list = list(), f: dict = dict()) -> None:
                 pass
 

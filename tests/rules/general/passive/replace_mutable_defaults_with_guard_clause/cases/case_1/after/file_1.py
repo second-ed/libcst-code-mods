@@ -21,4 +21,9 @@ def func_4(a: int, b: list | None = None) -> None:
     pass
 
 
+def kw_only_mutable_default(a: int, *, b: list[int] | None = None) -> None:
+    b = b if b is not None else []
+    pass
+
+
 func(2)
