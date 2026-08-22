@@ -163,26 +163,30 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
         if fqn is None:
             return
 
-        for param in node.params.params:
-            if param.default is not None and m.matches(param.default, MUTABLE_DEFAULT):
-                self.mutable_params.setdefault(fqn, {})
-                self.mutable_params[fqn][param.name.value] = normalise(param.default)
-
-        for param in node.params.posonly_params:
-            if param.default is not None and m.matches(param.default, MUTABLE_DEFAULT):
-                self.mutable_pos_only_params.setdefault(fqn, {})
-                self.mutable_pos_only_params[fqn][param.name.value] = normalise(param.default)
-
-        for param in node.params.kwonly_params:
-            if param.default is not None and m.matches(param.default, MUTABLE_DEFAULT):
-                self.mutable_kw_only_params.setdefault(fqn, {})
-                self.mutable_kw_only_params[fqn][param.name.value] = normalise(param.default)
+        config = (
+            (node.params.params, self.mutable_params),
+            (node.params.posonly_params, self.mutable_pos_only_params),
+            (node.params.kwonly_params, self.mutable_kw_only_params),
+        )
+        for params, param_dict in config:
+            _add_params(params, param_dict, fqn)
 
         if self.mutable_params or self.mutable_pos_only_params or self.mutable_kw_only_params:
             self.context.paths.add(self.path)
-            self.context.data.setdefault("mutable_params", {}).update(self.mutable_params)
-            self.context.data.setdefault("mutable_pos_only_params", {}).update(self.mutable_pos_only_params)
-            self.context.data.setdefault("mutable_kw_only_params", {}).update(self.mutable_kw_only_params)
+
+            context_config = (
+                ("mutable_params", self.mutable_params),
+                ("mutable_pos_only_params", self.mutable_pos_only_params),
+                ("mutable_kw_only_params", self.mutable_kw_only_params),
+            )
+            for key, values in context_config:
+                self.context.data.setdefault(key, {}).update(values)
+
+
+def _add_params(params: Sequence[cst.Param], param_dict: dict[str, dict[str, str]], fqn: str) -> None:
+    for param in params:
+        if param.default is not None and m.matches(param.default, MUTABLE_DEFAULT):
+            param_dict.setdefault(fqn, {})[param.name.value] = normalise(param.default)
 
 
 REPLACEMENTS: dict[str, cst.BaseExpression] = {
@@ -209,21 +213,20 @@ class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
         ):
             return updated_node
 
-        guards = [
-            _make_guard(name, default)
-            for name, default in {
-                **self.mutable_params.get(fqn, {}),
-                **self.mutable_pos_only_params.get(fqn, {}),
-                **self.mutable_kw_only_params.get(fqn, {}),
-            }.items()
-        ]
+        all_params = {
+            **self.mutable_params.get(fqn, {}),
+            **self.mutable_pos_only_params.get(fqn, {}),
+            **self.mutable_kw_only_params.get(fqn, {}),
+        }
+
+        guards = [_make_guard(name, default) for name, default in all_params.items()]
 
         docstring_nodes, slice_idx = extract_docstring_node_and_idx(updated_node)
         new_body = [*docstring_nodes, *guards, *updated_node.body.body[slice_idx:]]
 
         params = _update_params(updated_node.params.params, self.mutable_params.get(fqn, {}))
-        kw_only_params = _update_params(updated_node.params.kwonly_params, self.mutable_kw_only_params.get(fqn, {}))
         pos_only_params = _update_params(updated_node.params.posonly_params, self.mutable_pos_only_params.get(fqn, {}))
+        kw_only_params = _update_params(updated_node.params.kwonly_params, self.mutable_kw_only_params.get(fqn, {}))
 
         return updated_node.with_changes(
             params=updated_node.params.with_changes(
