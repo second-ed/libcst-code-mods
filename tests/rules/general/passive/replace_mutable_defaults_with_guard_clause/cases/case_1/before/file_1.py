@@ -17,7 +17,7 @@ def func_4(a: int, b: list = list()) -> None:
     pass
 
 
-def kw_only_mutable_default(a: int, *, b: list[int] = []) -> None:
+def kw_only_mutable_default(a: dict = {}, /, *, b: list[int] = []) -> None:
     pass
 
 

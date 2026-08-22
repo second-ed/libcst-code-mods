@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 import attrs
 import libcst as cst
 import libcst.matchers as m
@@ -99,14 +101,15 @@ class ReplaceMutableDefaultsWithGuardClause(RefactoringRule):
 
         .. code-block:: python
 
-            def kw_only_mutable_default(a: int, *, b: list[int] = []) -> None:
+            def kw_only_mutable_default(a: dict = {}, /, *, b: list[int] = []) -> None:
                 pass
 
         Post-transformer:
 
         .. code-block:: python
 
-            def kw_only_mutable_default(a: int, *, b: list[int] | None = None) -> None:
+            def kw_only_mutable_default(a: dict | None = None, /, *, b: list[int] | None = None) -> None:
+                a = a if a is not None else {}
                 b = b if b is not None else []
                 pass
 
@@ -151,6 +154,8 @@ MUTABLE_DEFAULT = m.OneOf(
 @attrs.define
 class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
     mutable_params: dict[str, dict[str, str]] = attrs.field(factory=dict)
+    mutable_pos_only_params: dict[str, dict[str, str]] = attrs.field(factory=dict)
+    mutable_kw_only_params: dict[str, dict[str, str]] = attrs.field(factory=dict)
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
         fqn = get_fqn(self, node)
@@ -163,9 +168,21 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
                 self.mutable_params.setdefault(fqn, {})
                 self.mutable_params[fqn][param.name.value] = normalise(param.default)
 
-        if self.mutable_params:
+        for param in node.params.posonly_params:
+            if param.default is not None and m.matches(param.default, MUTABLE_DEFAULT):
+                self.mutable_pos_only_params.setdefault(fqn, {})
+                self.mutable_pos_only_params[fqn][param.name.value] = normalise(param.default)
+
+        for param in node.params.kwonly_params:
+            if param.default is not None and m.matches(param.default, MUTABLE_DEFAULT):
+                self.mutable_kw_only_params.setdefault(fqn, {})
+                self.mutable_kw_only_params[fqn][param.name.value] = normalise(param.default)
+
+        if self.mutable_params or self.mutable_pos_only_params or self.mutable_kw_only_params:
             self.context.paths.add(self.path)
             self.context.data.setdefault("mutable_params", {}).update(self.mutable_params)
+            self.context.data.setdefault("mutable_pos_only_params", {}).update(self.mutable_pos_only_params)
+            self.context.data.setdefault("mutable_kw_only_params", {}).update(self.mutable_kw_only_params)
 
 
 REPLACEMENTS: dict[str, cst.BaseExpression] = {
@@ -181,40 +198,60 @@ REPLACEMENTS: dict[str, cst.BaseExpression] = {
 @attrs.define
 class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
     mutable_params: dict[str, dict[str, str]]
+    mutable_pos_only_params: dict[str, dict[str, str]]
+    mutable_kw_only_params: dict[str, dict[str, str]]
 
     def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: N802
         fqn = get_fqn(self, original_node)
 
-        if fqn is None or fqn not in self.mutable_params:
+        if fqn is None or not any(
+            fqn in params for params in (self.mutable_params, self.mutable_pos_only_params, self.mutable_kw_only_params)
+        ):
             return updated_node
 
-        params = self._update_params(updated_node, self.mutable_params[fqn])
-        guards = [_make_guard(name, default) for name, default in self.mutable_params[fqn].items()]
+        guards = [
+            _make_guard(name, default)
+            for name, default in {
+                **self.mutable_params.get(fqn, {}),
+                **self.mutable_pos_only_params.get(fqn, {}),
+                **self.mutable_kw_only_params.get(fqn, {}),
+            }.items()
+        ]
+
         docstring_nodes, slice_idx = extract_docstring_node_and_idx(updated_node)
         new_body = [*docstring_nodes, *guards, *updated_node.body.body[slice_idx:]]
+
+        params = _update_params(updated_node.params.params, self.mutable_params.get(fqn, {}))
+        kw_only_params = _update_params(updated_node.params.kwonly_params, self.mutable_kw_only_params.get(fqn, {}))
+        pos_only_params = _update_params(updated_node.params.posonly_params, self.mutable_pos_only_params.get(fqn, {}))
+
         return updated_node.with_changes(
-            params=updated_node.params.with_changes(params=params), body=updated_node.body.with_changes(body=new_body)
+            params=updated_node.params.with_changes(
+                params=params, kwonly_params=kw_only_params, posonly_params=pos_only_params
+            ),
+            body=updated_node.body.with_changes(body=new_body),
         )
 
-    def _update_params(self, updated_node: cst.FunctionDef, fn_param_map: dict[str, str]) -> list[cst.Param]:
-        new_params = []
 
-        for param in updated_node.params.params:
-            mutable = fn_param_map.get(param.name.value)
+def _update_params(params: Sequence[cst.Param], fn_param_map: dict[str, str]) -> list[cst.Param]:
+    new_params = []
 
-            if mutable is None:
-                new_params.append(param)
-                continue
+    for param in params:
+        mutable = fn_param_map.get(param.name.value)
 
-            annotation = param.annotation
+        if mutable is None:
+            new_params.append(param)
+            continue
 
-            if annotation is not None:
-                annotation = cst.Annotation(
-                    cst.BinaryOperation(left=annotation.annotation, operator=cst.BitOr(), right=cst.Name("None"))
-                )
+        annotation = param.annotation
 
-            new_params.append(param.with_changes(default=cst.Name("None"), annotation=annotation))
-        return new_params
+        if annotation is not None:
+            annotation = cst.Annotation(
+                cst.BinaryOperation(left=annotation.annotation, operator=cst.BitOr(), right=cst.Name("None"))
+            )
+
+        new_params.append(param.with_changes(default=cst.Name("None"), annotation=annotation))
+    return new_params
 
 
 def _make_guard(name: str, default: str) -> cst.SimpleStatementLine:
