@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from types import MappingProxyType
 
 import libcst as cst
 from libcst.metadata import FullRepoManager
 
 from libcst_code_mods.constants import METADATA_DEPS
 from libcst_code_mods.core.cst_context import CstContext
+from libcst_code_mods.core.cst_rule import CstRule
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING, RuleMapping, make_rule_mapping_immutable
 from libcst_code_mods.utils import black_format
@@ -21,27 +23,24 @@ def multi_file_refactor(
     specific_paths: list[str] | None = None,
 ) -> dict[Path, str]:
     rule_mapping = rule_mapping if rule_mapping is not None else RULE_MAPPING
-    immutable_rule_mapping = make_rule_mapping_immutable(rule_mapping)
+    immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule] = make_rule_mapping_immutable(rule_mapping)
 
     if specific_paths:
         paths = [p for p in paths if str(p) in specific_paths]
 
     manager = get_manager(str(root), paths)
-    contexts = {
+    contexts: dict[type[RefactoringRule], CstContext] = {
         type(refactoring_rule): CstContext(data=refactoring_rule.to_dict()) for refactoring_rule in refactoring_rules
     }
 
     for path in paths:
-        str_path = str(path)
-        wrapper = manager.get_metadata_wrapper_for_path(str_path)
-
-        visitors = [
-            visitor_factory.from_context(str_path, contexts[type(rule)])
-            for rule in refactoring_rules
-            if (visitor_factory := immutable_rule_mapping[type(rule)].visitor_factory) is not None
-        ]
-        if visitors:
-            wrapper.visit_batched(visitors)
+        _collect_context(
+            manager=manager,
+            refactoring_rules=refactoring_rules,
+            immutable_rule_mapping=immutable_rule_mapping,
+            contexts=contexts,
+            path=str(path),
+        )
 
     refactored_code = {}
 
@@ -66,6 +65,24 @@ def multi_file_refactor(
             refactored_code[path] = black_format(new_code)
 
     return refactored_code
+
+
+def _collect_context(
+    manager: FullRepoManager,
+    refactoring_rules: list[RefactoringRule],
+    immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule],
+    contexts: dict[type[RefactoringRule], CstContext],
+    path: str,
+) -> None:
+    wrapper = manager.get_metadata_wrapper_for_path(path)
+
+    visitors = [
+        visitor_factory.from_context(path, contexts[type(rule)])
+        for rule in refactoring_rules
+        if (visitor_factory := immutable_rule_mapping[type(rule)].visitor_factory) is not None
+    ]
+    if visitors:
+        wrapper.visit_batched(visitors)
 
 
 def get_manager(root: str, paths: list[Path] | None = None) -> FullRepoManager:
