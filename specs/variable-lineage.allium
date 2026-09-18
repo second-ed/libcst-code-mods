@@ -1,0 +1,524 @@
+-- allium: 3
+-- variable-lineage.allium
+-- Scope: Static analysis of a Python program rooted at one module, function, or entity.
+-- Includes: import resolution, variable lineage, purity findings, mutation findings,
+--   dead-code findings, source mapping, diagnostics, and accumulated analysis output.
+-- Excludes: Python runtime execution, annotation semantics, and implementation details
+--   of the compiler itself.
+-- Dependencies: Python source files and LibCST-generated syntax trees are external inputs.
+
+------------------------------------------------------------
+-- Enumerations
+------------------------------------------------------------
+
+enum FindingType {
+    pure |
+    possible_mutation |
+    impure |
+    potentially_impure |
+    possible_dead_code |
+    mutable_global
+}
+
+enum DiagnosticSeverity { warning | error }
+
+enum RootKind { module | function | entity }
+
+enum TargetKind { module | function | entity | static_method | class_method | class_group }
+
+enum AcceptedEffect {
+    pure |
+    possible_mutation |
+    allowed_external_effect
+}
+
+enum AcceptedMatcherKind { fully_qualified | simple_name }
+
+------------------------------------------------------------
+-- Value Types
+------------------------------------------------------------
+
+value SourceSpan {
+    absolute_path: String
+    start_line: Integer       -- one-based
+    start_column: Integer     -- zero-based
+    end_line: Integer         -- one-based
+    end_column: Integer       -- zero-based, exclusive
+}
+
+value SymbolReference {
+    spelling: String
+    qualified_name: String
+    definition: SourceSpan
+}
+
+value AnalysisRoot {
+    kind: RootKind
+    absolute_path: String
+    qualified_name: String?
+}
+
+value AcceptedEffectRule {
+    name_matcher: String
+    matcher_kind: AcceptedMatcherKind
+    effect: AcceptedEffect
+    simple_name_warning: Boolean
+}
+
+value AnalysisRequest {
+    root: AnalysisRoot
+    user_code_directories: List<String>
+    import_search_paths: List<String>
+    accepted_effects: List<AcceptedEffectRule>
+}
+
+------------------------------------------------------------
+-- Entities
+------------------------------------------------------------
+
+external entity PythonSource {}
+external entity CstNode {}
+
+entity AnalysisUnit {
+    target: SymbolReference
+    kind: TargetKind
+    reachable: Boolean
+    already_analysed: Boolean
+    has_no_external_dependency: Boolean
+    has_no_unresolved_dependency: Boolean
+    has_no_argument_mutation: Boolean
+    has_no_mutable_global_dependency: Boolean
+    has_possible_mutation: Boolean
+    body_and_instance_methods_grouped: Boolean
+    definition_time_dependencies_analysed: Boolean
+    findings: Set<Finding>
+    direct_lineage: Set<LineageEdge>
+    transitive_lineage: Set<LineageEdge>
+}
+
+entity Finding {
+    kind: FindingType
+    target: AnalysisUnit
+    use_site: SourceSpan?
+    definition_site: SourceSpan?
+    subject: SymbolReference?
+    explanation: String
+}
+
+entity LineageEdge {
+    target: AnalysisUnit
+    from_symbol: SymbolReference
+    to_symbol: SymbolReference
+    use_site: SourceSpan
+    definition_site: SourceSpan
+    predecessor: LineageEdge?
+}
+
+entity ArgumentFlow {
+    caller: AnalysisUnit
+    callee: AnalysisUnit
+    argument_name: String
+    parameter_name: String
+    call_site: SourceSpan
+    argument_is_caller_owned: Boolean
+}
+
+entity Diagnostic {
+    severity: DiagnosticSeverity
+    code: String
+    message: String
+    location: SourceSpan?
+    subject: SymbolReference?
+}
+
+entity ImportCycle {
+    modules: List<SymbolReference>
+    location: SourceSpan?
+}
+
+entity AnalysisResult {
+    request: AnalysisRequest
+    units: Set<AnalysisUnit>
+    findings: Set<Finding>
+    lineage: Set<LineageEdge>
+    argument_flows: Set<ArgumentFlow>
+    diagnostics: Set<Diagnostic>
+    import_cycles: Set<ImportCycle>
+}
+
+------------------------------------------------------------
+-- Contracts
+------------------------------------------------------------
+
+contract LineageCompiler {
+    compile: (request: AnalysisRequest) -> AnalysisResult
+
+    @invariant SingleResult
+        -- Compilation returns one structured in-memory result.
+        -- The compiler does not use terminal output as its primary result.
+
+    @invariant StableSourceMapping
+        -- Every source reference uses an absolute path and a source span.
+        -- A consumer can use the span to locate the corresponding node in a reparsed tree.
+        -- Lines are one-based. Columns are zero-based. End positions are exclusive.
+
+    @invariant AcceptedNameMatching
+        -- Fully qualified matchers use exact resolved symbol names.
+        -- Simple-name matchers use the final symbol segment and produce a warning.
+
+    @invariant FlatSortableResult
+        -- Result collections contain flat records that consumers can sort.
+
+    @guidance
+        -- The compiler should analyse each module and symbol once whenever possible.
+}
+
+------------------------------------------------------------
+-- Rules
+------------------------------------------------------------
+
+rule AnalyseRequest {
+    when: AnalysisRequested(request)
+
+    requires: request.user_code_directories.count >= 1
+    requires: request.import_search_paths.count >= 0
+
+    ensures:
+        AnalysisResult.created(
+            request: request,
+            units: {},
+            findings: {},
+            lineage: {},
+            argument_flows: {},
+            diagnostics: {},
+            import_cycles: {}
+        )
+}
+
+rule ResolveProgramImports {
+    when: AnalysisResult.created(result)
+
+    ensures:
+        for module in ReachableModules(result.request.root, result.request.import_search_paths):
+            AnalysisUnit.created(
+                target: module,
+                kind: module,
+                reachable: true
+            )
+}
+
+rule CacheRepeatedModuleAnalysis {
+    when: ModuleEncountered(module)
+    requires: module.already_analysed = true
+
+    ensures:
+        module resolves to its existing AnalysisUnit
+}
+
+rule ReportImportCycle {
+    when: ImportResolutionReachesActiveModule(path)
+
+    ensures:
+        ImportCycle.created(modules: path)
+        Diagnostic.created(
+            severity: warning,
+            code: "import_cycle",
+            message: "The import graph contains a cycle. The compiler continues analysis."
+        )
+}
+
+rule ContinueAfterDiagnostic {
+    when: DiagnosticDetected(diagnostic)
+
+    ensures:
+        diagnostic is added to the current AnalysisResult
+        all other analysable modules and targets continue analysis
+}
+
+rule ResolveUserCodeBindings {
+    when: UserCodeTargetAnalysed(target)
+
+    ensures:
+        for reference in target.reachable_references:
+            LineageEdge.created(
+                target: target,
+                from_symbol: reference.local_symbol,
+                to_symbol: reference.resolved_symbol,
+                use_site: reference.use_site,
+                definition_site: reference.definition_site
+            )
+}
+
+rule MergeUncertainBindings {
+    when: BindingHasMultiplePossibleTargets(reference)
+
+    ensures:
+        for possible_target in reference.possible_targets:
+            LineageEdge.created(
+                target: reference.analysis_unit,
+                from_symbol: reference.local_symbol,
+                to_symbol: possible_target.symbol,
+                use_site: reference.use_site,
+                definition_site: possible_target.definition_site
+            )
+}
+
+rule PreserveAliasNames {
+    when: AliasAssignmentObserved(alias, original)
+
+    ensures:
+        LineageEdge.created(
+            target: alias.analysis_unit,
+            from_symbol: alias.symbol,
+            to_symbol: original.symbol,
+            use_site: alias.use_site,
+            definition_site: original.definition_site
+        )
+}
+
+rule PropagateTransitiveLineage {
+    when: LineageEdge.created(edge)
+
+    ensures:
+        for predecessor in edge.predecessors:
+            LineageEdge.created(
+                target: edge.target,
+                from_symbol: predecessor.from_symbol,
+                to_symbol: edge.to_symbol,
+                use_site: edge.use_site,
+                definition_site: edge.definition_site,
+                predecessor: predecessor
+            )
+}
+
+rule MapCallArguments {
+    when: UserCodeCallObserved(call)
+
+    ensures:
+        for mapping in call.argument_mappings:
+            ArgumentFlow.created(
+                caller: call.caller,
+                callee: call.callee,
+                argument_name: mapping.argument_name,
+                parameter_name: mapping.parameter_name,
+                call_site: call.location,
+                argument_is_caller_owned: mapping.argument_is_caller_owned
+            )
+}
+
+rule ClassifyPureTarget {
+    when: TargetAnalysisCompleted(target)
+    requires: target.has_no_external_dependency
+    requires: target.has_no_unresolved_dependency
+    requires: target.has_no_argument_mutation
+    requires: target.has_no_mutable_global_dependency
+
+    ensures:
+        Finding.created(
+            kind: pure,
+            target: target,
+            explanation: "Every reachable dependency uses only permitted inputs."
+        )
+}
+
+rule ClassifyArgumentMutation {
+    when: ArgumentMutationObserved(target, argument)
+
+    ensures:
+        Finding.created(
+            kind: possible_mutation,
+            target: target,
+            subject: argument,
+            use_site: argument.use_site,
+            definition_site: argument.definition_site,
+            explanation: "A caller-owned argument may be mutated."
+        )
+}
+
+rule PropagateArgumentMutation {
+    when: ArgumentFlow.created(flow)
+    requires: flow.callee.has_possible_mutation = true
+    requires: flow.argument_is_caller_owned = true
+
+    ensures:
+        ArgumentMutationObserved(flow.caller, flow.argument_name)
+}
+
+rule ClassifyExternalDependency {
+    when: ExternalDependencyObserved(target, dependency)
+
+    ensures:
+        Finding.created(
+            kind: impure,
+            target: target,
+            subject: dependency.symbol,
+            use_site: dependency.use_site,
+            definition_site: dependency.definition_site,
+            explanation: "The target relies on state outside its arguments."
+        )
+}
+
+rule ClassifyPotentialExternalDependency {
+    when: UnresolvedDependencyObserved(target, dependency)
+
+    ensures:
+        Finding.created(
+            kind: potentially_impure,
+            target: target,
+            subject: dependency.symbol,
+            use_site: dependency.use_site,
+            explanation: "The dependency cannot be proven safe."
+        )
+}
+
+rule ClassifyDynamicExecution {
+    when: DynamicFeatureObserved(target, feature)
+
+    ensures:
+        Finding.created(
+            kind: potentially_impure,
+            target: target,
+            subject: feature.symbol,
+            use_site: feature.use_site,
+            explanation: "Dynamic execution prevents complete static resolution."
+        )
+
+    @guidance
+        -- Keep dynamic binding forms under potentially_impure.
+        -- Do not add separate finding kinds for individual Python dynamic features yet.
+}
+
+rule ClassifyMutableGlobal {
+    when: ModuleStateCreatedOrChanged(target, global)
+
+    ensures:
+        Finding.created(
+            kind: mutable_global,
+            target: target,
+            subject: global.symbol,
+            use_site: global.use_site,
+            definition_site: global.definition_site,
+            explanation: "The target relies on mutable module-level state."
+        )
+        Finding.created(
+            kind: impure,
+            target: target,
+            subject: global.symbol,
+            use_site: global.use_site,
+            definition_site: global.definition_site,
+            explanation: "Mutable module-level state is external to the target arguments."
+        )
+}
+
+rule ClassifyUnreachableTarget {
+    when: UserCodeTargetAnalysed(target)
+    requires: target.reachable = false
+
+    ensures:
+        Finding.created(
+            kind: possible_dead_code,
+            target: target,
+            explanation: "The target is not reachable from the selected analysis root."
+        )
+}
+
+rule ClassifyClassUnits {
+    when: ClassAnalysed(class_unit)
+
+    ensures:
+        class_unit.body_and_instance_methods_grouped = true
+
+    @guidance
+        -- Static methods and class methods form independent analysis units.
+}
+
+rule ClassifyDefinitionTimeDependencies {
+    when: DefinitionAnalysed(target)
+
+    ensures:
+        target.definition_time_dependencies_analysed = true
+
+    @guidance
+        -- Decorators and default arguments form independent analysis units.
+        -- Annotations do not create lineage or findings.
+}
+
+rule ApplyAcceptedEffect {
+    when: AcceptedDependencyObserved(target, dependency, rule)
+
+    requires: rule.matcher_kind = fully_qualified or rule.matcher_kind = simple_name
+
+    ensures:
+        if rule.simple_name_warning = true:
+            Diagnostic.created(
+                severity: warning,
+                code: "simple_name_match",
+                message: "The accepted effect matched a simple name."
+            )
+}
+
+rule ReportParseFailure {
+    when: UserSourceCannotBeParsed(source)
+
+    ensures:
+        Diagnostic.created(
+            severity: error,
+            code: "parse_failure",
+            message: "The source cannot be parsed."
+        )
+}
+
+rule ReportImportResolutionFailure {
+    when: ImportCannotBeResolved(import_reference)
+
+    ensures:
+        Diagnostic.created(
+            severity: error,
+            code: "import_resolution_failure",
+            message: "The import cannot be resolved."
+        )
+        UnresolvedDependencyObserved(import_reference.target, import_reference)
+}
+
+------------------------------------------------------------
+-- Invariants
+------------------------------------------------------------
+
+invariant FindingsAreAdditive {
+    for target in AnalysisUnits:
+        target.findings.count >= 0
+}
+
+invariant PureExcludesEffectFindings {
+    for target in AnalysisUnits:
+        pure in target.findings implies (
+            impure not in target.findings and
+            potentially_impure not in target.findings and
+            possible_mutation not in target.findings and
+            mutable_global not in target.findings
+        )
+}
+
+invariant EveryFindingHasTarget {
+    for finding in Findings:
+        exists finding.target
+}
+
+invariant EveryLineageEdgeHasSourceMapping {
+    for edge in LineageEdges:
+        exists edge.use_site
+        exists edge.definition_site
+}
+
+invariant EveryAnalysisHasOneRoot {
+    for result in AnalysisResults:
+        exists result.request.root
+}
+
+------------------------------------------------------------
+-- Open Questions
+------------------------------------------------------------
+
+-- Dynamic binding forms use potentially_impure until a later version needs more detail.
+-- Accepted matchers use exact qualified names or warned simple names.
+-- Source spans use absolute paths, one-based lines, zero-based columns, and exclusive ends.
