@@ -58,7 +58,8 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │       ├── invert_guards
     │   │       ├── invert_loop_guards
     │   │       ├── replace_multiple_function_calls_in_comp_with_walrus
-    │   │       └── replace_mutable_defaults_with_guard_clause
+    │   │       ├── replace_mutable_defaults_with_guard_clause
+    │   │       └── replace_nested_list_comps_with_linear_gen_exps
     │   └── pyspark
     │       └── passive
     │           ├── replace_multiple_with_column_calls
