@@ -100,7 +100,7 @@ class ReorderParamsTransformer(BaseCstTransformer):
         if not m.matches(updated_node, m.Call(m.Name(self.fn_name))):
             return updated_node
 
-        args = list(updated_node.args)
+        args = updated_node.args
 
         if all(arg.keyword is None for arg in args):
             return updated_node.with_changes(args=[args[i] for i in self.index_map])

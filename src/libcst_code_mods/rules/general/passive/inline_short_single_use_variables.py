@@ -210,7 +210,7 @@ class InlineShortSingleUseVariablesTransformer(BaseCstTransformer):
 
             inlineable.append((assignment_index, name.value, value))
 
-        body = list(updated_node.body.body)
+        body = updated_node.body.body
         for assignment_index, name, value in reversed(inlineable):
             body = [
                 statement.visit(_ReplaceName(name=name, replacement=value))

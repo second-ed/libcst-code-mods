@@ -68,8 +68,7 @@ class AddKwargsTransformer(BaseCstTransformer):
         fn_kwarg_list = self.param_names[updated_node.func.value]
 
         kwargs = {
-            arg.keyword.value if arg.keyword else fn_kwarg_list[i]: arg.value
-            for i, arg in enumerate(list(updated_node.args))
+            arg.keyword.value if arg.keyword else fn_kwarg_list[i]: arg.value for i, arg in enumerate(updated_node.args)
         }
         new_args = [cst.Arg(value=kwargs[name], keyword=cst.Name(name)) for name in fn_kwarg_list]
         return updated_node.with_changes(args=new_args)

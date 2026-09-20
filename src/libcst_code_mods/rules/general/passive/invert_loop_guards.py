@@ -102,20 +102,22 @@ class InvertLoopGuardsVisitor(BaseCstVisitor):
 @register_rule_transformer(InvertLoopGuards)
 @attrs.define
 class InvertLoopGuardsTransformer(BaseCstTransformer):
-    def leave_For(self, original_node: cst.For, updated_node: cst.For) -> cst.For | cst.FlattenSentinel:  # noqa: ARG002 N802
+    def leave_For(self, _original_node: cst.For, updated_node: cst.For) -> cst.For | cst.FlattenSentinel:  # noqa: N802
 
         if not (extracted := m.extract(updated_node, GUARD_MATCHER)):
             return updated_node
 
-        if list(updated_node.body.body)[-1] != extracted["if_node"]:
+        if updated_node.body.body[-1] != extracted["if_node"]:
             return updated_node
-        success_body = list(extracted["success_body"].body)
-        failure_body = list(extracted["failure_body"].body)
 
         guard = cst.If(
             test=invert_condition(extracted["condition"]),
-            body=cst.IndentedBlock(body=[*failure_body, cst.SimpleStatementLine(body=[cst.Continue()])]),
+            body=cst.IndentedBlock(
+                body=[*extracted["failure_body"].body, cst.SimpleStatementLine(body=[cst.Continue()])]
+            ),
         )
         return updated_node.with_changes(
-            body=updated_node.body.with_changes(body=[*extracted["existing_body"], guard, *success_body])
+            body=updated_node.body.with_changes(
+                body=[*extracted["existing_body"], guard, *extracted["success_body"].body]
+            )
         )
