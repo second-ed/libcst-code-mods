@@ -90,17 +90,15 @@ class ReplaceMultipleFunctionCallsInCompWithWalrusVisitor(BaseCstVisitor):
 @attrs.define
 class ReplaceMultipleFunctionCallsInCompWithWalrusTransformer(BaseCstTransformer):
     def leave_ListComp(self, original_node: cst.ListComp, updated_node: cst.ListComp) -> cst.ListComp:  # noqa: N802
-        extracted = m.extract(original_node, LIST_COMP_MATCHER)
 
-        if extracted is None:
+        if (extracted := m.extract(original_node, LIST_COMP_MATCHER)) is None:
             return updated_node
 
         elt = extracted["elt_call"]
-        cond = extracted["if_cond"]
 
         tmp = cst.Name("__code_mod_tmp")
         walrus = cst.NamedExpr(target=tmp, value=elt, lpar=[cst.LeftParen()], rpar=[cst.RightParen()])
-        new_cond = cond.visit(_ReplaceCallWithWalrus(call=elt, walrus=walrus))
+        new_cond = extracted["if_cond"].visit(_ReplaceCallWithWalrus(call=elt, walrus=walrus))
         new_for = updated_node.for_in.with_changes(ifs=[cst.CompIf(test=new_cond)])
 
         return updated_node.with_changes(elt=tmp, for_in=new_for)

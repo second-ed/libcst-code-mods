@@ -281,10 +281,7 @@ class InvertGuardsTransformer(BaseCstTransformer):
 
         if not extracted:
             return updated_node
-
-        condition = extracted["condition"]
-        success_body = list(extracted["success_body"].body)
-        failure_body = list(extracted["failure_body"].body)
+        failure_body = extracted["failure_body"].body
 
         if not failure_body:
             return updated_node
@@ -294,5 +291,5 @@ class InvertGuardsTransformer(BaseCstTransformer):
         if not isinstance(last, cst.SimpleStatementLine) or not isinstance(last.body[0], (cst.Return, cst.Raise)):
             return updated_node
 
-        guard = cst.If(test=invert_condition(condition), body=cst.IndentedBlock(body=failure_body))
-        return cst.FlattenSentinel([guard, *success_body])
+        guard = cst.If(test=invert_condition(extracted["condition"]), body=cst.IndentedBlock(body=failure_body))
+        return cst.FlattenSentinel([guard, *extracted["success_body"].body])

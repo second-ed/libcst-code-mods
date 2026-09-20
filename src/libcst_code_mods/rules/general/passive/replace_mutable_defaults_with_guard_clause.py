@@ -158,9 +158,8 @@ class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
     mutable_kw_only_params: dict[str, dict[str, str]] = attrs.field(factory=dict)
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
-        fqn = get_fqn(self, node)
 
-        if fqn is None:
+        if (fqn := get_fqn(self, node)) is None:
             return
 
         config = (
@@ -240,15 +239,11 @@ def _update_params(params: Sequence[cst.Param], fn_param_map: dict[str, str]) ->
     new_params = []
 
     for param in params:
-        mutable = fn_param_map.get(param.name.value)
-
-        if mutable is None:
+        if fn_param_map.get(param.name.value) is None:
             new_params.append(param)
             continue
 
-        annotation = param.annotation
-
-        if annotation is not None:
+        if (annotation := param.annotation) is not None:
             annotation = cst.Annotation(
                 cst.BinaryOperation(left=annotation.annotation, operator=cst.BitOr(), right=cst.Name("None"))
             )

@@ -11,6 +11,12 @@ repos:
         language: python
         pass_filenames: false
         always_run: true
+      - id: run-code-mods
+        name: run code mods
+        entry: uv run -m scripts.run_code_mods
+        language: python
+        pass_filenames: false
+        always_run: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:

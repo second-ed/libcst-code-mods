@@ -28,23 +28,18 @@ def for_loop_matcher(fn_name: str) -> m.For:
 
 
 def update_with_column_call_in_for_loop(
-    original_node: cst.For,  # noqa: ARG001
-    updated_node: cst.For,
-    call_matcher: m.BaseMatcherNode,
-    new_fn_name: str,
+    _original_node: cst.For, updated_node: cst.For, call_matcher: m.BaseMatcherNode, new_fn_name: str
 ) -> cst.For | cst.Assign:
-    extracted_nodes = m.extract(updated_node, call_matcher)
 
-    if extracted_nodes is None:
+    if (extracted_nodes := m.extract(updated_node, call_matcher)) is None:
         return updated_node
-
-    name = extracted_nodes["name"]
-    expr = extracted_nodes["expr"]
-    loop = extracted_nodes["loop"]
-    iterable = extracted_nodes["iterable"]
     target = extracted_nodes["target"]
 
-    dict_comp = cst.DictComp(key=name, value=expr, for_in=cst.CompFor(target=loop, iter=iterable))
+    dict_comp = cst.DictComp(
+        key=extracted_nodes["name"],
+        value=extracted_nodes["expr"],
+        for_in=cst.CompFor(target=extracted_nodes["loop"], iter=extracted_nodes["iterable"]),
+    )
 
     new_call = cst.Call(func=cst.Attribute(value=target, attr=cst.Name(new_fn_name)), args=[cst.Arg(value=dict_comp)])
     return cst.SimpleStatementLine(body=[cst.Assign(targets=[cst.AssignTarget(target=target)], value=new_call)])

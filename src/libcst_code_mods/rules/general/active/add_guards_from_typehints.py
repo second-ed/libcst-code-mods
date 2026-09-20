@@ -150,9 +150,8 @@ class AddGuardsFromTypehintsTransformer(BaseCstTransformer):
             type_err_expected.append(f"`{param}` expected `{annot}` got `{{type({param})}}`")
 
         msg = "Invalid arg types:\\n" + "\\n".join(type_err_expected)
-        isinstance_checks_str = ", ".join(isinstance_checks)
 
-        guards = cst.parse_statement(f"if not all([{isinstance_checks_str}]): raise TypeError(f'{msg}')")
+        guards = cst.parse_statement(f"if not all([{', '.join(isinstance_checks)}]): raise TypeError(f'{msg}')")
 
         docstring_nodes, slice_idx = extract_docstring_node_and_idx(updated_node)
 

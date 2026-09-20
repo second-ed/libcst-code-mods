@@ -34,9 +34,8 @@ def invert_comparison(expr: cst.Comparison) -> cst.BaseExpression:
         return cst.UnaryOperation(operator=cst.Not(), expression=expr)
 
     target = expr.comparisons[0]
-    inverse = COMPARISON_INVERSES.get(type(target.operator))
 
-    if inverse is None:
+    if (inverse := COMPARISON_INVERSES.get(type(target.operator))) is None:
         return cst.UnaryOperation(operator=cst.Not(), expression=expr)
 
     return expr.with_changes(comparisons=[target.with_changes(operator=inverse())])
