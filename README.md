@@ -56,6 +56,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │   │   └── reorder_params
     │   │   └── passive
     │   │       ├── assignment_then_guard_to_walrus
+    │   │       ├── inline_short_single_use_variables
     │   │       ├── invert_guards
     │   │       ├── invert_loop_guards
     │   │       ├── replace_multiple_function_calls_in_comp_with_walrus
