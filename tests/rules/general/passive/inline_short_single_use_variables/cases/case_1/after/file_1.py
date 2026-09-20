@@ -13,5 +13,11 @@ def variable_is_unchanged_if_variable_value_is_too_long() -> None:
     b = fn(z=z)
 
 
+def variable_with_multiple_attribute_uses_is_unchanged() -> None:
+    root = Path("src")
+    root.glob("*.py")
+    root.rglob("*.py")
+
+
 def single_use_list_comp_is_inlined() -> None:
     b = fn(a=[f(x) for x in y])

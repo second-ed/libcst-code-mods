@@ -81,23 +81,37 @@ class InlineShortSingleUseVariablesTransformer(BaseCstTransformer):
     def leave_FunctionDef(  # noqa: N802
         self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef
     ) -> cst.FunctionDef:
-        assignments = m.findall(original_node.body, ASSIGNMENT_MATCHER)
+        assignments = [
+            (index, statement)
+            for index, statement in enumerate(original_node.body.body)
+            if m.matches(statement, ASSIGNMENT_MATCHER)
+        ]
         if not assignments:
             return updated_node
 
         inlineable = []
-        for assignment in assignments:
+        for assignment_index, assignment in assignments:
             extracted = m.extract(assignment, ASSIGNMENT_MATCHER)
             name = extracted["name"]
             value = extracted["value"]
             if len(cst.Module([]).code_for_node(value)) > self.max_value_length:
                 continue
 
-            uses = m.findall(original_node.body, m.Arg(value=m.Name(value=name.value)))
+            names = m.findall(original_node.body, m.Name(value=name.value))
+            assignment_targets = {
+                target.target
+                for target in m.findall(original_node.body, m.AssignTarget(target=m.Name(value=name.value)))
+            }
+            keyword_names = {
+                argument.keyword
+                for argument in m.findall(original_node.body, m.Arg(keyword=m.Name(value=name.value)))
+            }
+            uses = [
+                node for node in names if node not in assignment_targets and node not in keyword_names
+            ]
             if len(uses) != 1:
                 continue
 
-            assignment_index = original_node.body.body.index(assignment)
             inlineable.append((assignment_index, name.value, value))
 
         body = list(updated_node.body.body)
