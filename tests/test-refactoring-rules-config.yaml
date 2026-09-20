@@ -4,3 +4,4 @@ rules:
   replace_mutable_defaults_with_guard_clause: {}
   replace_multiple_with_column_renamed_calls: {}
   replace_multiple_with_column_calls: {}
+  replace_nested_list_comps_with_linear_gen_exps: {}
