@@ -65,10 +65,11 @@ class AddKwargsTransformer(BaseCstTransformer):
     def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:  # noqa: N802 ARG002
         if updated_node.func.value not in self.fn_names:
             return updated_node
-
-        args = list(updated_node.args)
         fn_kwarg_list = self.param_names[updated_node.func.value]
 
-        kwargs = {arg.keyword.value if arg.keyword else fn_kwarg_list[i]: arg.value for i, arg in enumerate(args)}
+        kwargs = {
+            arg.keyword.value if arg.keyword else fn_kwarg_list[i]: arg.value
+            for i, arg in enumerate(list(updated_node.args))
+        }
         new_args = [cst.Arg(value=kwargs[name], keyword=cst.Name(name)) for name in fn_kwarg_list]
         return updated_node.with_changes(args=new_args)

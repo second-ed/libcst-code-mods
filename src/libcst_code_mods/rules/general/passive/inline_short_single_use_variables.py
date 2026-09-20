@@ -38,6 +38,96 @@ class InlineShortSingleUseVariables(RefactoringRule):
 
         .. code-block:: python
 
+            def variable_used_in_fstring_is_inlined_if_it_includes_quote_chars_they_are_changed_to_avoid_syntax_errors() -> None:
+                isinstance_checks_str = ", ".join(isinstance_checks)
+                message = f"{isinstance_checks_str}"
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def variable_used_in_fstring_is_inlined_if_it_includes_quote_chars_they_are_changed_to_avoid_syntax_errors() -> None:
+                message = f"{', '.join(isinstance_checks)}"
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def variable_used_in_subscript_is_inlined() -> None:
+                block_body = list(updated_node.body.body)
+                last = block_body[-1]
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def variable_used_in_subscript_is_inlined() -> None:
+                last = list(updated_node.body.body)[-1]
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def variable_used_as_method_receiver_is_inlined() -> None:
+                cond = extracted["if_cond"]
+                new_cond = cond.visit(transformer)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def variable_used_as_method_receiver_is_inlined() -> None:
+                new_cond = extracted["if_cond"].visit(transformer)
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def variable_used_as_attribute_is_inlined() -> None:
+                original_assign = original_node.body[0]
+                value = original_assign.value
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def variable_used_as_attribute_is_inlined() -> None:
+                value = original_node.body[0].value
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def variable_used_in_attribute_update_is_inlined() -> None:
+                updated_assign = updated_node.body[0]
+                result = updated_assign.with_changes(value=result)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def variable_used_in_attribute_update_is_inlined() -> None:
+                result = updated_node.body[0].with_changes(value=result)
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
             def single_use_list_comp_is_inlined() -> None:
                 a = [f(x) for x in y]
                 b = fn(a=a)
@@ -81,12 +171,13 @@ class InlineShortSingleUseVariablesTransformer(BaseCstTransformer):
     def leave_FunctionDef(  # noqa: N802
         self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef
     ) -> cst.FunctionDef:
-        assignments = [
-            (index, statement)
-            for index, statement in enumerate(original_node.body.body)
-            if m.matches(statement, ASSIGNMENT_MATCHER)
-        ]
-        if not assignments:
+        if not (
+            assignments := [
+                (index, statement)
+                for index, statement in enumerate(original_node.body.body)
+                if m.matches(statement, ASSIGNMENT_MATCHER)
+            ]
+        ):
             return updated_node
 
         inlineable = []
@@ -147,9 +238,7 @@ class _ReplaceName(cst.CSTTransformer):
         return updated_node
 
     def leave_FormattedStringExpression(  # noqa: N802
-        self,
-        original_node: cst.FormattedStringExpression,
-        updated_node: cst.FormattedStringExpression,
+        self, original_node: cst.FormattedStringExpression, updated_node: cst.FormattedStringExpression
     ) -> cst.FormattedStringExpression:
         if m.matches(original_node, m.FormattedStringExpression(expression=m.Name(value=self.name))):
             replacement = self.replacement.visit(_UseSingleQuotes())

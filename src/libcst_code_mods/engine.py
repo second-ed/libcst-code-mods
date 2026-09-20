@@ -59,9 +59,7 @@ def multi_file_refactor(
 
             module = wrapper.visit(cst_rule.transformer_factory.from_context(rule_context))
             wrapper = cst.MetadataWrapper(module, cache=wrapper._cache)  # noqa: SLF001
-
-        new_code = wrapper.module.code
-        if new_code != original_code:
+        if (new_code := wrapper.module.code) != original_code:
             refactored_code[path] = black_format(new_code)
 
     return refactored_code
@@ -75,13 +73,11 @@ def _collect_context(
     path: str,
 ) -> None:
     wrapper = manager.get_metadata_wrapper_for_path(path)
-
-    visitors = [
+    if visitors := [
         visitor_factory.from_context(path, contexts[type(rule)])
         for rule in refactoring_rules
         if (visitor_factory := immutable_rule_mapping[type(rule)].visitor_factory) is not None
-    ]
-    if visitors:
+    ]:
         wrapper.visit_batched(visitors)
 
 

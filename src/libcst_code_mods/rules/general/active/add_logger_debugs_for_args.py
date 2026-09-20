@@ -89,9 +89,7 @@ class AddLoggerDebugsForArgsTransformer(BaseCstTransformer):
         msg_parts = ['f"']
         msg_parts.extend(f"{{{param} = }} " for param in fn_params)
         msg_parts.append('"')
-
-        msg = "".join(msg_parts)
-        debugs = cst.parse_statement(f"logger.debug({msg})")
+        debugs = cst.parse_statement(f"logger.debug({''.join(msg_parts)})")
 
         docstring_nodes, slice_idx = extract_docstring_node_and_idx(updated_node)
 

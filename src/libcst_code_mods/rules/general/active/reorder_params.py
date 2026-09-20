@@ -75,7 +75,7 @@ class ReorderParamsVisitor(BaseCstVisitor):
                 raise ValueError(
                     f"new_order does not have all of the parameters to be able to reorder {self.new_order = } {param_order = }"
                 )
-            self.context.data["index_map"] = [param_order.index(name) for name in self.new_order]
+            self.context.data["index_map"] = list(map(param_order.index, self.new_order))
             self.context.paths.add(self.path)
 
 
@@ -86,7 +86,7 @@ class ReorderParamsTransformer(BaseCstTransformer):
     new_order: list[str]
     index_map: list[int]
 
-    def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: ARG002 N802
+    def leave_FunctionDef(self, _original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: N802
         if not m.matches(updated_node.name, m.Name(self.fn_name)):
             return updated_node
 

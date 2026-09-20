@@ -354,10 +354,7 @@ class ReplaceNestedListCompsWithLinearGenExpsTransformer(BaseCstTransformer):
         if not m.matches(original_node, COMPREHENSION_STATEMENT_MATCHER):
             return updated_node
 
-        original_assign = original_node.body[0]
-        updated_assign = updated_node.body[0]
-
-        if (pipeline := _build_pipeline(original_assign.value)) is None:
+        if (pipeline := _build_pipeline(original_node.body[0].value)) is None:
             return updated_node
 
         stream, operations, output_as_list = pipeline
@@ -366,7 +363,7 @@ class ReplaceNestedListCompsWithLinearGenExpsTransformer(BaseCstTransformer):
         if output_as_list:
             result = _list_call(result)
 
-        result_line = updated_node.with_changes(body=[updated_assign.with_changes(value=result)])
+        result_line = updated_node.with_changes(body=[updated_node.body[0].with_changes(value=result)])
         return cst.FlattenSentinel([*assignments, result_line])
 
 

@@ -75,9 +75,7 @@ class RemoveKwargsIfDefaultValueTransformer(BaseCstTransformer):
                 new_args.append(arg)
                 continue
 
-            default = fn_args.get(arg.keyword.value)
-
-            if default is None:
+            if (default := fn_args.get(arg.keyword.value)) is None:
                 new_args.append(arg)
                 continue
 
