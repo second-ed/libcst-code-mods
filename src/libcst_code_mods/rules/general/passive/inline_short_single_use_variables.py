@@ -103,11 +103,16 @@ class InlineShortSingleUseVariablesTransformer(BaseCstTransformer):
                 for target in m.findall(original_node.body, m.AssignTarget(target=m.Name(value=name.value)))
             }
             keyword_names = {
-                argument.keyword
-                for argument in m.findall(original_node.body, m.Arg(keyword=m.Name(value=name.value)))
+                argument.keyword for argument in m.findall(original_node.body, m.Arg(keyword=m.Name(value=name.value)))
+            }
+            attribute_names = {
+                attribute.attr
+                for attribute in m.findall(original_node.body, m.Attribute(attr=m.Name(value=name.value)))
             }
             uses = [
-                node for node in names if node not in assignment_targets and node not in keyword_names
+                node
+                for node in names
+                if node not in assignment_targets and node not in keyword_names and node not in attribute_names
             ]
             if len(uses) != 1:
                 continue
@@ -129,7 +134,31 @@ class _ReplaceName(cst.CSTTransformer):
     name: str
     replacement: cst.BaseExpression
 
-    def leave_Arg(self, original_node: cst.Arg, updated_node: cst.Arg) -> cst.Arg:  # noqa: N802
-        if m.matches(original_node, m.Arg(value=m.Name(self.name))):
-            return updated_node.with_changes(value=self.replacement)
+    def leave_Name(self, original_node: cst.Name, updated_node: cst.Name) -> cst.BaseExpression:  # noqa: N802
+        if m.matches(original_node, m.Name(self.name)):
+            if m.matches(self.replacement, m.SimpleString()):
+                return self.replacement.with_changes(value=self.replacement.value.replace('"', "'"))
+            return self.replacement
         return updated_node
+
+    def leave_Arg(self, original_node: cst.Arg, updated_node: cst.Arg) -> cst.Arg:  # noqa: N802
+        if original_node.keyword is not None and m.matches(original_node.keyword, m.Name(self.name)):
+            return updated_node.with_changes(keyword=original_node.keyword)
+        return updated_node
+
+    def leave_FormattedStringExpression(  # noqa: N802
+        self,
+        original_node: cst.FormattedStringExpression,
+        updated_node: cst.FormattedStringExpression,
+    ) -> cst.FormattedStringExpression:
+        if m.matches(original_node, m.FormattedStringExpression(expression=m.Name(value=self.name))):
+            replacement = self.replacement.visit(_UseSingleQuotes())
+            return updated_node.with_changes(expression=replacement)
+        return updated_node
+
+
+class _UseSingleQuotes(cst.CSTTransformer):
+    def leave_SimpleString(  # noqa: N802
+        self, _original_node: cst.SimpleString, updated_node: cst.SimpleString
+    ) -> cst.SimpleString:
+        return updated_node.with_changes(value=updated_node.value.replace('"', "'"))

@@ -19,5 +19,25 @@ def variable_with_multiple_attribute_uses_is_unchanged() -> None:
     root.rglob("*.py")
 
 
+def variable_used_in_fstring_is_inlined_if_it_includes_quote_chars_they_are_changed_to_avoid_syntax_errors() -> None:
+    message = f"{', '.join(isinstance_checks)}"
+
+
+def variable_used_in_subscript_is_inlined() -> None:
+    last = list(updated_node.body.body)[-1]
+
+
+def variable_used_as_method_receiver_is_inlined() -> None:
+    new_cond = extracted["if_cond"].visit(transformer)
+
+
+def variable_used_as_attribute_is_inlined() -> None:
+    value = original_node.body[0].value
+
+
+def variable_used_in_attribute_update_is_inlined() -> None:
+    result = updated_node.body[0].with_changes(value=result)
+
+
 def single_use_list_comp_is_inlined() -> None:
     b = fn(a=[f(x) for x in y])
