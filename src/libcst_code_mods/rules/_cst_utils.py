@@ -56,6 +56,26 @@ def has_docstring(node: cst.FunctionDef) -> bool:
     return m.matches(node.body.body[0], m.SimpleStatementLine([m.Expr(m.SimpleString())]))
 
 
+def prepend_comment_to_function(node: cst.FunctionDef, text: str) -> cst.FunctionDef:
+    first_statement = node.body.body[0]
+    comment = f"# {text}"
+    if any(
+        m.matches(line, m.EmptyLine(comment=m.Comment())) and line.comment.value == comment
+        for line in first_statement.leading_lines
+    ):
+        return node
+
+    classification = cst.EmptyLine(indent=True, comment=cst.Comment(comment))
+    return node.with_changes(
+        body=node.body.with_changes(
+            body=[
+                first_statement.with_changes(leading_lines=[classification, *first_statement.leading_lines]),
+                *node.body.body[1:],
+            ]
+        )
+    )
+
+
 def get_fqn(cls: BaseCstVisitor | BaseCstTransformer, node: cst.CSTNode) -> str | None:
     qualified_names = cls.get_metadata(cst.metadata.FullyQualifiedNameProvider, node, set())
 
