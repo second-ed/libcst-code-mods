@@ -135,34 +135,35 @@ class IdentifyPureFunctionsVisitor(BaseCstVisitor):
 class IdentifyPureFunctionsTransformer(BaseCstTransformer):
     function_dependencies: dict[str, list[str]]
 
-    def leave_FunctionDef(self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef) -> cst.FunctionDef:  # noqa: N802
+    def leave_FunctionDef(  # noqa: N802
+        self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef
+    ) -> cst.FunctionDef:
         if (fqn := get_fqn(self, original_node)) is None:
             return updated_node
-        names = self.function_dependencies.get(fqn)
-        if names is None:
+        if (names := self.function_dependencies.get(fqn)) is None:
             return _prepend_classification_comment(updated_node, "[[Likely pure]]")
 
-        dependency = _format_dependencies(names)
-        message = f"[[Impure]]: Depends on [{dependency}] which do not originate within this function."
+        message = f"[[Impure]]: Depends on [{_format_dependencies(names)}] which do not originate within this function."
         return _prepend_classification_comment(updated_node, message)
 
 
 def _prepend_classification_comment(node: cst.FunctionDef, text: str) -> cst.FunctionDef:
     first_statement = node.body.body[0]
-    comment = f"# {text}"
-    leading_lines = []
-    found_classification = False
-    for line in first_statement.leading_lines:
-        if m.matches(line, m.EmptyLine(comment=m.Comment())) and line.comment.value.startswith("# [["):
-            found_classification = True
-            leading_lines.append(line.with_changes(comment=cst.Comment(comment)))
-        else:
-            leading_lines.append(line)
-
-    if found_classification:
+    classification_lines = [
+        (
+            line.with_changes(comment=cst.Comment(f"# {text}"))
+            if m.matches(line, m.EmptyLine(comment=m.Comment())) and line.comment.value.startswith("# [[")
+            else line
+        )
+        for line in first_statement.leading_lines
+    ]
+    if any(
+        m.matches(line, m.EmptyLine(comment=m.Comment())) and line.comment.value.startswith("# [[")
+        for line in first_statement.leading_lines
+    ):
         return node.with_changes(
             body=node.body.with_changes(
-                body=[first_statement.with_changes(leading_lines=leading_lines), *node.body.body[1:]]
+                body=[first_statement.with_changes(leading_lines=classification_lines), *node.body.body[1:]]
             )
         )
 
