@@ -58,3 +58,28 @@ def make_slots_decorator(decorator: cst.Decorator) -> cst.Decorator:
     if matched is None:
         return decorator
     return decorator.with_changes()
+
+
+def multiple_in_complex_condition() -> None:
+    for i in range(10):
+        a = fn(i)
+        b = i + 1
+        if a is None or b is None:
+            continue
+
+
+def should_avoid_walrus_assignment_within_generator(node: cst.FunctionDef, text: str) -> cst.FunctionDef | None:
+    first_statement = node.body.body[0]
+    comment = f"# {text}"
+    if any(
+        m.matches(line, m.EmptyLine(comment=m.Comment())) and line.comment.value == comment
+        for line in first_statement.leading_lines
+    ):
+        return node
+
+
+def should_not_use_walrus_if_would_result_in_multiple_fn_calls() -> int | None:
+    fqn = expensive_fn(args)
+
+    if fqn is None or not any(fqn in params for params in ("a", "b", "c")):
+        return 0
