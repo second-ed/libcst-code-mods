@@ -30,3 +30,30 @@ def docstring_appending_is_idempontent(a: int, b: int) -> int:
     # [[Likely pure]]
     res = a + b
     return res
+
+
+def parse(value: str) -> int:
+    # [[Likely pure]]
+    return int(value)
+
+
+def size(value: str) -> int:
+    # [[Likely pure]]
+    return len(value)
+
+
+def load(path: str) -> str:
+    # [[Impure]]: Depends on [`open`] which is impure.
+    with open(path) as file:
+        return file.read()
+
+
+def combined(value: str) -> int:
+    # [[Likely pure]]
+    return size(parse(value))
+
+
+def main(path: str) -> None:
+    # [[Impure]]: Depends on [`load`] which is impure.
+    data = load(path)
+    combined(data)

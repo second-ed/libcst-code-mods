@@ -27,3 +27,25 @@ def docstring_appending_is_idempontent(a: int, b: int) -> int:
     # [[Likely pure]]
     res = a + b
     return res
+
+
+def parse(value: str) -> int:
+    return int(value)
+
+
+def size(value: str) -> int:
+    return len(value)
+
+
+def load(path: str) -> str:
+    with open(path) as file:
+        return file.read()
+
+
+def combined(value: str) -> int:
+    return size(parse(value))
+
+
+def main(path: str) -> None:
+    data = load(path)
+    combined(data)

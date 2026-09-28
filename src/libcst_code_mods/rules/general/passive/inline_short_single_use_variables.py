@@ -189,10 +189,11 @@ class InlineShortSingleUseVariablesTransformer(BaseCstTransformer):
                 continue
 
             names = m.findall(original_node.body, m.Name(value=name.value))
-            assignment_targets = {
-                target.target
-                for target in m.findall(original_node.body, m.AssignTarget(target=m.Name(value=name.value)))
-            }
+            target_assignments = m.findall(original_node.body, m.AssignTarget(target=m.Name(value=name.value)))
+            if len(target_assignments) != 1:
+                continue
+
+            assignment_targets = {target.target for target in target_assignments}
             keyword_names = {
                 argument.keyword for argument in m.findall(original_node.body, m.Arg(keyword=m.Name(value=name.value)))
             }

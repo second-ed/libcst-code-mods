@@ -41,3 +41,14 @@ def variable_used_in_attribute_update_is_inlined() -> None:
 
 def single_use_list_comp_is_inlined() -> None:
     b = fn(a=[f(x) for x in y])
+
+
+def do_not_inline_loop_variable() -> None:
+    changed = True
+    while changed:
+        changed = False
+        for k, v in {"a": 1, "b": 2}.items():
+            if k in {"a"}:
+                continue
+
+            changed = True
