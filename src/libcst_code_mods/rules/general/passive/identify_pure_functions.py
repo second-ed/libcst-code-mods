@@ -13,28 +13,35 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 TWO_DEPENDENCIES = 2
 PURE_BUILTIN_NAMES = frozenset(
     {
+        "False",
+        "None",
+        "True",
         "abs",
         "all",
         "any",
         "bool",
         "bytes",
         "dict",
+        "enumerate",
+        "filter",
         "float",
         "frozenset",
         "int",
+        "isinstance",
+        "iter",
         "len",
         "list",
+        "map",
         "max",
         "min",
+        "next",
         "range",
         "set",
         "str",
         "sum",
         "tuple",
+        "type",
         "zip",
-        "True",
-        "False",
-        "None",
     }
 )
 KNOWN_IMPURE_NAMES = frozenset({"open"})
