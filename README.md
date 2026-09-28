@@ -57,6 +57,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │   └── passive
     │   │       ├── assignment_then_guard_to_walrus
     │   │       ├── dataclasses_should_be_frozen
+    │   │       ├── dataclasses_should_have_slots
     │   │       ├── identify_pure_functions
     │   │       ├── inline_short_single_use_variables
     │   │       ├── invert_guards

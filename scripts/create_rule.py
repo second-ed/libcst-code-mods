@@ -97,7 +97,7 @@ def create_src_file(transformer_name: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument("--name", type=str, help="the name of the transformer test case to create")
-    parser.add_argument("--case", type=int, help="the case number")
+    parser.add_argument("--case", default=1, type=int, help="the case number")
 
     args = parser.parse_args()
     create_src_file(args.name)

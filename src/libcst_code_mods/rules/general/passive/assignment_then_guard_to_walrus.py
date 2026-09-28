@@ -96,35 +96,100 @@ class AssignmentThenGuardToWalrus(RefactoringRule):
             def checks_if_is_truthy() -> Any | None:
                 if res := fn():
                     return res
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def multiple_to_change() -> None:
+                if unrelated_condition:
+                    return
+
+                res = fn()
+                if res is None:
+                    return
+                fn_2(res)
+
+                res_2 = fn_2()
+                if res_2 is not None:
+                    return res_2
+
+                res_3 = fn_3()
+                if not res_3:
+                    return
+                fn_3_output(res_3)
+
+                res_4 = fn_4()
+                if res_4:
+                    return res_4
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def multiple_to_change() -> None:
+                if unrelated_condition:
+                    return
+
+                if (res := fn()) is None:
+                    return
+                fn_2(res)
+
+                if (res_2 := fn_2()) is not None:
+                    return res_2
+
+                if not (res_3 := fn_3()):
+                    return
+                fn_3_output(res_3)
+
+                if res_4 := fn_4():
+                    return res_4
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def make_slots_decorator(decorator: cst.Decorator) -> cst.Decorator:
+                matched = m.extract(decorator, m.Decorator(decorator=m.SaveMatchedNode(m.Call(), "call")))
+                if matched is None:
+                    return decorator
+                return decorator.with_changes()
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def make_slots_decorator(decorator: cst.Decorator) -> cst.Decorator:
+                if (matched := m.extract(decorator, m.Decorator(decorator=m.SaveMatchedNode(m.Call(), "call")))) is None:
+                    return decorator
+                return decorator.with_changes()
     ---
     """
 
 
-ASSIGNMENT_THEN_GUARD_MATCHER = m.IndentedBlock(
+ASSIGNMENT_MATCHER = m.SimpleStatementLine(
     body=[
-        m.SaveMatchedNode(m.ZeroOrMore(), "before"),
-        m.SaveMatchedNode(
-            m.SimpleStatementLine(
-                body=[
-                    m.Assign(
-                        targets=[m.AssignTarget(target=m.SaveMatchedNode(m.Name(), "target"))],
-                        value=m.SaveMatchedNode(m.DoNotCare(), "value"),
-                    )
-                ]
-            ),
-            "assignment",
-        ),
-        m.SaveMatchedNode(m.If(test=m.SaveMatchedNode(m.DoNotCare(), "condition")), "guard"),
-        m.SaveMatchedNode(m.ZeroOrMore(), "after"),
+        m.Assign(
+            targets=[m.AssignTarget(target=m.SaveMatchedNode(m.Name(), "target"))],
+            value=m.SaveMatchedNode(m.DoNotCare(), "value"),
+        )
     ]
 )
+
+GUARD_MATCHER = m.If(test=m.SaveMatchedNode(m.DoNotCare(), "condition"))
 
 
 @register_rule_visitor(AssignmentThenGuardToWalrus)
 @attrs.define
 class AssignmentThenGuardToWalrusVisitor(BaseCstVisitor):
     def visit_IndentedBlock(self, node: cst.IndentedBlock) -> bool | None:  # noqa: N802
-        if m.matches(node, ASSIGNMENT_THEN_GUARD_MATCHER):
+        if _find_assignment_and_guards(node):
             self.context.paths.add(self.path)
         return super().visit_IndentedBlock(node)
 
@@ -135,30 +200,47 @@ class AssignmentThenGuardToWalrusTransformer(BaseCstTransformer):
     def leave_IndentedBlock(  # noqa: N802
         self, original_node: cst.IndentedBlock, updated_node: cst.IndentedBlock
     ) -> cst.IndentedBlock:
-        extracted = m.extract(original_node, ASSIGNMENT_THEN_GUARD_MATCHER)
-        if extracted is None:
+        if not (matches := _find_assignment_and_guards(original_node)):
             return updated_node
 
+        body = list(updated_node.body)
+        for assignment_index, extracted in reversed(matches):
+            target = extracted["target"]
+            condition = extracted["condition"]
+            target_matcher = m.Name(value=target.value)
+            walrus = cst.NamedExpr(target=target, value=extracted["value"])
+            if not m.matches(condition, target_matcher):
+                walrus = walrus.with_changes(lpar=[cst.LeftParen()], rpar=[cst.RightParen()])
+
+            new_condition = condition.visit(_ReplaceName(name=target.value, replacement=walrus))
+            guard = body[assignment_index + 1].with_changes(
+                leading_lines=original_node.body[assignment_index].leading_lines, test=new_condition
+            )
+            body[assignment_index : assignment_index + 2] = [guard]
+
+        return updated_node.with_changes(body=body)
+
+
+def _find_assignment_and_guards(node: cst.IndentedBlock) -> list[tuple[int, dict[str, cst.CSTNode]]]:
+    matches = []
+    for index in range(len(node.body) - 1):
+        assignment = m.extract(node.body[index], ASSIGNMENT_MATCHER)
+        guard = m.extract(node.body[index + 1], GUARD_MATCHER)
+        if assignment is None or guard is None:
+            continue
+
+        extracted = {**assignment, **guard}
         target = extracted["target"]
         condition = extracted["condition"]
         target_matcher = m.Name(value=target.value)
-        if not (
+        if (
             m.matches(condition, target_matcher)
             or m.matches(condition, m.UnaryOperation(operator=m.Not(), expression=target_matcher))
             or m.matches(condition, m.Comparison(left=target_matcher))
         ):
-            return updated_node
+            matches.append((index, extracted))
 
-        walrus = cst.NamedExpr(target=target, value=extracted["value"])
-        if not m.matches(condition, target_matcher):
-            walrus = walrus.with_changes(lpar=[cst.LeftParen()], rpar=[cst.RightParen()])
-
-        new_condition = condition.visit(_ReplaceName(name=target.value, replacement=walrus))
-        guard = extracted["guard"].with_changes(test=new_condition)
-        body = list(updated_node.body)
-        guard_index = original_node.body.index(extracted["guard"])
-        body[guard_index - 1 : guard_index + 1] = [guard]
-        return updated_node.with_changes(body=body)
+    return matches
 
 
 @attrs.define

@@ -10,7 +10,7 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 
 @register_rule
 @attrs.define(frozen=True)
-class DataclassesShouldBeFrozen(RefactoringRule):
+class DataclassesShouldHaveSlots(RefactoringRule):
     """Examples:
 
         Case
@@ -20,7 +20,7 @@ class DataclassesShouldBeFrozen(RefactoringRule):
 
         .. code-block:: python
 
-            @dataclass(slots=True)
+            @dataclass(frozen=True)
             class SomeDataclass:
                 pass
 
@@ -28,84 +28,58 @@ class DataclassesShouldBeFrozen(RefactoringRule):
 
         .. code-block:: python
 
-            @dataclass(slots=True, frozen=True)
+            @dataclass(frozen=True, slots=True)
             class SomeDataclass:
-                pass
-
-        Case
-        ----
-
-        Pre-transformer:
-
-        .. code-block:: python
-
-            @attrs.define
-            class SomeAttrsClass:
-                pass
-
-        Post-transformer:
-
-        .. code-block:: python
-
-            @attrs.define(frozen=True)
-            class SomeAttrsClass:
                 pass
     ---
     """
 
 
-@register_rule_visitor(DataclassesShouldBeFrozen)
+@register_rule_visitor(DataclassesShouldHaveSlots)
 @attrs.define
-class DataclassesShouldBeFrozenVisitor(BaseCstVisitor):
+class DataclassesShouldHaveSlotsVisitor(BaseCstVisitor):
     def visit_ClassDef(self, node: cst.ClassDef) -> None:  # noqa: N802
-        if any(m.matches(decorator, FROZEN_DECORATOR) for decorator in node.decorators):
+        if any(m.matches(decorator, SLOTS_DECORATOR) for decorator in node.decorators):
             self.context.paths.add(self.path)
 
 
-@register_rule_transformer(DataclassesShouldBeFrozen)
+@register_rule_transformer(DataclassesShouldHaveSlots)
 @attrs.define
-class DataclassesShouldBeFrozenTransformer(BaseCstTransformer):
+class DataclassesShouldHaveSlotsTransformer(BaseCstTransformer):
     def leave_ClassDef(  # noqa: N802
         self,
         original_node: cst.ClassDef,  # noqa: ARG002
         updated_node: cst.ClassDef,
     ) -> cst.ClassDef:
         decorators = [
-            _make_frozen_decorator(decorator) if m.matches(decorator, FROZEN_DECORATOR) else decorator
+            _make_slots_decorator(decorator) if m.matches(decorator, SLOTS_DECORATOR) else decorator
             for decorator in updated_node.decorators
         ]
         return updated_node.with_changes(decorators=decorators)
 
 
-FROZEN_DECORATOR = m.Decorator(
-    decorator=m.OneOf(
-        m.Name("dataclass"),
-        m.Call(m.Name("dataclass")),
-        m.Attribute(value=m.Name("attrs"), attr=m.Name("define")),
-        m.Call(m.Attribute(value=m.Name("attrs"), attr=m.Name("define"))),
-    )
-)
+SLOTS_DECORATOR = m.Decorator(decorator=m.OneOf(m.Name("dataclass"), m.Call(m.Name("dataclass"))))
 
 
-def _make_frozen_decorator(decorator: cst.Decorator) -> cst.Decorator:
+def _make_slots_decorator(decorator: cst.Decorator) -> cst.Decorator:
     if m.matches(decorator, m.Decorator(decorator=m.OneOf(m.Name(), m.Attribute()))):
-        call = cst.Call(func=decorator.decorator, args=[cst.Arg(keyword=cst.Name("frozen"), value=cst.Name("True"))])
+        call = cst.Call(func=decorator.decorator, args=[cst.Arg(keyword=cst.Name("slots"), value=cst.Name("True"))])
         return decorator.with_changes(decorator=call)
 
     if (matched := m.extract(decorator, m.Decorator(decorator=m.SaveMatchedNode(m.Call(), "call")))) is None:
         return decorator
 
     call = matched["call"]
-    if any(m.matches(arg, m.Arg(keyword=m.Name("frozen"), value=m.DoNotCare())) for arg in call.args):
+    if any(m.matches(arg, m.Arg(keyword=m.Name("slots"), value=m.DoNotCare())) for arg in call.args):
         args = [
             (
                 arg.with_changes(value=cst.Name("True"))
-                if m.matches(arg, m.Arg(keyword=m.Name("frozen"), value=m.DoNotCare()))
+                if m.matches(arg, m.Arg(keyword=m.Name("slots"), value=m.DoNotCare()))
                 else arg
             )
             for arg in call.args
         ]
     else:
-        args = [*call.args, cst.Arg(keyword=cst.Name("frozen"), value=cst.Name("True"))]
+        args = [*call.args, cst.Arg(keyword=cst.Name("slots"), value=cst.Name("True"))]
 
     return decorator.with_changes(decorator=call.with_changes(args=args))

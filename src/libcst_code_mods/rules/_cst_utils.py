@@ -77,9 +77,7 @@ def prepend_comment_to_function(node: cst.FunctionDef, text: str) -> cst.Functio
 
 
 def get_fqn(cls: BaseCstVisitor | BaseCstTransformer, node: cst.CSTNode) -> str | None:
-    qualified_names = cls.get_metadata(cst.metadata.FullyQualifiedNameProvider, node, set())
-
-    if not qualified_names:
+    if not (qualified_names := cls.get_metadata(cst.metadata.FullyQualifiedNameProvider, node, set())):
         return None
 
     fqn = next(iter(qualified_names))

@@ -18,3 +18,4 @@ scrap/
 scratch.ipynb
 .ruff_cache/
 __tmp/
+coverage.json

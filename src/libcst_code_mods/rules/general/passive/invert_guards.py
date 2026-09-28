@@ -277,13 +277,9 @@ class InvertGuardsTransformer(BaseCstTransformer):
         if isinstance(parent, cst.If) and parent.orelse is original_node:
             return updated_node
 
-        extracted = m.extract(updated_node, GUARD_MATCHER)
-
-        if not extracted:
+        if not (extracted := m.extract(updated_node, GUARD_MATCHER)):
             return updated_node
-        failure_body = extracted["failure_body"].body
-
-        if not failure_body:
+        if not (failure_body := extracted["failure_body"].body):
             return updated_node
 
         last = failure_body[-1]
