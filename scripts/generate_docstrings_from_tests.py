@@ -146,6 +146,10 @@ class _FnVisitor(cst.CSTVisitor):
         self.fns.setdefault(node.name.value, {})[self.state] = normalise(node).strip()
         return super().visit_FunctionDef(node)
 
+    def visit_ClassDef(self, node: cst.ClassDef) -> bool | None:  # noqa: N802
+        self.fns.setdefault(node.name.value, {})[self.state] = normalise(node).strip()
+        return super().visit_ClassDef(node)
+
 
 @attrs.define
 class _AddDocstringExamples(BaseCstTransformer):

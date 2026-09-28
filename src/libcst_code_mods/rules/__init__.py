@@ -6,6 +6,7 @@ from libcst_code_mods.rules.general.active.convert_function_signature import Con
 from libcst_code_mods.rules.general.active.remove_kwargs_if_default_value import RemoveKwargsIfDefaultValue
 from libcst_code_mods.rules.general.active.reorder_params import ReorderParams
 from libcst_code_mods.rules.general.passive.assignment_then_guard_to_walrus import AssignmentThenGuardToWalrus
+from libcst_code_mods.rules.general.passive.dataclasses_should_be_frozen import DataclassesShouldBeFrozen
 from libcst_code_mods.rules.general.passive.identify_pure_functions import IdentifyPureFunctions
 from libcst_code_mods.rules.general.passive.inline_short_single_use_variables import InlineShortSingleUseVariables
 from libcst_code_mods.rules.general.passive.invert_guards import InvertGuards
@@ -35,6 +36,7 @@ __all__ = [
     "AddLoggerDebugsForArgs",
     "AssignmentThenGuardToWalrus",
     "ConvertFunctionSignature",
+    "DataclassesShouldBeFrozen",
     "IdentifyPureFunctions",
     "InlineShortSingleUseVariables",
     "InvertGuards",
