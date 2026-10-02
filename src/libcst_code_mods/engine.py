@@ -1,6 +1,8 @@
 # repo-map-desc: main entrypoint to the code mods
 from __future__ import annotations
 
+import itertools
+from collections.abc import Iterable
 from pathlib import Path
 from types import MappingProxyType
 
@@ -10,6 +12,7 @@ from libcst.metadata import FullRepoManager
 from libcst_code_mods.constants import METADATA_DEPS
 from libcst_code_mods.core.cst_context import CstContext
 from libcst_code_mods.core.cst_rule import CstRule
+from libcst_code_mods.core.diagnostics import Diagnostic
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING, RuleMapping, make_rule_mapping_immutable
 from libcst_code_mods.utils import black_format
@@ -21,7 +24,7 @@ def multi_file_refactor(
     refactoring_rules: list[RefactoringRule],
     rule_mapping: RuleMapping | None = None,
     specific_paths: list[str] | None = None,
-) -> dict[Path, str]:
+) -> tuple[dict[Path, str], list[Diagnostic]]:
     rule_mapping = rule_mapping if rule_mapping is not None else RULE_MAPPING
     immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule] = make_rule_mapping_immutable(rule_mapping)
 
@@ -30,17 +33,24 @@ def multi_file_refactor(
 
     manager = get_manager(str(root), paths)
     contexts: dict[type[RefactoringRule], CstContext] = {
-        type(refactoring_rule): CstContext(data=refactoring_rule.to_dict()) for refactoring_rule in refactoring_rules
+        type(refactoring_rule): CstContext(Path(root).resolve(), data=refactoring_rule.to_dict())
+        for refactoring_rule in refactoring_rules
     }
 
-    for path in paths:
-        _collect_context(
-            manager=manager,
-            refactoring_rules=refactoring_rules,
-            immutable_rule_mapping=immutable_rule_mapping,
-            contexts=contexts,
-            path=str(path),
+    diagnostics = list(
+        itertools.chain.from_iterable(
+            [
+                _collect_context(
+                    manager=manager,
+                    refactoring_rules=refactoring_rules,
+                    immutable_rule_mapping=immutable_rule_mapping,
+                    contexts=contexts,
+                    path=str(path),
+                )
+                for path in paths
+            ]
         )
+    )
 
     refactored_code = {}
 
@@ -62,7 +72,7 @@ def multi_file_refactor(
         if (new_code := wrapper.module.code) != original_code:
             refactored_code[path] = black_format(new_code)
 
-    return refactored_code
+    return refactored_code, diagnostics
 
 
 def _collect_context(
@@ -71,7 +81,7 @@ def _collect_context(
     immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule],
     contexts: dict[type[RefactoringRule], CstContext],
     path: str,
-) -> None:
+) -> list[Diagnostic]:
     wrapper = manager.get_metadata_wrapper_for_path(path)
     if visitors := [
         visitor_factory.from_context(path, contexts[type(rule)])
@@ -79,8 +89,10 @@ def _collect_context(
         if (visitor_factory := immutable_rule_mapping[type(rule)].visitor_factory) is not None
     ]:
         wrapper.visit_batched(visitors)
+        return list(itertools.chain.from_iterable([visitor.context.diagnostics for visitor in visitors]))
+    return []
 
 
-def get_manager(root: str, paths: list[Path] | None = None) -> FullRepoManager:
-    paths = paths if paths is not None else list(Path(root).rglob("**/*.py"))
+def get_manager(root: str, paths: Iterable[Path] | None = None) -> FullRepoManager:
+    paths = paths if paths is not None else Path(root).rglob("**/*.py")
     return FullRepoManager(root, paths=list(map(str, paths)), providers=METADATA_DEPS)

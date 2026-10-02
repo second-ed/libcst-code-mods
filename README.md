@@ -42,7 +42,9 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │           ├── general                                                  # general python lints rather than specialised to a particular lib
 │           │   ├── active                                               # active rules require user configuration before running and run on a subset of entities
 │           │   └── passive                                              # passive rules don't require config and run whenever they see the pattern they alter
-│           └── pyspark                                                  # rules that are specific to pyspark
+│           ├── pyspark                                                  # rules that are specific to pyspark
+│           │   └── passive
+│           └── testing
 │               └── passive
 └── tests
     ├── rules
@@ -65,12 +67,15 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │       ├── replace_multiple_function_calls_in_comp_with_walrus
     │   │       ├── replace_mutable_defaults_with_guard_clause
     │   │       └── replace_nested_list_comps_with_linear_gen_exps
-    │   └── pyspark
+    │   ├── pyspark
+    │   │   └── passive
+    │   │       ├── replace_multiple_with_column_calls
+    │   │       ├── replace_multiple_with_column_renamed_calls
+    │   │       ├── replace_with_column_in_for_loop
+    │   │       └── replace_with_column_renamed_in_for_loop
+    │   └── testing
     │       └── passive
-    │           ├── replace_multiple_with_column_calls
-    │           ├── replace_multiple_with_column_renamed_calls
-    │           ├── replace_with_column_in_for_loop
-    │           └── replace_with_column_renamed_in_for_loop
+    │           └── no_asserts_in_loop
     └── test_examples
 
 (generated with repo-mapper-rs)

@@ -21,7 +21,7 @@ def test_replace_nested_list_comps_with_linear_gen_exps(case_name, transformers)
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
     after_paths = list(Path(f"{usecase_root}/after").rglob("**/*.py"))
 
-    refactored_code = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
+    refactored_code, _diagnostics = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
     assert refactored_code
     assert (
         diff_code_lfs(

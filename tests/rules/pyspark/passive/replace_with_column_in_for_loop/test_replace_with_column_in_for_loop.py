@@ -17,7 +17,7 @@ def test_replace_with_column_in_for_loop(case_name, transformers) -> None:
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
     after_paths = list(Path(f"{usecase_root}/after").rglob("**/*.py"))
 
-    refactored_code = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
+    refactored_code, _diagnostics = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
     assert refactored_code
     assert (
         diff_code_lfs(
