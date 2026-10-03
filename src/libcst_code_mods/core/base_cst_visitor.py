@@ -22,3 +22,7 @@ class BaseCstVisitor(BaseMetadataVisitor):
     def from_context(cls, path: str, context: CstContext) -> Self:
         filtered = {f.name: context.data[f.name] for f in attrs.fields(cls) if f.name in context.data}
         return cls(path=path, context=context, **filtered)
+
+    @classmethod
+    def finalize_context(cls, _context: CstContext) -> list:
+        return []

@@ -6,6 +6,7 @@ from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
+from libcst_code_mods.rules.general.passive._dataclass_decorator_utils import make_decorator_arg_true
 
 
 @register_rule
@@ -71,7 +72,7 @@ class DataclassesShouldBeFrozenTransformer(BaseCstTransformer):
         updated_node: cst.ClassDef,
     ) -> cst.ClassDef:
         decorators = [
-            _make_frozen_decorator(decorator) if m.matches(decorator, FROZEN_DECORATOR) else decorator
+            make_decorator_arg_true(decorator, "frozen") if m.matches(decorator, FROZEN_DECORATOR) else decorator
             for decorator in updated_node.decorators
         ]
         return updated_node.with_changes(decorators=decorators)
@@ -85,27 +86,3 @@ FROZEN_DECORATOR = m.Decorator(
         m.Call(m.Attribute(value=m.Name("attrs"), attr=m.Name("define"))),
     )
 )
-
-
-def _make_frozen_decorator(decorator: cst.Decorator) -> cst.Decorator:
-    if m.matches(decorator, m.Decorator(decorator=m.OneOf(m.Name(), m.Attribute()))):
-        call = cst.Call(func=decorator.decorator, args=[cst.Arg(keyword=cst.Name("frozen"), value=cst.Name("True"))])
-        return decorator.with_changes(decorator=call)
-
-    if (matched := m.extract(decorator, m.Decorator(decorator=m.SaveMatchedNode(m.Call(), "call")))) is None:
-        return decorator
-
-    call = matched["call"]
-    if any(m.matches(arg, m.Arg(keyword=m.Name("frozen"), value=m.DoNotCare())) for arg in call.args):
-        args = [
-            (
-                arg.with_changes(value=cst.Name("True"))
-                if m.matches(arg, m.Arg(keyword=m.Name("frozen"), value=m.DoNotCare()))
-                else arg
-            )
-            for arg in call.args
-        ]
-    else:
-        args = [*call.args, cst.Arg(keyword=cst.Name("frozen"), value=cst.Name("True"))]
-
-    return decorator.with_changes(decorator=call.with_changes(args=args))

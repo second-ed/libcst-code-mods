@@ -310,9 +310,8 @@ def _classify_functions(
             if fqn in pure_functions:
                 continue
 
-            external_dependencies = impurities[fqn]
-            called_functions = [function_names[name] for name in dependencies if name in function_names]
-            if not external_dependencies and all(name in pure_functions for name in called_functions):
+            called_functions = (function_names[name] for name in dependencies if name in function_names)
+            if not impurities[fqn] and all(name in pure_functions for name in called_functions):
                 pure_functions.add(fqn)
                 changed = True
 
