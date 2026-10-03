@@ -54,10 +54,11 @@ class NoAssertsInLoopVisitor(BaseCstVisitor):
             self.context.paths.add(self.path)
             self.context.diagnostics.append(
                 Diagnostic(
-                    RULE_NAME_MAPPING[self.__class__],
-                    relative_path(Path(self.path), self.context.root),
-                    self.get_metadata(cst.metadata.PositionProvider, loop),
-                    normalise(loop),
+                    rule=RULE_NAME_MAPPING[self.__class__],
+                    path=relative_path(Path(self.path), self.context.root),
+                    code_range=self.get_metadata(cst.metadata.PositionProvider, loop),
+                    code=normalise(loop),
+                    instead="assert once against the entire iterable",
                 )
             )
         return super().visit_FunctionDef(node)

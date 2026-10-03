@@ -35,7 +35,7 @@ def main(
         path.write_text(code)
         print(f"Modified: {path}")  # noqa: T201
 
-    return len(refactored_code)
+    return len(refactored_code) + len(diagnostics)
 
 
 if __name__ == "__main__":

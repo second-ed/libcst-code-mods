@@ -25,6 +25,7 @@ PARENT = Path(__file__).parent
                     Path("before/test_file_1.py"),
                     CodeRange(start=CodePosition(line=4, column=4), end=CodePosition(line=5, column=21)),
                     "\nfor i in range(n):\n    assert i >= 0\n",
+                    "assert once against the entire iterable",
                 )
             ],
         )
