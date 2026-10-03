@@ -6,15 +6,22 @@ from libcst.metadata import CodeRange
 
 @attrs.define(frozen=True)
 class Diagnostic:
-    path: str
+    rule: str
+    path: Path
     code_range: CodeRange
     code: str
 
-    def to_str(self) -> str:
-        range_str = f"[{self.code_range.start.line}:{self.code_range.start.column}-{self.code_range.end.line}:{self.code_range.end.column}]"
+    def to_dict(self) -> dict[str, str | int]:
+        return {
+            "rule": self.rule,
+            "path": str(self.path),
+            "start_line": self.code_range.start.line,
+            "start_col": self.code_range.start.column,
+            "end_line": self.code_range.end.line,
+            "end_col": self.code_range.end.column,
+            "code": self.code.strip("\n"),
+        }
 
-        return f"{self.path}{range_str}: {self.code}"
 
-
-def relative_path(path: str, root: Path) -> str:
-    return str(Path(path).resolve().relative_to(root))
+def relative_path(path: Path, root: Path) -> Path:
+    return path.resolve().relative_to(root)

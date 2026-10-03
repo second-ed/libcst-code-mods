@@ -11,6 +11,7 @@ from libcst_code_mods.core.refactoring_rule import RefactoringRule
 
 RuleMapping: TypeAlias = defaultdict[type[RefactoringRule], dict[str, type[BaseCstTransformer | BaseCstVisitor]]]
 RULE_MAPPING: RuleMapping = defaultdict(dict)
+RULE_NAME_MAPPING: dict[type[BaseCstTransformer] | type[BaseCstVisitor], str] = {}
 
 
 def make_rule_mapping_immutable(rule_mapping: RuleMapping) -> MappingProxyType[type[RefactoringRule], CstRule]:
@@ -48,6 +49,7 @@ def register_rule_visitor(
         cls: type[BaseCstTransformer] | type[BaseCstVisitor],
     ) -> type[BaseCstTransformer] | type[BaseCstVisitor]:
         RULE_MAPPING[rule]["visitor_factory"] = cls
+        RULE_NAME_MAPPING[cls] = camel_to_snake(rule.__name__)
         return cls
 
     return wrapper

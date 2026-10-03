@@ -21,9 +21,10 @@ PARENT = Path(__file__).parent
             [NoAssertsInLoop()],
             [
                 Diagnostic(
-                    path="before/test_file_1.py",
-                    code_range=CodeRange(start=CodePosition(line=4, column=4), end=CodePosition(line=5, column=21)),
-                    code="\nfor i in range(n):\n    assert i >= 0\n",
+                    "no_asserts_in_loop",
+                    Path("before/test_file_1.py"),
+                    CodeRange(start=CodePosition(line=4, column=4), end=CodePosition(line=5, column=21)),
+                    "\nfor i in range(n):\n    assert i >= 0\n",
                 )
             ],
         )

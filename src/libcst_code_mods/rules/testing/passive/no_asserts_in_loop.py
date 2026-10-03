@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import attrs
 import libcst as cst
 import libcst.matchers as m
@@ -7,7 +9,12 @@ from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.diagnostics import Diagnostic, relative_path
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._cst_utils import normalise
-from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
+from libcst_code_mods.rules._rule_mapping import (
+    RULE_NAME_MAPPING,
+    register_rule,
+    register_rule_transformer,
+    register_rule_visitor,
+)
 
 
 def in_test(path: str, node: cst.FunctionDef) -> bool:
@@ -47,7 +54,8 @@ class NoAssertsInLoopVisitor(BaseCstVisitor):
             self.context.paths.add(self.path)
             self.context.diagnostics.append(
                 Diagnostic(
-                    relative_path(self.path, self.context.root),
+                    RULE_NAME_MAPPING[self.__class__],
+                    relative_path(Path(self.path), self.context.root),
                     self.get_metadata(cst.metadata.PositionProvider, loop),
                     normalise(loop),
                 )
