@@ -53,6 +53,9 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
         for block_size in range(self.min_block_size, min(self.max_block_size, n_statements) + 1):
             for start in range(n_statements - block_size + 1):
                 block = tuple(statements[start : start + block_size])
+                extraction_status, extraction_reason = _extraction_status(block)
+                if not extraction_status:
+                    continue
                 diagnostic = Diagnostic(
                     "identify_duplicated_code",
                     Path(self.path).relative_to(self.context.root),
@@ -62,7 +65,7 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
                 (
                     self.context.data.setdefault("duplicated_code_blocks", {})
                     .setdefault((_fingerprint(block), block_size), [])
-                    .append((diagnostic, *_extraction_status(block)))
+                    .append((diagnostic, extraction_status, extraction_reason))
                 )
                 self.context.paths.add(self.path)
 
@@ -125,15 +128,16 @@ def _fingerprint(block: tuple[cst.BaseStatement, ...]) -> str:
         statement.visit(collector)
 
     transformed = cst.Module(body=list(block)).visit(
-        _FingerprintTransformer(collector.call_target_ids, collector.keyword_ids)
+        _FingerprintTransformer(collector.call_target_ids, collector.keyword_ids, collector.attribute_ids)
     )
     return transformed.code
 
 
 def _extraction_status(block: tuple[cst.BaseStatement, ...]) -> tuple[bool, str | None]:
     module = cst.Module(body=list(block))
-    if m.findall(module, m.Return()):
-        return False, "The block contains a return statement."
+    returns = m.findall(module, m.Return())
+    if returns and not _has_single_final_return(block, returns):
+        return False, "The block contains a nested or non-final return statement."
     if m.findall(module, m.Yield()):
         return False, "The block contains a yield statement."
     if m.findall(module, m.OneOf(m.Break(), m.Continue())) and not any(
@@ -143,10 +147,17 @@ def _extraction_status(block: tuple[cst.BaseStatement, ...]) -> tuple[bool, str 
     return True, None
 
 
+def _has_single_final_return(block: tuple[cst.BaseStatement, ...], returns: list[cst.Return]) -> bool:
+    if len(returns) != 1 or not isinstance(block[-1], cst.SimpleStatementLine):
+        return False
+    return any(isinstance(statement, cst.Return) for statement in block[-1].body)
+
+
 @attrs.define
 class _NameUsageCollector(cst.CSTVisitor):
     call_target_ids: set[int] = attrs.field(factory=set)
     keyword_ids: set[int] = attrs.field(factory=set)
+    attribute_ids: set[int] = attrs.field(factory=set)
 
     def visit_Call(self, node: cst.Call) -> bool:  # noqa: N802
         if isinstance(node.func, cst.Name):
@@ -160,15 +171,23 @@ class _NameUsageCollector(cst.CSTVisitor):
             self.keyword_ids.add(id(node.keyword))
         return True
 
+    def visit_Attribute(self, node: cst.Attribute) -> bool:  # noqa: N802
+        self.attribute_ids.add(id(node.attr))
+        return True
+
 
 @attrs.define
 class _FingerprintTransformer(cst.CSTTransformer):
     call_target_ids: set[int]
     keyword_ids: set[int]
+    attribute_ids: set[int]
     names: dict[str, str] = attrs.field(factory=dict)
 
     def leave_Name(self, original_node: cst.Name, updated_node: cst.Name) -> cst.Name:  # noqa: N802
         if id(original_node) in self.call_target_ids or id(original_node) in self.keyword_ids:
+            return updated_node
+        if id(original_node) in self.attribute_ids:
+            self.names.setdefault(original_node.value, f"__name_{len(self.names)}__")
             return updated_node
         if original_node.value in {"True", "False"}:
             return cst.Name("__literal_boolean__")
