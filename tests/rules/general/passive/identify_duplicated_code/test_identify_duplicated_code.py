@@ -16,7 +16,7 @@ PARENT = Path(__file__).parent
     [
         pytest.param(
             "case_1",
-            [IdentifyDuplicatedCode()],
+            [IdentifyDuplicatedCode(min_occurrences=2)],
             [
                 AggregatedDiagnostic(
                     rule="identify_duplicated_code",

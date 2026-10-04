@@ -56,7 +56,7 @@ def multi_file_refactor(  # noqa: PLR0913
 
     for refactoring_rule in refactoring_rules:
         if (visitor_factory := immutable_rule_mapping[type(refactoring_rule)].visitor_factory) is not None:
-            diagnostics.extend(visitor_factory.finalize_context(contexts[type(refactoring_rule)]))
+            diagnostics.extend(visitor_factory.finalize_context(refactoring_rule, contexts[type(refactoring_rule)]))
 
     if not fix:
         return {}, diagnostics

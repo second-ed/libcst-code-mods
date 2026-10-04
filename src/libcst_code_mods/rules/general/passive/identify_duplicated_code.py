@@ -16,7 +16,8 @@ from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 MIN_BLOCK_SIZE = 2
-MIN_OCCURRENCES = 2
+# WET
+MIN_OCCURRENCES = 3
 
 
 @register_rule
@@ -25,14 +26,18 @@ class IdentifyDuplicatedCode(RefactoringRule):
     min_block_size: int = 2
     max_block_size: int = 5
     top_n: int | None = None
+    min_occurrences: int = MIN_OCCURRENCES
 
     def __attrs_post_init__(self) -> None:
+        errs = []
         if self.min_block_size < MIN_BLOCK_SIZE:
-            raise ValueError(f"min_block_size must be at least {MIN_BLOCK_SIZE}")
+            errs.append(f"{self.min_block_size = } must be at least {MIN_BLOCK_SIZE}")
         if self.max_block_size < self.min_block_size:
-            raise ValueError("max_block_size must be at least min_block_size")
+            errs.append(f"{self.max_block_size = } must be at least {self.min_block_size = }")
         if self.top_n is not None and self.top_n < 1:
-            raise ValueError("top_n must be at least 1")
+            errs.append(f"{self.top_n = } must be at least 1")
+        if errs:
+            raise ValueError(f"Invalid args: {errs}")
 
 
 @register_rule_visitor(IdentifyDuplicatedCode)
@@ -41,6 +46,7 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
     min_block_size: int
     max_block_size: int
     top_n: int | None
+    min_occurrences: int
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
         for candidates in _iter_candidates(node.body):
@@ -70,7 +76,12 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
                 self.context.paths.add(self.path)
 
     @classmethod
-    def finalize_context(cls, context: CstContext) -> list[AggregatedDiagnostic]:
+    def finalize_context(cls, rule: RefactoringRule, context: CstContext) -> list[AggregatedDiagnostic]:
+        if not isinstance(rule, IdentifyDuplicatedCode):
+            raise TypeError(
+                f"IdentifyDuplicatedCodeVisitor requires an IdentifyDuplicatedCode rule object. Got: {rule = }"
+            )
+
         groups: dict[tuple[str, int], list[tuple[Diagnostic, bool, str | None]]] = context.data.get(
             "duplicated_code_blocks", {}
         )
@@ -78,7 +89,7 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
         agg_diagnostics = []
 
         for (fingerprint, block_size), entries in groups.items():
-            if len(entries) < MIN_OCCURRENCES:
+            if len(entries) < rule.min_occurrences:
                 continue
 
             agg_diagnostics.append(

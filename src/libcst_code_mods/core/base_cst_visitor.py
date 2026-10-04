@@ -7,6 +7,7 @@ import libcst as cst
 
 from libcst_code_mods.constants import METADATA_DEPS
 from libcst_code_mods.core.cst_context import CstContext
+from libcst_code_mods.core.refactoring_rule import RefactoringRule
 
 
 class BaseMetadataVisitor(cst.BatchableCSTVisitor):
@@ -24,5 +25,5 @@ class BaseCstVisitor(BaseMetadataVisitor):
         return cls(path=path, context=context, **filtered)
 
     @classmethod
-    def finalize_context(cls, _context: CstContext) -> list:
+    def finalize_context(cls, _rule: RefactoringRule, _context: CstContext) -> list:
         return []
