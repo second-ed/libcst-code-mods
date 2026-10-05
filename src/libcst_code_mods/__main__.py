@@ -19,14 +19,13 @@ def main(
     root = Path(inp_root)
 
     if config_path is None:
-        config_path = next(root.glob("refactoring-rules-config.yaml"))
+        config_path = next(Path.cwd().glob("refactoring-rules-config.yaml"))
 
     config = yaml.safe_load(Path(config_path).read_text())
+    paths = _filter_paths(list(root.rglob("**/*.py")), specific_paths or [])
 
     refactoring_rules = [RULES[k].from_dict(v) for k, v in config.get("rules", {}).items() if k in RULES]
-    refactored_code, diagnostics = multi_file_refactor(
-        root, list(root.rglob("**/*.py")), refactoring_rules=refactoring_rules, specific_paths=specific_paths, fix=fix
-    )
+    refactored_code, diagnostics = multi_file_refactor(root, paths, refactoring_rules=refactoring_rules, fix=fix)
 
     if diagnostics:
         print(json.dumps([diag.to_dict() for diag in diagnostics], indent=2))  # noqa: T201
@@ -35,7 +34,21 @@ def main(
         path.write_text(code)
         print(f"Modified: {path}")  # noqa: T201
 
-    return len(refactored_code) + len(diagnostics)
+    n_changes = len(refactored_code)
+    n_diagnostics = len(diagnostics)
+
+    if (n_changes + n_diagnostics) == 0:
+        print("All passed")  # noqa: T201
+        return 0
+
+    print(f"`{n_changes}` changes made. `{n_diagnostics}` required")  # noqa: T201
+    return n_changes + n_diagnostics
+
+
+def _filter_paths(paths: list[Path], specific_paths: list[str]) -> list[Path]:
+    if specific_paths:
+        paths = [p for p in paths if str(p) in specific_paths]
+    return paths
 
 
 if __name__ == "__main__":

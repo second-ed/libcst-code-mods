@@ -18,21 +18,16 @@ from libcst_code_mods.rules._rule_mapping import RULE_MAPPING, RuleMapping, make
 from libcst_code_mods.utils import black_format
 
 
-def multi_file_refactor(  # noqa: PLR0913
+def multi_file_refactor(
     root: Path | str,
     paths: list[Path],
     refactoring_rules: list[RefactoringRule],
     rule_mapping: RuleMapping | None = None,
-    specific_paths: list[str] | None = None,
     *,
     fix: bool = True,
 ) -> tuple[dict[Path, str], list[Diagnostic]]:
     rule_mapping = rule_mapping if rule_mapping is not None else RULE_MAPPING
     immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule] = make_rule_mapping_immutable(rule_mapping)
-
-    if specific_paths:
-        paths = [p for p in paths if str(p) in specific_paths]
-
     manager = get_manager(str(root), paths)
     contexts: dict[type[RefactoringRule], CstContext] = {
         type(refactoring_rule): CstContext(Path(root).resolve(), data=refactoring_rule.to_dict())
