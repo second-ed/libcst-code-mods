@@ -76,6 +76,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │       └── replace_with_column_renamed_in_for_loop
     │   └── testing
     │       └── passive
+    │           ├── do_not_use_magic_mock
     │           └── no_asserts_in_loop
     └── test_examples
 

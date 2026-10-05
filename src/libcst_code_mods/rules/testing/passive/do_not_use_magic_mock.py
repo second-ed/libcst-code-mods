@@ -22,50 +22,42 @@ from libcst_code_mods.rules.testing.passive._utils import in_test
 
 @register_rule
 @attrs.define(frozen=True)
-class NoAssertsInLoop(RefactoringRule):
+class DoNotUseMagicMock(RefactoringRule):
     pass
 
 
-ASSERTS_IN_LOOP = m.FunctionDef(
-    body=m.IndentedBlock(
-        body=[
-            m.ZeroOrMore(),
-            m.SaveMatchedNode(
-                m.For(
-                    body=m.IndentedBlock(
-                        body=[m.ZeroOrMore(), m.SimpleStatementLine(body=[m.Assert()]), m.ZeroOrMore()]
-                    )
-                ),
-                "loop",
-            ),
-            m.ZeroOrMore(),
-        ]
-    )
-)
-
-
-@register_rule_visitor(NoAssertsInLoop)
+@register_rule_visitor(DoNotUseMagicMock)
 @attrs.define
-class NoAssertsInLoopVisitor(BaseCstVisitor):
+class DoNotUseMagicMockVisitor(BaseCstVisitor):
     METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (cst.metadata.PositionProvider,)
 
+    is_in_test: bool = False
+
     def visit_FunctionDef(self, node: cst.FunctionDef) -> bool | None:  # noqa: N802
-        if in_test(self.path, node) and (matched := m.extract(node, ASSERTS_IN_LOOP)) is not None:
-            loop = matched["loop"]
+        self.is_in_test = in_test(self.path, node)
+        return super().visit_FunctionDef(node)
+
+    def leave_FunctionDef(self, original_node: cst.FunctionDef) -> None:  # noqa: N802
+        self.is_in_test = False
+        return super().leave_FunctionDef(original_node)
+
+    def visit_Call(self, node: cst.Call) -> bool | None:  # noqa: N802
+        if self.is_in_test and m.matches(node, m.Call(m.Name("MagicMock"))):
             self.context.paths.add(self.path)
             self.context.diagnostics.append(
                 Diagnostic(
                     rule=RULE_NAME_MAPPING[self.__class__],
                     path=relative_path(Path(self.path), self.context.root),
-                    code_range=self.get_metadata(cst.metadata.PositionProvider, loop),
-                    code=normalise(loop),
-                    instead="assert once against the entire iterable",
+                    code_range=self.get_metadata(cst.metadata.PositionProvider, node),
+                    code=normalise(node),
+                    instead="Refactor for testability. Move I/O to the system boundary. Inject dependencies. Use small test doubles instead of MagicMock",
                 )
             )
-        return super().visit_FunctionDef(node)
+
+        return super().visit_Call(node)
 
 
-@register_rule_transformer(NoAssertsInLoop)
+@register_rule_transformer(DoNotUseMagicMock)
 @attrs.define
-class NoAssertsInLoopTransformer(BaseCstTransformer):
+class DoNotUseMagicMockTransformer(BaseCstTransformer):
     pass

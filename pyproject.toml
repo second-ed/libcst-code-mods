@@ -36,3 +36,10 @@ dev = [
 [tool.uv]
 exclude-newer = "1 week"
 exclude-newer-package = { repo-mapper-rs = false }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "--ignore-glob=*/before/*",
+    "--ignore-glob=*/after/*",
+]
