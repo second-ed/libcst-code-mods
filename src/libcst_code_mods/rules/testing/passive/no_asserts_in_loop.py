@@ -1,4 +1,6 @@
+from collections.abc import Collection
 from pathlib import Path
+from typing import ClassVar
 
 import attrs
 import libcst as cst
@@ -48,6 +50,8 @@ ASSERTS_IN_LOOP = m.FunctionDef(
 @register_rule_visitor(NoAssertsInLoop)
 @attrs.define
 class NoAssertsInLoopVisitor(BaseCstVisitor):
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (cst.metadata.PositionProvider,)
+
     def visit_FunctionDef(self, node: cst.FunctionDef) -> bool | None:  # noqa: N802
         if in_test(self.path, node) and (matched := m.extract(node, ASSERTS_IN_LOOP)) is not None:
             loop = matched["loop"]

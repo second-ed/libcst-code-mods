@@ -1,3 +1,6 @@
+from collections.abc import Collection
+from typing import ClassVar
+
 import attrs
 import libcst as cst
 import libcst.matchers as m
@@ -232,6 +235,13 @@ class IdentifyPureFunctions(RefactoringRule):
 @register_rule_visitor(IdentifyPureFunctions)
 @attrs.define
 class IdentifyPureFunctionsVisitor(BaseCstVisitor):
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (
+        cst.metadata.ExpressionContextProvider,
+        cst.metadata.ScopeProvider,
+        cst.metadata.PositionProvider,
+        cst.metadata.FullyQualifiedNameProvider,
+    )
+
     function_dependencies: dict[str, list[str]] = attrs.field(factory=dict)
     function_names: dict[str, str] = attrs.field(factory=dict)
 
@@ -275,6 +285,8 @@ class IdentifyPureFunctionsVisitor(BaseCstVisitor):
 @register_rule_transformer(IdentifyPureFunctions)
 @attrs.define
 class IdentifyPureFunctionsTransformer(BaseCstTransformer):
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (cst.metadata.FullyQualifiedNameProvider,)
+
     function_dependencies: dict[str, list[str]]
     function_names: dict[str, str]
     function_impurities: dict[str, list[str]] = attrs.field(init=False, factory=dict)

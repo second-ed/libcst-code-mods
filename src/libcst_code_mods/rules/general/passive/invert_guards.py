@@ -1,3 +1,6 @@
+from collections.abc import Collection
+from typing import ClassVar
+
 import attrs
 import libcst as cst
 import libcst.matchers as m
@@ -271,6 +274,8 @@ class InvertGuardsVisitor(BaseCstVisitor):
 @register_rule_transformer(InvertGuards)
 @attrs.define
 class InvertGuardsTransformer(BaseCstTransformer):
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (cst.metadata.ParentNodeProvider,)
+
     def leave_If(self, original_node: cst.If, updated_node: cst.If) -> cst.If | cst.FlattenSentinel:  # noqa: N802
         parent = self.get_metadata(cst.metadata.ParentNodeProvider, original_node)
 

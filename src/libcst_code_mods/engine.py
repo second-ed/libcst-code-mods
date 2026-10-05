@@ -73,6 +73,7 @@ def multi_file_refactor(
 
             module = wrapper.visit(cst_rule.transformer_factory.from_context(rule_context))
             wrapper = cst.MetadataWrapper(module, cache=wrapper._cache)  # noqa: SLF001
+
         if (new_code := wrapper.module.code) != original_code:
             refactored_code[path] = black_format(new_code)
 

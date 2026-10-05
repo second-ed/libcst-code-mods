@@ -1,4 +1,5 @@
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
+from typing import ClassVar
 
 import attrs
 import libcst as cst
@@ -153,6 +154,8 @@ MUTABLE_DEFAULT = m.OneOf(
 @register_rule_visitor(ReplaceMutableDefaultsWithGuardClause)
 @attrs.define
 class ReplaceMutableDefaultsWithGuardClauseVisitor(BaseCstVisitor):
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (cst.metadata.FullyQualifiedNameProvider,)
+
     mutable_params: dict[str, dict[str, str]] = attrs.field(factory=dict)
     mutable_pos_only_params: dict[str, dict[str, str]] = attrs.field(factory=dict)
     mutable_kw_only_params: dict[str, dict[str, str]] = attrs.field(factory=dict)
@@ -200,6 +203,8 @@ REPLACEMENTS: dict[str, cst.BaseExpression] = {
 @register_rule_transformer(ReplaceMutableDefaultsWithGuardClause)
 @attrs.define
 class ReplaceMutableDefaultsWithGuardClauseTransformer(BaseCstTransformer):
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (cst.metadata.FullyQualifiedNameProvider,)
+
     mutable_params: dict[str, dict[str, str]]
     mutable_pos_only_params: dict[str, dict[str, str]]
     mutable_kw_only_params: dict[str, dict[str, str]]

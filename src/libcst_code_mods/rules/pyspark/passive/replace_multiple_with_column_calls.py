@@ -1,3 +1,6 @@
+from collections.abc import Collection
+from typing import ClassVar
+
 import attrs
 import libcst as cst
 import libcst.matchers as m
@@ -136,6 +139,8 @@ class ReplaceMultipleWithColumnCallsVisitor(BaseCstVisitor):
 @register_rule_transformer(ReplaceMultipleWithColumnCalls)
 @attrs.define
 class ReplaceMultipleWithColumnCallsTransformer(BaseCstTransformer):
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (cst.metadata.ParentNodeProvider,)
+
     def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.BaseExpression:  # noqa: N802
         return update_multiple_with_column_calls(
             self, original_node, updated_node, WITH_COLUMN_CALL, WITH_COLUMN_ATTR, "withColumns"

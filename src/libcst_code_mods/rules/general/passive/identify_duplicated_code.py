@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Collection, Iterator, Sequence
 from pathlib import Path
+from typing import ClassVar
 
 import attrs
 import libcst as cst
@@ -43,6 +44,8 @@ class IdentifyDuplicatedCode(RefactoringRule):
 @register_rule_visitor(IdentifyDuplicatedCode)
 @attrs.define
 class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (PositionProvider,)
+
     min_block_size: int
     max_block_size: int
     top_n: int | None
@@ -158,7 +161,7 @@ def _extraction_status(block: tuple[cst.BaseStatement, ...]) -> tuple[bool, str 
     return True, None
 
 
-def _has_single_final_return(block: tuple[cst.BaseStatement, ...], returns: list[cst.Return]) -> bool:
+def _has_single_final_return(block: tuple[cst.BaseStatement, ...], returns: Sequence[cst.Return]) -> bool:
     if len(returns) != 1 or not isinstance(block[-1], cst.SimpleStatementLine):
         return False
     return any(isinstance(statement, cst.Return) for statement in block[-1].body)
