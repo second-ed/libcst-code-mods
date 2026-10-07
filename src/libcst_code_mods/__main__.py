@@ -16,7 +16,7 @@ def main(
     *,
     fix: bool = True,
 ) -> int:
-    root = Path(inp_root)
+    root = Path(inp_root).resolve()
 
     if config_path is None:
         config_path = next(Path.cwd().glob("refactoring-rules-config.yaml"))
@@ -51,7 +51,7 @@ def _filter_paths(paths: list[Path], specific_paths: list[str]) -> list[Path]:
     return paths
 
 
-if __name__ == "__main__":
+def cli() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("root", nargs="?", type=Path, default=Path.cwd())
     parser.add_argument("--specific-paths", type=lambda x: x.split(","), default=[])
@@ -59,4 +59,8 @@ if __name__ == "__main__":
     parser.add_argument("--fix", action="store_true")
     args = parser.parse_args()
 
-    sys.exit(main(inp_root=args.root, specific_paths=args.specific_paths, config_path=args.config_path, fix=args.fix))
+    return main(inp_root=args.root, specific_paths=args.specific_paths, config_path=args.config_path, fix=args.fix)
+
+
+if __name__ == "__main__":
+    sys.exit(cli())
