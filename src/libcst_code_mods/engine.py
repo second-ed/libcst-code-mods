@@ -54,7 +54,7 @@ def multi_file_refactor(
             diagnostics.extend(visitor_factory.finalize_context(refactoring_rule, contexts[type(refactoring_rule)]))
 
     if not fix:
-        return {}, diagnostics
+        return {}, list(dict.fromkeys(diagnostics))
 
     refactored_code = {}
 
@@ -77,7 +77,7 @@ def multi_file_refactor(
         if (new_code := wrapper.module.code) != original_code:
             refactored_code[path] = black_format(new_code)
 
-    return refactored_code, diagnostics
+    return refactored_code, list(dict.fromkeys(diagnostics))
 
 
 def _collect_context(

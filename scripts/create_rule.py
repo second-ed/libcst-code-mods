@@ -43,8 +43,8 @@ from tests.conftest import code_map_to_rows, diff_code_lfs, paths_to_rows, rows_
 PARENT = Path(__file__).parent
 
 
-@pytest.mark.parametrize(("case_name", "transformers"), [pytest.param("case_1", [{cls_name}()])])
-def test_{rule_name}(case_name, transformers) -> None:
+@pytest.mark.parametrize(("case_name", "transformers", "expected_diagnostics"), [pytest.param("case_1", [{cls_name}()], [])])
+def test_{rule_name}(case_name, transformers, expected_diagnostics) -> None:
     usecase_root = f"{{PARENT}}/cases/{{case_name}}"
     before_paths = list(Path(f"{{usecase_root}}/before").rglob("**/*.py"))
     after_paths = list(Path(f"{{usecase_root}}/after").rglob("**/*.py"))
