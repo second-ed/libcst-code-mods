@@ -106,10 +106,9 @@ def create_examples(struct: dict[str, str]) -> list[str]:
 
 
 def _get_changed_code(struct: dict[str, str]) -> dict[str, dict[str, str]]:
-    diffs = _fn_diffs(struct)
     return {
         fn_name: code_states
-        for fn_name, code_states in diffs.items()
+        for fn_name, code_states in _fn_diffs(struct).items()
         if code_states.get("before_code", f"no code for {fn_name}")
         != code_states.get("after_code", f"no code for {fn_name}")
     }

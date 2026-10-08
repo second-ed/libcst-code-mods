@@ -67,11 +67,9 @@ def create_test_case(transformer_name: str, case_num: int) -> None:
     file_path = "/".join(parts)
 
     root = Path(REPO_ROOT) / f"tests/rules/{file_path}/cases/case_{case_num}"
-    states = ["before", "after"]
-    files = ["file_1", "__init__"]
 
-    for state in states:
-        for f in files:
+    for state in ["before", "after"]:
+        for f in ["file_1", "__init__"]:
             new_file = root / state / f"{f}.py"
             new_file.parent.mkdir(parents=True, exist_ok=True)
             new_file.touch()
@@ -84,12 +82,10 @@ def create_test_case(transformer_name: str, case_num: int) -> None:
 
 def create_src_file(transformer_name: str) -> None:
     parts = transformer_name.split(".")
-    module_name = parts[-1]
-    file_path = "/".join(parts)
 
-    cls_name = "".join(map(str.capitalize, module_name.split("_")))
+    cls_name = "".join(map(str.capitalize, parts[-1].split("_")))
 
-    path = Path(REPO_ROOT) / f"src/libcst_code_mods/rules/{file_path}.py"
+    path = Path(REPO_ROOT) / f"src/libcst_code_mods/rules/{'/'.join(parts)}.py"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(SRC_FILE.format(cls_name=cls_name))
 

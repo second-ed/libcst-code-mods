@@ -6,17 +6,12 @@ from libcst_code_mods.engine import get_manager
 
 
 def get_populated_visitor(root: str, visitor: BaseCstVisitor) -> BaseCstVisitor:
-    paths = Path(root).rglob("**/*.py")
-
-    manager = get_manager(str(root))
     cache = {}
 
-    context = CstContext()
-
-    for path in paths:
-        wrapper = manager.get_metadata_wrapper_for_path(str(path))
+    for path in Path(root).rglob("**/*.py"):
+        wrapper = get_manager(str(root)).get_metadata_wrapper_for_path(str(path))
         cache = {**cache, **wrapper._cache}  # noqa: SLF001
 
-        visitor = visitor.from_context(path, context)
+        visitor = visitor.from_context(path, CstContext())
         wrapper.visit_batched([visitor])
     return visitor
