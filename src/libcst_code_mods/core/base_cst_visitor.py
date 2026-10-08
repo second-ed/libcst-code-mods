@@ -11,7 +11,7 @@ from libcst_code_mods.core.refactoring_rule import RefactoringRule
 
 
 class BaseMetadataVisitor(cst.BatchableCSTVisitor):
-    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = ()  # METADATA_DEPS
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = ()
 
 
 @attrs.define

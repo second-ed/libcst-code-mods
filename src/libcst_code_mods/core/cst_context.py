@@ -13,4 +13,4 @@ class CstContext:
     root: Path
     paths: set[str] = attrs.field(factory=set)
     data: dict[str, Any] = attrs.field(factory=dict)
-    diagnostics: list[Diagnostic] = attrs.field(factory=list)
+    diagnostics: set[Diagnostic] = attrs.field(factory=set)

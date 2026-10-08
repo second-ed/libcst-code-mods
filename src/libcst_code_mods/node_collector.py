@@ -1,10 +1,11 @@
 # repo-map-desc: the pre-pass stage that collects the context before the transformation
 
+from collections.abc import Collection
+from typing import ClassVar
+
 import attrs
 import libcst as cst
 import libcst.matchers as m
-
-from libcst_code_mods.constants import METADATA_DEPS
 
 
 @attrs.define(frozen=True)
@@ -15,12 +16,14 @@ class NodeMetadata:
     qualified_names: set[cst.metadata.QualifiedName]
 
 
-class MetadataBase(cst.CSTVisitor):
-    METADATA_DEPENDENCIES = METADATA_DEPS
-
-
 @attrs.define
-class NodeCollector(MetadataBase):
+class NodeCollector(cst.CSTVisitor):
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (
+        cst.metadata.PositionProvider,
+        cst.metadata.ScopeProvider,
+        cst.metadata.FullyQualifiedNameProvider,
+    )
+
     matcher: m.BaseMatcherNode | None
     results: list[NodeMetadata] = attrs.field(factory=list)
 

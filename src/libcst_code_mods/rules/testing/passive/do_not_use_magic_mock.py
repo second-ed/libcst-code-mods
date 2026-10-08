@@ -44,7 +44,7 @@ class DoNotUseMagicMockVisitor(BaseCstVisitor):
     def visit_Call(self, node: cst.Call) -> bool | None:  # noqa: N802
         if self.is_in_test and m.matches(node, m.Call(m.Name("MagicMock"))):
             self.context.paths.add(self.path)
-            self.context.diagnostics.append(
+            self.context.diagnostics.add(
                 Diagnostic(
                     rule=RULE_NAME_MAPPING[self.__class__],
                     path=relative_path(Path(self.path), self.context.root),

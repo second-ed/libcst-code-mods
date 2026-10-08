@@ -49,7 +49,7 @@ class MethodDoesNotUseSelfVisitor(BaseCstVisitor):
             and not m.findall(node.body, m.Name("self"))
         ):
             self.context.paths.add(self.path)
-            self.context.diagnostics.append(
+            self.context.diagnostics.add(
                 Diagnostic(
                     rule=RULE_NAME_MAPPING[self.__class__],
                     path=relative_path(Path(self.path), self.context.root),

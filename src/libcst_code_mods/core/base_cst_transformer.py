@@ -10,7 +10,7 @@ from libcst_code_mods.core.cst_context import CstContext
 
 
 class BaseMetadataTransformer(cst.CSTTransformer):
-    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = ()  # METADATA_DEPS
+    METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = ()
 
 
 @attrs.define

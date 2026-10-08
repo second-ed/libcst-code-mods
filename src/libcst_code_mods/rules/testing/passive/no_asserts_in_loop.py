@@ -53,7 +53,7 @@ class NoAssertsInLoopVisitor(BaseCstVisitor):
         if in_test(self.path, node) and (matched := m.extract(node, ASSERTS_IN_LOOP)) is not None:
             loop = matched["loop"]
             self.context.paths.add(self.path)
-            self.context.diagnostics.append(
+            self.context.diagnostics.add(
                 Diagnostic(
                     rule=RULE_NAME_MAPPING[self.__class__],
                     path=relative_path(Path(self.path), self.context.root),

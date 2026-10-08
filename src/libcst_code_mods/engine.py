@@ -94,7 +94,15 @@ def _collect_context(
         if (visitor_factory := immutable_rule_mapping[type(rule)].visitor_factory) is not None
     ]:
         wrapper.visit_batched(visitors)
-        return list(itertools.chain.from_iterable([visitor.context.diagnostics for visitor in visitors]))
+        return sorted(
+            itertools.chain.from_iterable(visitor.context.diagnostics for visitor in visitors),
+            key=lambda diagnostic: (
+                diagnostic.code_range.start.line,
+                diagnostic.code_range.start.column,
+                diagnostic.rule,
+                str(diagnostic.path),
+            ),
+        )
     return []
 
 
