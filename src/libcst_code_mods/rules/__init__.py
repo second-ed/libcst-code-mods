@@ -29,6 +29,7 @@ from libcst_code_mods.rules.pyspark.passive.replace_with_column_in_for_loop impo
 from libcst_code_mods.rules.pyspark.passive.replace_with_column_renamed_in_for_loop import (
     ReplaceWithColumnRenamedInForLoop,
 )
+from libcst_code_mods.rules.testing.passive.assert_against_full_object import AssertAgainstFullObject
 from libcst_code_mods.rules.testing.passive.do_not_use_magic_mock import DoNotUseMagicMock
 from libcst_code_mods.rules.testing.passive.no_asserts_in_loop import NoAssertsInLoop
 
@@ -37,6 +38,7 @@ __all__ = [
     "AddGuardsFromTypehints",
     "AddKwargs",
     "AddLoggerDebugsForArgs",
+    "AssertAgainstFullObject",
     "AssignmentThenGuardToWalrus",
     "ConvertFunctionSignature",
     "DataclassesShouldBeFrozen",

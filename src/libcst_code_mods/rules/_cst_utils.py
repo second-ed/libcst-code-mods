@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 import libcst as cst
 import libcst.matchers as m
 
@@ -7,6 +9,14 @@ from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 
 def normalise(node: cst.CSTNode | None) -> str:
     return cst.Module([]).code_for_node(node)
+
+
+def visit_for_if_matches(
+    visitor: BaseCstVisitor, node: cst.For, matcher: m.BaseMatcherNode, visit_for: Callable[[cst.For], bool | None]
+) -> bool | None:
+    if m.matches(node, matcher):
+        visitor.context.paths.add(visitor.path)
+    return visit_for(node)
 
 
 def invert_condition(expr: cst.BaseExpression) -> cst.BaseExpression:

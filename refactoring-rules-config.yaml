@@ -12,4 +12,5 @@ rules:
   replace_nested_list_comps_with_linear_gen_exps: {}
   no_asserts_in_loop: {}
   do_not_use_magic_mock: {}
-  # identify_duplicated_code: {}
+  identify_duplicated_code: {}
+  assert_against_full_object: {}
