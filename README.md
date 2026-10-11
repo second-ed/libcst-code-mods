@@ -79,7 +79,8 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │       └── passive
     │           ├── assert_against_full_object
     │           ├── do_not_use_magic_mock
-    │           └── no_asserts_in_loop
+    │           ├── no_asserts_in_loop
+    │           └── parametrize_similar_tests
     └── test_examples
 
 (generated with repo-mapper-rs)

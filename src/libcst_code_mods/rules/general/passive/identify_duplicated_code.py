@@ -225,3 +225,11 @@ class _FingerprintTransformer(cst.CSTTransformer):
         self, _original_node: cst.FormattedString, _updated_node: cst.FormattedString
     ) -> cst.Name:
         return cst.Name("__literal_fstring__")
+
+    def visit_ConcatenatedString(self, _node: cst.ConcatenatedString) -> bool:  # noqa: N802
+        return False
+
+    def leave_ConcatenatedString(  # noqa: N802
+        self, _original_node: cst.ConcatenatedString, _updated_node: cst.ConcatenatedString
+    ) -> cst.Name:
+        return cst.Name("__literal_string__")
