@@ -17,6 +17,7 @@ TWO_DEPENDENCIES = 2
 PURE_BUILTIN_NAMES = frozenset(
     {
         "False",
+        "MappingProxyType",
         "None",
         "True",
         "abs",
@@ -38,6 +39,7 @@ PURE_BUILTIN_NAMES = frozenset(
         "max",
         "min",
         "next",
+        "object",
         "range",
         "set",
         "str",
