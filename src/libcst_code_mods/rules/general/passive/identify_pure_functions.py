@@ -13,7 +13,6 @@ from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._cst_utils import get_fqn, prepend_comment_to_function
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
-TWO_DEPENDENCIES = 2
 PURE_BUILTIN_NAMES = frozenset(
     {
         "False",
