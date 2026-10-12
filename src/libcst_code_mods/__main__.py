@@ -28,7 +28,9 @@ def main(inp_root: Path | str, config_path: Path | str | None = None, *, fix: bo
     config = yaml.safe_load(Path(config_path).read_text())
 
     refactoring_rules = [RULES[k].from_dict(v) for k, v in config.get("rules", {}).items() if k in RULES]
-    refactored_code, diagnostics = multi_file_refactor(root, paths, refactoring_rules=refactoring_rules, fix=fix)
+    refactored_code, diagnostics = multi_file_refactor(
+        root, paths, refactoring_rules=refactoring_rules, fix=fix, format_code=config.get("black_format", False)
+    )
 
     if diagnostics:
         print(json.dumps([diag.to_dict() for diag in diagnostics], indent=2))  # noqa: T201

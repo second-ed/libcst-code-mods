@@ -14,3 +14,4 @@ rules:
   do_not_use_magic_mock: {}
   identify_duplicated_code: {}
   assert_against_full_object: {}
+black_format: true
