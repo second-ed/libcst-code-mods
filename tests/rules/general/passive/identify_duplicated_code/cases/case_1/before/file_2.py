@@ -18,3 +18,9 @@ def transform_with_early_return(some_arg, guards):
     if not some_arg:
         return some_arg
     return some_arg.update(body=some_arg.body.update(body=[*res_a, guards, *some_arg.body.body[res_b:]]))
+
+
+def first(value) -> None:
+    """The function docstring."""
+    var1 = fn1(value)
+    fn2(var1)

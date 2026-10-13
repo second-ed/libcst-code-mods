@@ -14,6 +14,7 @@ from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.cst_context import CstContext
 from libcst_code_mods.core.diagnostics import AggregatedDiagnostic, Diagnostic
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
+from libcst_code_mods.rules._cst_utils import has_docstring
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 MIN_BLOCK_SIZE = 2
@@ -52,7 +53,11 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
     min_occurrences: int
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
-        for candidates in _iter_candidates(node.body):
+        function_body = node.body
+        if has_docstring(node) and isinstance(function_body, cst.IndentedBlock):
+            function_body = function_body.with_changes(body=function_body.body[1:])
+
+        for candidates in _iter_candidates(function_body):
             self._collect_candidate_blocks(candidates)
 
     def _collect_candidate_blocks(self, candidate: cst.IndentedBlock) -> None:

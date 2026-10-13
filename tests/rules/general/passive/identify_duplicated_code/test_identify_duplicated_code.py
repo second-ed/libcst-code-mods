@@ -43,6 +43,29 @@ PARENT = Path(__file__).parent
                 ),
                 AggregatedDiagnostic(
                     rule="identify_duplicated_code",
+                    fingerprint="__name_0__ = fn1(__name_1__)\nfn2(__name_0__)\n",
+                    block_size=2,
+                    diagnostics=(
+                        Diagnostic(
+                            rule="identify_duplicated_code",
+                            path=Path("before/file_1.py"),
+                            code_range=CodeRange(CodePosition(20, 4), CodePosition(21, 17)),
+                            code="some_var = fn1(val)\nfn2(some_var)",
+                            instead=None,
+                        ),
+                        Diagnostic(
+                            rule="identify_duplicated_code",
+                            path=Path("before/file_2.py"),
+                            code_range=CodeRange(CodePosition(25, 4), CodePosition(26, 13)),
+                            code="var1 = fn1(value)\nfn2(var1)",
+                            instead=None,
+                        ),
+                    ),
+                    extractable=True,
+                    extraction_reason=None,
+                ),
+                AggregatedDiagnostic(
+                    rule="identify_duplicated_code",
                     fingerprint="__name_0__, __name_1__ = fn_a(__name_2__)\nreturn __name_2__.update(body=__name_2__.body.update(body=[*__name_0__, __name_4__, *__name_2__.body.body[__name_1__:]]))\n",
                     block_size=2,
                     diagnostics=(
