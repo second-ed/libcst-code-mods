@@ -3,33 +3,32 @@ import json
 import sys
 from pathlib import Path
 
-import yaml
-
+from libcst_code_mods.config import RefactoringConfig
 from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.rules import RULES
 
 
-def cli() -> int:
+def cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("path", nargs="?", type=Path, default=Path.cwd())
-    parser.add_argument("--config-path", type=str)
+    parser.add_argument("--config-path", type=Path)
     parser.add_argument("--fix", action="store_true")
-    args = parser.parse_args()
+    parser.add_argument("--black-format", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--rule", action="append", choices=sorted(RULES))
+    args = parser.parse_args(argv)
 
-    return main(inp_root=args.path, config_path=args.config_path, fix=args.fix)
+    config = RefactoringConfig.from_file(
+        args.config_path, fix=args.fix, black_format=args.black_format, rule_names=args.rule
+    )
+    return main(inp_root=args.path, config=config)
 
 
-def main(inp_root: Path | str, config_path: Path | str | None = None, *, fix: bool = True) -> int:
+def main(inp_root: Path | str, config: RefactoringConfig) -> int:
     root, paths = _resolve_root_path(inp_root)
 
-    if config_path is None:
-        config_path = next(Path.cwd().glob("refactoring-rules-config.yaml"))
-
-    config = yaml.safe_load(Path(config_path).read_text())
-
-    refactoring_rules = [RULES[k].from_dict(v) for k, v in config.get("rules", {}).items() if k in RULES]
+    refactoring_rules = [RULES[k].from_dict(v) for k, v in config.rules.items() if k in RULES]
     refactored_code, diagnostics = multi_file_refactor(
-        root, paths, refactoring_rules=refactoring_rules, fix=fix, format_code=config.get("black_format", False)
+        root, paths, refactoring_rules=refactoring_rules, fix=config.fix, format_code=config.black_format
     )
 
     if diagnostics:

@@ -38,7 +38,6 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 ├── src
 │   └── libcst_code_mods
 │       ├── core
-│       ├── cst_builders
 │       └── rules
 │           ├── general                                                  # general python lints rather than specialised to a particular lib
 │           │   ├── active                                               # active rules require user configuration before running and run on a subset of entities

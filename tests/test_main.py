@@ -1,6 +1,7 @@
 from shutil import copytree
 
 from libcst_code_mods.__main__ import main
+from libcst_code_mods.config import RefactoringConfig
 from libcst_code_mods.constants import REPO_ROOT
 from tests.conftest import diff_code_lfs, paths_to_rows, rows_to_lf
 
@@ -14,7 +15,7 @@ def test_main(tmp_path) -> None:
     before_root = tmp_root / "before"
     after_root = tmp_root / "after"
 
-    main(before_root, config_path=config_path)
+    main(before_root, config=RefactoringConfig.from_file(config_path, fix=True))
 
     expected_paths = list(after_root.rglob("**/*.py"))
     actual_paths = list(before_root.rglob("**/*.py"))
