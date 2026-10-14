@@ -102,7 +102,7 @@ def _read_code(path: str) -> str:
 
 def create_examples(struct: dict[str, str]) -> list[str]:
     changes = _add_indent_to_examples(_get_changed_code(struct))
-    return [_add_indent(DOC_TEMP.format(**v)) for v in changes.values()]
+    return [_add_indent(DOC_TEMP.format(**v)) for v in changes.values() if v.get("before_code") and v.get("after_code")]
 
 
 def _get_changed_code(struct: dict[str, str]) -> dict[str, dict[str, str]]:
