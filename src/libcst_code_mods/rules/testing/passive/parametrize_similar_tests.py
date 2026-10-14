@@ -144,10 +144,9 @@ def _candidate(function: cst.FunctionDef) -> _TestCandidate | None:
 
 
 def _similar_groups(candidates: Iterable[_TestCandidate]) -> Iterable[tuple[_TestCandidate, ...]]:
-    grouped: dict[tuple[tuple[str, ...], str, bool], list[_TestCandidate]] = {}
+    grouped: dict[tuple[tuple[str, ...], str], list[_TestCandidate]] = {}
     for candidate in candidates:
-        key = (candidate.param_names, candidate.assertion_left, candidate.assertion_message is not None)
-        grouped.setdefault(key, []).append(candidate)
+        grouped.setdefault((candidate.param_names, candidate.assertion_left), []).append(candidate)
     return (tuple(group) for group in grouped.values() if len(group) >= MIN_SIMILAR_TESTS)
 
 
@@ -155,29 +154,30 @@ def _replacement(group: tuple[_TestCandidate, ...]) -> _Replacement:
     first = group[0]
     common_name = _common_test_name(candidate.name for candidate in group)
     param_names = (*first.param_names, "expected_result")
-    decorator_parameter_names = (*param_names, "assert_msg") if first.assertion_message is not None else param_names
+    has_assertion_message = any(candidate.assertion_message is not None for candidate in group)
+    generated_param_names = (*param_names, "assert_msg") if has_assertion_message else param_names
 
-    rows = map(partial(_create_pytest_param, first=first), group)
+    rows = map(partial(_create_pytest_param, has_assertion_message=has_assertion_message), group)
 
     return_annotation = f" -> {normalise(first.function.returns.annotation)}" if first.function.returns else ""
     code = (
         "@pytest.mark.parametrize(\n"
-        f"    ({', '.join(repr(name) for name in decorator_parameter_names)}),\n"
+        f"    ({', '.join(repr(name) for name in generated_param_names)}),\n"
         f"    [{', '.join(rows)}],\n"
         ")\n"
-        f"def {common_name}({', '.join(param_names)}){return_annotation}:\n"
-        f"    assert {first.assertion_left} == expected_result\n"
+        f"def {common_name}({', '.join(generated_param_names)}){return_annotation}:\n"
+        f"    assert {first.assertion_left} == expected_result{', assert_msg' if has_assertion_message else ''}\n"
     )
     return _Replacement(name=common_name, source_names=tuple(candidate.name for candidate in group), code=code)
 
 
-def _create_pytest_param(candidate: _TestCandidate, first: _TestCandidate) -> str:
+def _create_pytest_param(candidate: _TestCandidate, *, has_assertion_message: bool) -> str:
     params = ", ".join(
         (*candidate.param_values, candidate.expected_value, _assertion_message(candidate))
-        if first.assertion_message is not None
+        if has_assertion_message
         else (*candidate.param_values, candidate.expected_value)
     )
-    return f"pytest.param({params}, id={candidate.name[5:].replace('_', ' ')!r})"
+    return f"pytest.param({params}, id={candidate.name.removeprefix('test_').replace('_', ' ')!r})"
 
 
 def _common_test_name(names: Iterable[str]) -> str:
@@ -190,7 +190,7 @@ def _common_test_name(names: Iterable[str]) -> str:
 
 def _assertion_message(candidate: _TestCandidate) -> str:
     if candidate.assertion_message is None:
-        raise ValueError("The candidate must contain an assertion message")
+        return '"no assertion message provided"'
 
     message = candidate.assertion_message
     for name, value in zip(candidate.param_names, candidate.param_values, strict=True):

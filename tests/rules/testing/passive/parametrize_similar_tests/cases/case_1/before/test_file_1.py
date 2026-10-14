@@ -37,3 +37,9 @@ def test_div_with_negative_numbers() -> None:
     a = -6
     b = -2
     assert truediv(a, b) == -3, f"some other msg {a = } {b = }"
+
+
+def test_div_with_mix_of_positive_and_negative() -> None:
+    a = 12
+    b = -3
+    assert truediv(a, b) == -4

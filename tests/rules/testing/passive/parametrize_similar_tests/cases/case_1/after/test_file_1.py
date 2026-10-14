@@ -30,7 +30,8 @@ def test_unrelated_function() -> None:
     [
         pytest.param(12, 3, 4, f"should never fail a = 12 b = 3", id="div with positive numbers"),
         pytest.param(-6, -2, -3, f"some other msg a = -6 b = -2", id="div with negative numbers"),
+        pytest.param(12, -3, -4, "no assertion message provided", id="div with mix of positive and negative"),
     ],
 )
-def test_div_with(a, b, expected_result) -> None:
-    assert truediv(a, b) == expected_result
+def test_div_with(a, b, expected_result, assert_msg) -> None:
+    assert truediv(a, b) == expected_result, assert_msg
