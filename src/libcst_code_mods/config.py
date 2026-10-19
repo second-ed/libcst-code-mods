@@ -1,13 +1,13 @@
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Self
 
+import attrs
 import yaml
 
 CONFIG_FILENAME = "refactoring-rules-config.yaml"
 
 
-@dataclass(frozen=True, slots=True)
+@attrs.define(frozen=True)
 class RefactoringConfig:
     rules: dict[str, Any]
     fix: bool = True
