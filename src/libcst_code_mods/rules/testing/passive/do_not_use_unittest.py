@@ -13,6 +13,7 @@ from libcst_code_mods.rules._rule_mapping import (
     register_rule_transformer,
     register_rule_visitor,
 )
+from libcst_code_mods.rules.testing.passive._utils import in_test_file
 
 
 @register_rule
@@ -27,17 +28,14 @@ class DoNotUseUnittestVisitor(BaseCstVisitor):
     METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (cst.metadata.PositionProvider,)
 
     def visit_Import(self, node: cst.Import) -> bool | None:  # noqa: N802
-        if any(_starts_with_unittest(alias.name) for alias in node.names):
-            self._add_diagnostic(node)
+        if in_test_file(self.path) and any(_starts_with_unittest(alias.name) for alias in node.names):
+            self.add_diagnostic(node, RULE_NAME_MAPPING[self.__class__], "Use pytest instead of unittest")
         return super().visit_Import(node)
 
     def visit_ImportFrom(self, node: cst.ImportFrom) -> bool | None:  # noqa: N802
-        if node.module is not None and _starts_with_unittest(node.module):
-            self._add_diagnostic(node)
+        if in_test_file(self.path) and node.module is not None and _starts_with_unittest(node.module):
+            self.add_diagnostic(node, RULE_NAME_MAPPING[self.__class__], "Use pytest instead of unittest")
         return super().visit_ImportFrom(node)
-
-    def _add_diagnostic(self, node: cst.Import | cst.ImportFrom) -> None:
-        self.add_diagnostic(node, RULE_NAME_MAPPING[self.__class__], "Use pytest instead of unittest")
 
 
 def _starts_with_unittest(node: cst.BaseExpression) -> bool:

@@ -21,14 +21,14 @@ PARENT = Path(__file__).parent
             [
                 Diagnostic(
                     rule="do_not_use_unittest",
-                    path=Path("before/file_1.py"),
+                    path=Path("before/test_file_1.py"),
                     code_range=CodeRange(CodePosition(1, 0), CodePosition(1, 15)),
                     code="import unittest",
                     instead="Use pytest instead of unittest",
                 ),
                 Diagnostic(
                     rule="do_not_use_unittest",
-                    path=Path("before/file_1.py"),
+                    path=Path("before/test_file_1.py"),
                     code_range=CodeRange(CodePosition(2, 0), CodePosition(2, 31)),
                     code="from unittest.mock import patch",
                     instead="Use pytest instead of unittest",

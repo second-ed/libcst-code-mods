@@ -79,6 +79,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │       └── passive
     │           ├── assert_against_full_object
     │           ├── do_not_use_magic_mock
+    │           ├── do_not_use_test_classes
     │           ├── do_not_use_unittest
     │           ├── no_asserts_in_loop
     │           └── parametrize_similar_tests
