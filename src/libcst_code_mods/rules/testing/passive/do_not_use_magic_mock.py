@@ -18,7 +18,7 @@ from libcst_code_mods.rules.testing.passive._utils import in_test
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class DoNotUseMagicMock(RefactoringRule):
     pass
 

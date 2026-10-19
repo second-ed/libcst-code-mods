@@ -8,7 +8,7 @@ import libcst as cst
 import libcst.matchers as m
 
 
-@attrs.define(frozen=True)
+@attrs.frozen
 class NodeMetadata:
     node: cst.CSTNode = attrs.field(repr=False)
     position: cst.metadata.CodeRange

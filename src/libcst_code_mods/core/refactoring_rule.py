@@ -5,7 +5,7 @@ from typing import Self
 import attrs
 
 
-@attrs.define(frozen=True)
+@attrs.frozen
 class RefactoringRule:
     @classmethod
     def from_dict(cls, data: dict) -> Self:

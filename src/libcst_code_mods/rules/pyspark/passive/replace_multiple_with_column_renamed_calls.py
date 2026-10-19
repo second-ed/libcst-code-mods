@@ -14,7 +14,7 @@ from ._replace_multiple_with_column_calls import update_multiple_with_column_cal
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class ReplaceMultipleWithColumnRenamedCalls(RefactoringRule):
     """Examples:
 

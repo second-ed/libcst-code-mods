@@ -4,7 +4,7 @@ import attrs
 from libcst.metadata import CodeRange
 
 
-@attrs.define(frozen=True)
+@attrs.frozen
 class Diagnostic:
     rule: str
     path: Path
@@ -27,7 +27,7 @@ class Diagnostic:
         return diagnostic
 
 
-@attrs.define(frozen=True)
+@attrs.frozen
 class AggregatedDiagnostic:
     rule: str
     fingerprint: str

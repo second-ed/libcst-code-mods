@@ -52,7 +52,7 @@ KNOWN_IMPURE_NAMES = frozenset({"open"})
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class IdentifyPureFunctions(RefactoringRule):
     '''Examples:
 

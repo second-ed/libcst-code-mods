@@ -10,7 +10,7 @@ from libcst_code_mods.rules.general.passive._dataclass_decorator_utils import ma
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class DataclassesShouldHaveSlots(RefactoringRule):
     """Examples:
 

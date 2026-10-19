@@ -26,7 +26,7 @@ MIN_ASSERTION_GROUP_SIZE = 2
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class AssertAgainstFullObject(RefactoringRule):
     pass
 

@@ -8,7 +8,7 @@ import attrs
 from libcst_code_mods.core.diagnostics import Diagnostic
 
 
-@attrs.define(frozen=True)
+@attrs.frozen
 class CstContext:
     root: Path
     paths: set[str] = attrs.field(factory=set)

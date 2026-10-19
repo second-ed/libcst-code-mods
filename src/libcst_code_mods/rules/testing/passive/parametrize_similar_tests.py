@@ -41,7 +41,7 @@ IMPORT_STATEMENT = m.SimpleStatementLine(body=[m.OneOf(m.Import(), m.ImportFrom(
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class ParametrizeSimilarTests(RefactoringRule):
     pass
 
@@ -92,7 +92,7 @@ class ParametrizeSimilarTestsTransformer(BaseCstTransformer):
         return updated_node.with_changes(body=body)
 
 
-@attrs.define(frozen=True)
+@attrs.frozen
 class _TestCandidate:
     function: cst.FunctionDef
     name: str
@@ -103,7 +103,7 @@ class _TestCandidate:
     assertion_message: str | None
 
 
-@attrs.define(frozen=True)
+@attrs.frozen
 class _Replacement:
     name: str
     source_names: tuple[str, ...]

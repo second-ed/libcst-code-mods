@@ -7,7 +7,7 @@ import yaml
 CONFIG_FILENAME = "refactoring-rules-config.yaml"
 
 
-@attrs.define(frozen=True)
+@attrs.frozen
 class RefactoringConfig:
     rules: dict[str, Any]
     fix: bool = True

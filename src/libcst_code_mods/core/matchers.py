@@ -7,7 +7,7 @@ import libcst as cst
 import libcst.matchers as m
 
 
-@attrs.define(frozen=True)
+@attrs.frozen
 class HasAny:
     match_cond: m.BaseMatcherNode
 

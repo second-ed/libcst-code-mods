@@ -21,7 +21,7 @@ from libcst_code_mods.rules._rule_mapping import (
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class MethodDoesNotUseSelf(RefactoringRule):
     pass
 

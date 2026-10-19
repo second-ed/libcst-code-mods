@@ -11,7 +11,7 @@ from ._replace_with_column_in_for_loop import for_loop_matcher, update_with_colu
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class ReplaceWithColumnInForLoop(RefactoringRule):
     """Examples:
 

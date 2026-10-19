@@ -23,7 +23,7 @@ MIN_OCCURRENCES = 3
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class IdentifyDuplicatedCode(RefactoringRule):
     min_block_size: int = 2
     max_block_size: int = 5
