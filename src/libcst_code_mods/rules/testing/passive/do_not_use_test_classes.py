@@ -27,7 +27,7 @@ class DoNotUseTestClasses(RefactoringRule):
 class DoNotUseTestClassesVisitor(BaseCstVisitor):
     METADATA_DEPENDENCIES: ClassVar[Collection[cst.metadata.ProviderT]] = (cst.metadata.PositionProvider,)
 
-    def visit_ClassDef(self, node: cst.ClassDef) -> bool:  # noqa: N802
+    def visit_ClassDef(self, node: cst.ClassDef) -> bool | None:  # noqa: N802
         if in_test_file(self.path) and node.name.value.startswith("Test"):
             self.add_diagnostic(node, RULE_NAME_MAPPING[self.__class__], "use a parametrized pytest function instead")
         return super().visit_ClassDef(node)
