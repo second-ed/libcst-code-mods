@@ -7,11 +7,13 @@ from libcst_code_mods.rules.general.active.remove_kwargs_if_default_value import
 from libcst_code_mods.rules.general.active.reorder_params import ReorderParams
 from libcst_code_mods.rules.general.passive.assignment_then_guard_to_walrus import AssignmentThenGuardToWalrus
 from libcst_code_mods.rules.general.passive.dataclasses_should_be_frozen import DataclassesShouldBeFrozen
+from libcst_code_mods.rules.general.passive.dataclasses_should_have_slots import DataclassesShouldHaveSlots
 from libcst_code_mods.rules.general.passive.identify_duplicated_code import IdentifyDuplicatedCode
 from libcst_code_mods.rules.general.passive.identify_pure_functions import IdentifyPureFunctions
 from libcst_code_mods.rules.general.passive.inline_short_single_use_variables import InlineShortSingleUseVariables
 from libcst_code_mods.rules.general.passive.invert_guards import InvertGuards
 from libcst_code_mods.rules.general.passive.invert_loop_guards import InvertLoopGuards
+from libcst_code_mods.rules.general.passive.method_does_not_use_self import MethodDoesNotUseSelf
 from libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus import (
     ReplaceMultipleFunctionCallsInCompWithWalrus,
 )
@@ -31,7 +33,10 @@ from libcst_code_mods.rules.pyspark.passive.replace_with_column_renamed_in_for_l
 )
 from libcst_code_mods.rules.testing.passive.assert_against_full_object import AssertAgainstFullObject
 from libcst_code_mods.rules.testing.passive.do_not_use_magic_mock import DoNotUseMagicMock
+from libcst_code_mods.rules.testing.passive.do_not_use_test_classes import DoNotUseTestClasses
+from libcst_code_mods.rules.testing.passive.do_not_use_unittest import DoNotUseUnittest
 from libcst_code_mods.rules.testing.passive.no_asserts_in_loop import NoAssertsInLoop
+from libcst_code_mods.rules.testing.passive.parametrize_similar_tests import ParametrizeSimilarTests
 
 __all__ = [
     "RULES",
@@ -42,13 +47,18 @@ __all__ = [
     "AssignmentThenGuardToWalrus",
     "ConvertFunctionSignature",
     "DataclassesShouldBeFrozen",
+    "DataclassesShouldHaveSlots",
     "DoNotUseMagicMock",
+    "DoNotUseTestClasses",
+    "DoNotUseUnittest",
     "IdentifyDuplicatedCode",
     "IdentifyPureFunctions",
     "InlineShortSingleUseVariables",
     "InvertGuards",
     "InvertLoopGuards",
+    "MethodDoesNotUseSelf",
     "NoAssertsInLoop",
+    "ParametrizeSimilarTests",
     "RemoveKwargsIfDefaultValue",
     "ReorderParams",
     "ReplaceMultipleFunctionCallsInCompWithWalrus",

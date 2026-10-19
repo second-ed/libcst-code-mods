@@ -7,7 +7,7 @@ import yaml
 CONFIG_FILENAME = "refactoring-rules-config.yaml"
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class RefactoringConfig:
     rules: dict[str, Any]
     fix: bool = True
