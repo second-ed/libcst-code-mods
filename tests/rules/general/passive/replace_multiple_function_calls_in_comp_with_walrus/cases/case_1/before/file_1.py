@@ -14,3 +14,7 @@ def should_replace_multiple_function_calls_with_nested_call_in_cond(
     xs: Iterable, f: Callable, g: Callable
 ) -> list[Any]:
     return [f(x) for x in xs if g(f(x))]
+
+
+def should_not_replace_when_the_filter_does_not_use_the_element_call(xs: Iterable, f: Callable) -> list[Any]:
+    return [f(x) for x in xs if x]

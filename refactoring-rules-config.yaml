@@ -1,17 +1,28 @@
 rules:
-  assignment_then_guard_to_walrus: {}
-  dataclasses_should_have_slots: {}
-  # identify_pure_functions: {}
+  replace_nested_list_comps_with_linear_gen_exps: {}
+  replace_multiple_function_calls_in_comp_with_walrus: {}
   inline_short_single_use_variables: {}
+  dataclasses_should_have_slots: {}
   invert_loop_guards: {}
   invert_guards: {}
+  identify_duplicated_code: {}
   replace_mutable_defaults_with_guard_clause: {}
+  assignment_then_guard_to_walrus: {}
+  method_does_not_use_self:
+    ignore_patterns:
+      - name: visit_*
+        parameters: 1
+      - name: leave_*
+        parameters: 2
+  # identify_pure_functions: {}
+  replace_with_column_in_for_loop: {}
   replace_multiple_with_column_renamed_calls: {}
   replace_multiple_with_column_calls: {}
-  replace_with_column_in_for_loop: {}
-  replace_nested_list_comps_with_linear_gen_exps: {}
-  no_asserts_in_loop: {}
-  do_not_use_magic_mock: {}
-  identify_duplicated_code: {}
+  replace_with_column_renamed_in_for_loop: {}
+  do_not_use_unittest: {}
+  do_not_use_test_classes: {}
+  parametrize_similar_tests: {}
   assert_against_full_object: {}
-black_format: true
+  do_not_use_magic_mock: {}
+  no_asserts_in_loop: {}
+black_format: false

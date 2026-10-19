@@ -28,7 +28,8 @@ PARENT = Path(__file__).parent
                     instead="use a free floating function if the method doesn't need to be attached to the object",
                 )
             ],
-        )
+        ),
+        pytest.param("case_2", [MethodDoesNotUseSelf(ignore_patterns=({"name": "handle_*", "parameters": 1},))], []),
     ],
 )
 def test_method_does_not_use_self(case_name, transformers, expected_diagnostics) -> None:

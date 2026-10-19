@@ -81,7 +81,7 @@ LIST_COMP_MATCHER = m.ListComp(
 @attrs.define
 class ReplaceMultipleFunctionCallsInCompWithWalrusVisitor(BaseCstVisitor):
     def visit_ListComp(self, node: cst.ListComp) -> bool | None:  # noqa: N802
-        if m.matches(node, LIST_COMP_MATCHER):
+        if _extract_matching_calls(node) is not None:
             self.context.paths.add(self.path)
         return super().visit_ListComp(node)
 
@@ -91,7 +91,7 @@ class ReplaceMultipleFunctionCallsInCompWithWalrusVisitor(BaseCstVisitor):
 class ReplaceMultipleFunctionCallsInCompWithWalrusTransformer(BaseCstTransformer):
     def leave_ListComp(self, original_node: cst.ListComp, updated_node: cst.ListComp) -> cst.ListComp:  # noqa: N802
 
-        if (extracted := m.extract(original_node, LIST_COMP_MATCHER)) is None:
+        if (extracted := _extract_matching_calls(original_node)) is None:
             return updated_node
 
         elt = extracted["elt_call"]
@@ -102,6 +102,15 @@ class ReplaceMultipleFunctionCallsInCompWithWalrusTransformer(BaseCstTransformer
         new_for = updated_node.for_in.with_changes(ifs=[cst.CompIf(test=new_cond)])
 
         return updated_node.with_changes(elt=tmp, for_in=new_for)
+
+
+def _extract_matching_calls(node: cst.ListComp) -> dict[str, cst.Call] | None:
+    if (extracted := m.extract(node, LIST_COMP_MATCHER)) is None:
+        return None
+    if not any(call.deep_equals(extracted["elt_call"]) for call in m.findall(extracted["if_cond"], m.Call())):
+        return None
+
+    return extracted
 
 
 @attrs.define

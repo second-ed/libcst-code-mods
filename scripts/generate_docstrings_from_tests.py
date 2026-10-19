@@ -42,10 +42,14 @@ def main(src_root: Path = REPO_ROOT / "src/libcst_code_mods/rules", test_root: P
         _paths_to_df(test_root)
         .filter(pl.col("path_parts").list.len() > 1)
         .pipe(_add_domain_and_active_cols)
-        .with_columns(before_or_after=pl.col("path_parts").list.get(-2), rule_name=pl.col("path_parts").list.get(2))
+        .with_columns(
+            before_or_after=pl.col("path_parts").list.get(-2),
+            case_name=pl.col("path_parts").list.get(-3),
+            rule_name=pl.col("path_parts").list.get(2),
+        )
         .filter(pl.col("basename").is_in(["file_1.py", "file_2.py"]))
-        .select("rule_name", "basename", "before_or_after", "path")
-        .pivot(on="before_or_after", index=["rule_name", "basename"], values="path")
+        .select("rule_name", "case_name", "basename", "before_or_after", "path")
+        .pivot(on="before_or_after", index=["rule_name", "case_name", "basename"], values="path")
         .select("rule_name", "before", "after")
     )
 
