@@ -22,11 +22,11 @@ RULES: dict[str, type[RefactoringRule]] = {}
 
 
 def register_rule(cls: type[RefactoringRule]) -> type[RefactoringRule]:
-    RULES[camel_to_snake(cls.__name__)] = cls
+    RULES[_camel_to_snake(cls.__name__)] = cls
     return cls
 
 
-def camel_to_snake(name: str) -> str:
+def _camel_to_snake(name: str) -> str:
     return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
 
 
@@ -49,7 +49,7 @@ def register_rule_visitor(
         cls: type[BaseCstTransformer] | type[BaseCstVisitor],
     ) -> type[BaseCstTransformer] | type[BaseCstVisitor]:
         RULE_MAPPING[rule]["visitor_factory"] = cls
-        RULE_NAME_MAPPING[cls] = camel_to_snake(rule.__name__)
+        RULE_NAME_MAPPING[cls] = _camel_to_snake(rule.__name__)
         return cls
 
     return wrapper

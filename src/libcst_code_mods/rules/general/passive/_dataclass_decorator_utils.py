@@ -12,10 +12,10 @@ def make_decorator_arg_true(decorator: cst.Decorator, arg_name: str) -> cst.Deco
 
     call: cst.Call = matched["call"]
 
-    return decorator.with_changes(decorator=call.with_changes(args=extract_args(call, arg_name)))
+    return decorator.with_changes(decorator=call.with_changes(args=_extract_args(call, arg_name)))
 
 
-def extract_args(call: cst.Call, arg_name: str) -> list[cst.Arg]:
+def _extract_args(call: cst.Call, arg_name: str) -> list[cst.Arg]:
     if any(m.matches(arg, m.Arg(keyword=m.Name(arg_name), value=m.DoNotCare())) for arg in call.args):
         return [
             (

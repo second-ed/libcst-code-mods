@@ -24,7 +24,7 @@ def invert_condition(expr: cst.BaseExpression) -> cst.BaseExpression:
         return expr.expression
 
     if m.matches(expr, m.Comparison()):
-        return invert_comparison(expr)
+        return _invert_comparison(expr)
 
     return cst.UnaryOperation(operator=cst.Not(), expression=expr)
 
@@ -39,7 +39,7 @@ COMPARISON_INVERSES = {
 }
 
 
-def invert_comparison(expr: cst.Comparison) -> cst.BaseExpression:
+def _invert_comparison(expr: cst.Comparison) -> cst.BaseExpression:
     if len(expr.comparisons) != 1:
         return cst.UnaryOperation(operator=cst.Not(), expression=expr)
 

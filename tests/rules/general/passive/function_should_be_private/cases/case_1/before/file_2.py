@@ -1,0 +1,4 @@
+from .file_1 import public_function_used_by_another_module_stays_public
+
+
+public_result_from_another_module = public_function_used_by_another_module_stays_public(2)

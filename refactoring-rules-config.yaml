@@ -1,7 +1,10 @@
 rules:
   replace_nested_list_comps_with_linear_gen_exps: {}
   replace_multiple_function_calls_in_comp_with_walrus: {}
-  function_should_be_private: {}
+  function_should_be_private:
+    ignore_function_names:
+      - main
+      - cli
   inline_short_single_use_variables: {}
   dataclasses_should_have_slots: {}
   invert_loop_guards: {}

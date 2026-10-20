@@ -4,7 +4,7 @@ from libcst.metadata.wrapper import MetadataWrapper
 
 import libcst_code_mods.core.matchers as mat
 from libcst_code_mods.constants import REPO_ROOT
-from libcst_code_mods.engine import get_manager
+from libcst_code_mods.engine import _get_manager
 from libcst_code_mods.node_collector import NodeCollector, NodeMetadata
 
 MATCHER_TEST_ROOT = f"{REPO_ROOT}/tests/test_examples"
@@ -12,7 +12,7 @@ MATCHER_TEST_ROOT = f"{REPO_ROOT}/tests/test_examples"
 
 @pytest.fixture(scope="session")
 def test_manager():
-    return get_manager(MATCHER_TEST_ROOT)
+    return _get_manager(MATCHER_TEST_ROOT)
 
 
 @pytest.fixture

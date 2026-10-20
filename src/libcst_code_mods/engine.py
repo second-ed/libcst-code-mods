@@ -29,7 +29,7 @@ def multi_file_refactor(  # noqa: PLR0913
 ) -> tuple[dict[Path, str], list[Diagnostic]]:
     rule_mapping = rule_mapping if rule_mapping is not None else RULE_MAPPING
     immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule] = make_rule_mapping_immutable(rule_mapping)
-    manager = get_manager(str(root), paths)
+    manager = _get_manager(str(root), paths)
     contexts: dict[type[RefactoringRule], CstContext] = {
         type(refactoring_rule): CstContext(Path(root).resolve(), data=refactoring_rule.to_dict())
         for refactoring_rule in refactoring_rules
@@ -107,6 +107,6 @@ def _collect_context(
     return []
 
 
-def get_manager(root: str, paths: Iterable[Path] | None = None) -> FullRepoManager:
+def _get_manager(root: str, paths: Iterable[Path] | None = None) -> FullRepoManager:
     paths = paths if paths is not None else Path(root).rglob("**/*.py")
     return FullRepoManager(root, paths=list(map(str, paths)), providers=METADATA_DEPS)
