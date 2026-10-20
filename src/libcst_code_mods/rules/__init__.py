@@ -8,6 +8,10 @@ from libcst_code_mods.rules.general.active.reorder_params import ReorderParams
 from libcst_code_mods.rules.general.passive.assignment_then_guard_to_walrus import AssignmentThenGuardToWalrus
 from libcst_code_mods.rules.general.passive.dataclasses_should_be_frozen import DataclassesShouldBeFrozen
 from libcst_code_mods.rules.general.passive.dataclasses_should_have_slots import DataclassesShouldHaveSlots
+from libcst_code_mods.rules.general.passive.do_not_use_private_functions_in_another_module import (
+    DoNotUsePrivateFunctionsInAnotherModule,
+)
+from libcst_code_mods.rules.general.passive.function_should_be_private import FunctionShouldBePrivate
 from libcst_code_mods.rules.general.passive.identify_duplicated_code import IdentifyDuplicatedCode
 from libcst_code_mods.rules.general.passive.identify_pure_functions import IdentifyPureFunctions
 from libcst_code_mods.rules.general.passive.inline_short_single_use_variables import InlineShortSingleUseVariables
@@ -49,8 +53,10 @@ __all__ = [
     "DataclassesShouldBeFrozen",
     "DataclassesShouldHaveSlots",
     "DoNotUseMagicMock",
+    "DoNotUsePrivateFunctionsInAnotherModule",
     "DoNotUseTestClasses",
     "DoNotUseUnittest",
+    "FunctionShouldBePrivate",
     "IdentifyDuplicatedCode",
     "IdentifyPureFunctions",
     "InlineShortSingleUseVariables",
