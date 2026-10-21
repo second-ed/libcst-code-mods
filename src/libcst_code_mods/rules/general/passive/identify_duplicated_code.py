@@ -9,13 +9,12 @@ import libcst as cst
 import libcst.matchers as m
 from libcst.metadata import CodeRange, PositionProvider
 
-from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.cst_context import CstContext
 from libcst_code_mods.core.diagnostics import AggregatedDiagnostic, Diagnostic
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._cst_utils import has_docstring
-from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
+from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_visitor
 
 MIN_BLOCK_SIZE = 2
 # WET
@@ -117,12 +116,6 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
         if top_n := context.data.get("top_n"):
             agg_diagnostics = agg_diagnostics[:top_n]
         return agg_diagnostics
-
-
-@register_rule_transformer(IdentifyDuplicatedCode)
-@attrs.define
-class IdentifyDuplicatedCodeTransformer(BaseCstTransformer):
-    pass
 
 
 def _iter_candidates(node: cst.CSTNode) -> Iterator[cst.IndentedBlock]:

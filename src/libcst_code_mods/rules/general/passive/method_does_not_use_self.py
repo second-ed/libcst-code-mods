@@ -10,17 +10,11 @@ import libcst as cst
 import libcst.matchers as m
 from libcst.metadata import PositionProvider
 
-from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.diagnostics import Diagnostic, relative_path
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._cst_utils import normalise
-from libcst_code_mods.rules._rule_mapping import (
-    RULE_NAME_MAPPING,
-    register_rule,
-    register_rule_transformer,
-    register_rule_visitor,
-)
+from libcst_code_mods.rules._rule_mapping import RULE_NAME_MAPPING, register_rule, register_rule_visitor
 
 
 @attrs.frozen
@@ -81,12 +75,6 @@ class MethodDoesNotUseSelfVisitor(BaseCstVisitor):
 
     def leave_FunctionDef(self, original_node: cst.FunctionDef) -> None:  # noqa: N802 ARG002
         self.function_depth -= 1
-
-
-@register_rule_transformer(MethodDoesNotUseSelf)
-@attrs.define
-class MethodDoesNotUseSelfTransformer(BaseCstTransformer):
-    pass
 
 
 def _has_self_parameter(node: cst.FunctionDef) -> bool:

@@ -9,17 +9,11 @@ import libcst as cst
 import libcst.matchers as m
 from libcst.metadata import CodeRange, PositionProvider
 
-from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.diagnostics import Diagnostic, relative_path
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._cst_utils import normalise
-from libcst_code_mods.rules._rule_mapping import (
-    RULE_NAME_MAPPING,
-    register_rule,
-    register_rule_transformer,
-    register_rule_visitor,
-)
+from libcst_code_mods.rules._rule_mapping import RULE_NAME_MAPPING, register_rule, register_rule_visitor
 from libcst_code_mods.rules.testing.passive._utils import in_test
 
 MIN_ASSERTION_GROUP_SIZE = 2
@@ -55,12 +49,6 @@ class AssertAgainstFullObjectVisitor(BaseCstVisitor):
                 instead="Assert against the entire object, not one of its attributes or subscripts.",
             )
         )
-
-
-@register_rule_transformer(AssertAgainstFullObject)
-@attrs.define
-class AssertAgainstFullObjectTransformer(BaseCstTransformer):
-    pass
 
 
 def _assertion_groups(

@@ -6,17 +6,11 @@ import attrs
 import libcst as cst
 from libcst.metadata import PositionProvider, QualifiedNameSource
 
-from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.diagnostics import Diagnostic, relative_path
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._cst_utils import normalise
-from libcst_code_mods.rules._rule_mapping import (
-    RULE_NAME_MAPPING,
-    register_rule,
-    register_rule_transformer,
-    register_rule_visitor,
-)
+from libcst_code_mods.rules._rule_mapping import RULE_NAME_MAPPING, register_rule, register_rule_visitor
 
 
 @register_rule
@@ -52,9 +46,3 @@ class DoNotUsePrivateFunctionsInAnotherModuleVisitor(BaseCstVisitor):
             )
 
         return super().visit_Call(node)
-
-
-@register_rule_transformer(DoNotUsePrivateFunctionsInAnotherModule)
-@attrs.define
-class DoNotUsePrivateFunctionsInAnotherModuleTransformer(BaseCstTransformer):
-    pass

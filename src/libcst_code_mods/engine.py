@@ -72,6 +72,9 @@ def multi_file_refactor(  # noqa: PLR0913
 
             cst_rule = immutable_rule_mapping[type(refactoring_rule)]
 
+            if cst_rule.transformer_factory is None:
+                continue
+
             module = wrapper.visit(cst_rule.transformer_factory.from_context(rule_context))
             wrapper = cst.MetadataWrapper(module, cache=wrapper._cache)  # noqa: SLF001
 

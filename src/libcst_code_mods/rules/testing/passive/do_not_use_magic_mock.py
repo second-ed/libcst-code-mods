@@ -5,15 +5,9 @@ import attrs
 import libcst as cst
 import libcst.matchers as m
 
-from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
-from libcst_code_mods.rules._rule_mapping import (
-    RULE_NAME_MAPPING,
-    register_rule,
-    register_rule_transformer,
-    register_rule_visitor,
-)
+from libcst_code_mods.rules._rule_mapping import RULE_NAME_MAPPING, register_rule, register_rule_visitor
 from libcst_code_mods.rules.testing.passive._utils import in_test
 
 
@@ -47,9 +41,3 @@ class DoNotUseMagicMockVisitor(BaseCstVisitor):
             )
 
         return super().visit_Call(node)
-
-
-@register_rule_transformer(DoNotUseMagicMock)
-@attrs.define
-class DoNotUseMagicMockTransformer(BaseCstTransformer):
-    pass

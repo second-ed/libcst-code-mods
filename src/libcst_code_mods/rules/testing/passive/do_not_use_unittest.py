@@ -4,15 +4,9 @@ from typing import ClassVar
 import attrs
 import libcst as cst
 
-from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
-from libcst_code_mods.rules._rule_mapping import (
-    RULE_NAME_MAPPING,
-    register_rule,
-    register_rule_transformer,
-    register_rule_visitor,
-)
+from libcst_code_mods.rules._rule_mapping import RULE_NAME_MAPPING, register_rule, register_rule_visitor
 from libcst_code_mods.rules.testing.passive._utils import in_test_file
 
 
@@ -41,9 +35,3 @@ class DoNotUseUnittestVisitor(BaseCstVisitor):
 def _starts_with_unittest(node: cst.BaseExpression) -> bool:
     name = cst.helpers.get_full_name_for_node(node)
     return name is not None and (name == "unittest" or name.startswith("unittest."))
-
-
-@register_rule_transformer(DoNotUseUnittest)
-@attrs.define
-class DoNotUseUnittestTransformer(BaseCstTransformer):
-    pass

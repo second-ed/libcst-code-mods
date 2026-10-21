@@ -8,5 +8,5 @@ from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 
 @attrs.frozen
 class CstRule:
-    transformer_factory: type[BaseCstTransformer]
     visitor_factory: type[BaseCstVisitor] | None = None
+    transformer_factory: type[BaseCstTransformer] | None = None
