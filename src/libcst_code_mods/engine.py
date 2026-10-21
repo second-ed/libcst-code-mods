@@ -57,6 +57,21 @@ def multi_file_refactor(  # noqa: PLR0913
     if not fix:
         return {}, list(dict.fromkeys(diagnostics))
 
+    return _run_transformers(
+        paths, refactoring_rules, immutable_rule_mapping, manager, contexts, diagnostics, format_code=format_code
+    )
+
+
+def _run_transformers(  # noqa: PLR0913
+    paths: list[Path],
+    refactoring_rules: list[RefactoringRule],
+    immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule],
+    manager: FullRepoManager,
+    contexts: dict[type[RefactoringRule], CstContext],
+    diagnostics: list[Diagnostic],
+    *,
+    format_code: bool,
+) -> tuple[dict[Path, str], list[Diagnostic]]:
     refactored_code = {}
 
     for path in paths:
@@ -70,9 +85,7 @@ def multi_file_refactor(  # noqa: PLR0913
             if str_path not in rule_context.paths:
                 continue
 
-            cst_rule = immutable_rule_mapping[type(refactoring_rule)]
-
-            if cst_rule.transformer_factory is None:
+            if (cst_rule := immutable_rule_mapping[type(refactoring_rule)]).transformer_factory is None:
                 continue
 
             module = wrapper.visit(cst_rule.transformer_factory.from_context(rule_context))

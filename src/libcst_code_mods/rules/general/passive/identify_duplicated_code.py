@@ -6,7 +6,6 @@ from typing import ClassVar
 
 import attrs
 import libcst as cst
-import libcst.matchers as m
 from libcst.metadata import CodeRange, PositionProvider
 
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
@@ -66,19 +65,20 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
         for block_size in range(self.min_block_size, min(self.max_block_size, n_statements) + 1):
             for start in range(n_statements - block_size + 1):
                 block = tuple(statements[start : start + block_size])
-                extraction_status, extraction_reason = _extraction_status(block)
+                fingerprint, extraction_status = _analyse_block(block)
                 if not extraction_status:
                     continue
-                diagnostic = Diagnostic(
-                    "identify_duplicated_code",
-                    Path(self.path).relative_to(self.context.root),
-                    _code_range(self, block),
-                    cst.Module(body=list(block)).code,
-                )
+
                 (
                     self.context.data.setdefault("duplicated_code_blocks", {})
-                    .setdefault((_fingerprint(block), block_size), [])
-                    .append((diagnostic, extraction_status, extraction_reason))
+                    .setdefault((fingerprint, block_size), [])
+                    .append(
+                        _Candidate(
+                            path=Path(self.path).relative_to(self.context.root),
+                            code_range=_code_range(self, block),
+                            block=block,
+                        )
+                    )
                 )
                 self.context.paths.add(self.path)
 
@@ -89,9 +89,7 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
                 f"IdentifyDuplicatedCodeVisitor requires an IdentifyDuplicatedCode rule object. Got: {rule = }"
             )
 
-        groups: dict[tuple[str, int], list[tuple[Diagnostic, bool, str | None]]] = context.data.get(
-            "duplicated_code_blocks", {}
-        )
+        groups: dict[tuple[str, int], list[_Candidate]] = context.data.get("duplicated_code_blocks", {})
 
         agg_diagnostics = []
 
@@ -99,14 +97,24 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
             if len(entries) < rule.min_occurrences:
                 continue
 
+            diagnostics = tuple(
+                Diagnostic(
+                    rule="identify_duplicated_code",
+                    path=entry.path,
+                    code_range=entry.code_range,
+                    code=cst.Module(body=list(entry.block)).code,
+                )
+                for entry in entries
+            )
+
             agg_diagnostics.append(
                 AggregatedDiagnostic(
                     rule="identify_duplicated_code",
                     fingerprint=fingerprint,
                     block_size=block_size,
-                    diagnostics=tuple(entry[0] for entry in entries),
-                    extractable=all(entry[1] for entry in entries),
-                    extraction_reason=next((entry[2] for entry in entries if entry[2]), None),
+                    diagnostics=diagnostics,
+                    extractable=True,
+                    extraction_reason=None,
                 )
             )
 
@@ -134,29 +142,26 @@ def _code_range(visitor: BaseCstVisitor, block: tuple[cst.BaseStatement, ...]) -
     return CodeRange(start=start.start, end=end.end)
 
 
-def _fingerprint(block: tuple[cst.BaseStatement, ...]) -> str:
-    collector = _NameUsageCollector()
-    for statement in block:
-        statement.visit(collector)
-
-    transformed = cst.Module(body=list(block)).visit(
-        _FingerprintTransformer(collector.call_target_ids, collector.keyword_ids, collector.attribute_ids)
-    )
-    return transformed.code
+@attrs.frozen
+class _Candidate:
+    path: Path
+    code_range: CodeRange
+    block: tuple[cst.BaseStatement, ...]
 
 
-def _extraction_status(block: tuple[cst.BaseStatement, ...]) -> tuple[bool, str | None]:
-    module = cst.Module(body=list(block))
-    returns = m.findall(module, m.Return())
-    if returns and not _has_single_final_return(block, returns):
-        return False, "The block contains a nested or non-final return statement."
-    if m.findall(module, m.Yield()):
-        return False, "The block contains a yield statement."
-    if m.findall(module, m.OneOf(m.Break(), m.Continue())) and not any(
+def _analyse_block(block: tuple[cst.BaseStatement, ...]) -> tuple[str, bool]:
+    transformer = _FingerprintTransformer()
+    fingerprint = cst.Module(body=list(block)).visit(transformer).code
+
+    if transformer.returns and not _has_single_final_return(block, transformer.returns):
+        return fingerprint, False
+    if transformer.has_yield:
+        return fingerprint, False
+    if transformer.has_break_or_continue and not any(
         isinstance(statement, (cst.For, cst.While)) for statement in block
     ):
-        return False, "The block contains break or continue without its owning loop."
-    return True, None
+        return fingerprint, False
+    return fingerprint, True
 
 
 def _has_single_final_return(block: tuple[cst.BaseStatement, ...], returns: Sequence[cst.Return]) -> bool:
@@ -166,10 +171,14 @@ def _has_single_final_return(block: tuple[cst.BaseStatement, ...], returns: Sequ
 
 
 @attrs.define
-class _NameUsageCollector(cst.CSTVisitor):
+class _FingerprintTransformer(cst.CSTTransformer):
     call_target_ids: set[int] = attrs.field(factory=set)
     keyword_ids: set[int] = attrs.field(factory=set)
     attribute_ids: set[int] = attrs.field(factory=set)
+    names: dict[str, str] = attrs.field(factory=dict)
+    returns: list[cst.Return] = attrs.field(factory=list)
+    has_yield: bool = False
+    has_break_or_continue: bool = False
 
     def visit_Call(self, node: cst.Call) -> bool:  # noqa: N802
         if isinstance(node.func, cst.Name):
@@ -187,13 +196,21 @@ class _NameUsageCollector(cst.CSTVisitor):
         self.attribute_ids.add(id(node.attr))
         return True
 
+    def visit_Return(self, node: cst.Return) -> bool:  # noqa: N802
+        self.returns.append(node)
+        return True
 
-@attrs.define
-class _FingerprintTransformer(cst.CSTTransformer):
-    call_target_ids: set[int]
-    keyword_ids: set[int]
-    attribute_ids: set[int]
-    names: dict[str, str] = attrs.field(factory=dict)
+    def visit_Yield(self, _node: cst.Yield) -> bool:  # noqa: N802
+        self.has_yield = True
+        return True
+
+    def visit_Break(self, _node: cst.Break) -> bool:  # noqa: N802
+        self.has_break_or_continue = True
+        return True
+
+    def visit_Continue(self, _node: cst.Continue) -> bool:  # noqa: N802
+        self.has_break_or_continue = True
+        return True
 
     def leave_Name(self, original_node: cst.Name, updated_node: cst.Name) -> cst.Name:  # noqa: N802
         if id(original_node) in self.call_target_ids or id(original_node) in self.keyword_ids:
