@@ -25,7 +25,7 @@ def multi_file_refactor(  # noqa: PLR0913
     rule_mapping: RuleMapping | None = None,
     *,
     fix: bool = True,
-    format_code: bool = True,
+    format_code: bool = False,
 ) -> tuple[dict[Path, str], list[Diagnostic]]:
     rule_mapping = rule_mapping if rule_mapping is not None else RULE_MAPPING
     immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule] = make_rule_mapping_immutable(rule_mapping)

@@ -41,6 +41,8 @@ def test_do_not_use_unittest(case_name, transformers, expected_diagnostics) -> N
     usecase_root = f"{PARENT}/cases/{case_name}"
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
 
-    refactored_code, diagnostics = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
+    refactored_code, diagnostics = multi_file_refactor(
+        usecase_root, before_paths, transformers, RULE_MAPPING, format_code=True
+    )
     assert not refactored_code
     assert diagnostics == expected_diagnostics

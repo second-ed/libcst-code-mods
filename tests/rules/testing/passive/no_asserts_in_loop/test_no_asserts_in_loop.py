@@ -36,6 +36,8 @@ def test_no_asserts_in_loop(case_name, transformers, expected_diagnostics) -> No
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
     after_paths = list(Path(f"{usecase_root}/after").rglob("**/*.py"))
 
-    refactored_code, diagnostics = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
+    refactored_code, diagnostics = multi_file_refactor(
+        usecase_root, before_paths, transformers, RULE_MAPPING, format_code=True
+    )
     assert not refactored_code
     assert diagnostics == expected_diagnostics

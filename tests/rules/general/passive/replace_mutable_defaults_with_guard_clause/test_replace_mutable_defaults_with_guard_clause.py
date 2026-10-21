@@ -21,7 +21,9 @@ def test_replace_mutable_defaults_with_guard_clause(case_name, transformers) -> 
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
     after_paths = list(Path(f"{usecase_root}/after").rglob("**/*.py"))
 
-    refactored_code, _diagnostics = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
+    refactored_code, _diagnostics = multi_file_refactor(
+        usecase_root, before_paths, transformers, RULE_MAPPING, format_code=True
+    )
     assert refactored_code
     assert (
         diff_code_lfs(

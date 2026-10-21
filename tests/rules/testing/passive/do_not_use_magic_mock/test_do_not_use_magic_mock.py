@@ -44,6 +44,8 @@ def test_do_not_use_magic_mock(case_name, transformers, expected_diagnostic) -> 
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
     _after_paths = list(Path(f"{usecase_root}/after").rglob("**/*.py"))
 
-    refactored_code, diagnostics = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING)
+    refactored_code, diagnostics = multi_file_refactor(
+        usecase_root, before_paths, transformers, RULE_MAPPING, format_code=True
+    )
     assert not refactored_code
     assert diagnostics == expected_diagnostic
