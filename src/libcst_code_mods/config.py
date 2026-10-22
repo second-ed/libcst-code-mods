@@ -35,6 +35,9 @@ class RefactoringConfig:
             black_format=black_format if black_format is not None else values.get("black_format", False),
         )
 
+    def to_dict(self) -> dict:
+        return attrs.asdict(self)
+
 
 def _resolve_config_path(config_path: Path | str | None) -> Path:
     if config_path is not None:

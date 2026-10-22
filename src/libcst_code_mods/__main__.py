@@ -3,6 +3,7 @@ import json
 import sys
 from pathlib import Path
 
+from libcst_code_mods.cache import RefactoringCache
 from libcst_code_mods.config import RefactoringConfig
 from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.rules import RULES
@@ -25,10 +26,21 @@ def cli(argv: list[str] | None = None) -> int:
 
 def main(inp_root: Path | str, config: RefactoringConfig) -> int:
     root, paths = _resolve_root_path(inp_root)
+    cache = RefactoringCache.new(config, paths)
+
+    if not cache.paths_to_process:
+        if config.fix:
+            cache.update()
+        print("All passed")  # noqa: T201
+        return 0
 
     refactoring_rules = [RULES[k].from_dict(v) for k, v in config.rules.items() if k in RULES]
     refactored_code, diagnostics = multi_file_refactor(
-        root, paths, refactoring_rules=refactoring_rules, fix=config.fix, format_code=config.black_format
+        root,
+        cache.paths_to_process,
+        refactoring_rules=refactoring_rules,
+        fix=config.fix,
+        format_code=config.black_format,
     )
 
     if diagnostics:
@@ -37,6 +49,9 @@ def main(inp_root: Path | str, config: RefactoringConfig) -> int:
     for path, code in refactored_code.items():
         path.write_text(code)
         print(f"Modified: {path}")  # noqa: T201
+
+    if config.fix and not diagnostics:
+        cache.update()
 
     n_changes = len(refactored_code)
     n_diagnostics = len(diagnostics)
