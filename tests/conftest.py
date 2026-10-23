@@ -6,6 +6,8 @@ import hypothesis.strategies as st
 import polars as pl
 from hypothesis import given
 
+from libcst_code_mods.utils import black_format
+
 
 def code_map_to_rows(code_map: dict[Path, str], code_col_name: str) -> list[dict[str, str]]:
     return [{"path": str(path), code_col_name: code} for path, code in code_map.items()]
@@ -32,16 +34,24 @@ def _make_diff(actual: str, expected: str) -> str:
 
 
 def diff_code_lfs(expected: pl.LazyFrame, actual: pl.LazyFrame) -> dict[str, str]:
-    non_matching = expected.join(actual, on="path").filter(pl.col("actual") != pl.col("expected"))
     diffs = (
-        non_matching.with_columns(
-            pl.struct(["actual", "expected"])
-            .map_elements(lambda row: _make_diff(row["actual"], row["expected"]), return_dtype=pl.String)
+        expected.join(actual, on="path")
+        .with_columns(
+            pl.col("actual").map_elements(black_format, return_dtype=pl.String).alias("actual_formatted"),
+            pl.col("expected").map_elements(black_format, return_dtype=pl.String).alias("expected_formatted"),
+        )
+        .filter(pl.col("actual_formatted") != pl.col("expected_formatted"))
+        .with_columns(
+            pl.struct(["actual_formatted", "expected_formatted"])
+            .map_elements(
+                lambda row: _make_diff(row["actual_formatted"], row["expected_formatted"]), return_dtype=pl.String
+            )
             .alias("diff")
         )
         .select("path", "diff")
         .collect()
     )
+
     return dict(zip(diffs["path"], diffs["diff"], strict=True))
 
 
