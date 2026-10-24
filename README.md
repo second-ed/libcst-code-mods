@@ -74,6 +74,8 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │       └── replace_nested_list_comps_with_linear_gen_exps
     │   ├── pyspark
     │   │   └── passive
+    │   │       ├── avoid_single_partition_repartition
+    │   │       ├── combine_multiple_filter_calls
     │   │       ├── replace_multiple_with_column_calls
     │   │       ├── replace_multiple_with_column_renamed_calls
     │   │       ├── replace_with_column_in_for_loop

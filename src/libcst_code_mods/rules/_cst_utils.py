@@ -19,6 +19,13 @@ def visit_for_if_matches(
     return visit_for(node)
 
 
+def is_part_of_call_chain(visitor: BaseCstVisitor | BaseCstTransformer, node: cst.Call) -> bool:
+    parent = visitor.get_metadata(cst.metadata.ParentNodeProvider, node)
+    while m.matches(parent, m.Attribute()):
+        parent = visitor.get_metadata(cst.metadata.ParentNodeProvider, parent)
+    return m.matches(parent, m.Call())
+
+
 def invert_condition(expr: cst.BaseExpression) -> cst.BaseExpression:
     if m.matches(expr, m.UnaryOperation(m.Not())):
         return expr.expression
