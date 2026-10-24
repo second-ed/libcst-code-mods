@@ -24,6 +24,7 @@ rules:
   replace_multiple_with_column_renamed_calls: {}
   replace_multiple_with_column_calls: {}
   replace_with_column_renamed_in_for_loop: {}
+  avoid_single_partition_repartition: {}
   do_not_use_unittest: {}
   do_not_use_test_classes: {}
   parametrize_similar_tests: {}

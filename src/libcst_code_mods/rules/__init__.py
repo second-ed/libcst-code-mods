@@ -27,6 +27,7 @@ from libcst_code_mods.rules.general.passive.replace_mutable_defaults_with_guard_
 from libcst_code_mods.rules.general.passive.replace_nested_list_comps_with_linear_gen_exps import (
     ReplaceNestedListCompsWithLinearGenExps,
 )
+from libcst_code_mods.rules.pyspark.passive.avoid_single_partition_repartition import AvoidSinglePartitionRepartition
 from libcst_code_mods.rules.pyspark.passive.replace_multiple_with_column_calls import ReplaceMultipleWithColumnCalls
 from libcst_code_mods.rules.pyspark.passive.replace_multiple_with_column_renamed_calls import (
     ReplaceMultipleWithColumnRenamedCalls,
@@ -49,6 +50,7 @@ __all__ = [
     "AddLoggerDebugsForArgs",
     "AssertAgainstFullObject",
     "AssignmentThenGuardToWalrus",
+    "AvoidSinglePartitionRepartition",
     "ConvertFunctionSignature",
     "DataclassesShouldBeFrozen",
     "DataclassesShouldHaveSlots",
