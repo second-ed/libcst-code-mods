@@ -65,6 +65,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │       ├── assignment_then_guard_to_walrus
     │   │       ├── dataclasses_should_be_frozen
     │   │       ├── dataclasses_should_have_slots
+    │   │       ├── do_not_use_assertions
     │   │       ├── do_not_use_private_functions_in_another_module
     │   │       ├── function_should_be_private
     │   │       ├── identify_duplicated_code

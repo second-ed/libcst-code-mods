@@ -43,6 +43,10 @@ COMPARISON_INVERSES = {
     cst.IsNot: cst.Is,
     cst.In: cst.NotIn,
     cst.NotIn: cst.In,
+    cst.GreaterThan: cst.LessThanEqual,
+    cst.GreaterThanEqual: cst.LessThan,
+    cst.LessThan: cst.GreaterThanEqual,
+    cst.LessThanEqual: cst.GreaterThan,
 }
 
 
