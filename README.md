@@ -39,6 +39,9 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 ├── src
 │   └── libcst_code_mods
 │       ├── core
+│       ├── cst_builders
+│       │   ├── primitives
+│       │   └── testing
 │       └── rules
 │           ├── general                                                  # general python lints rather than specialised to a particular lib
 │           │   ├── active                                               # active rules require user configuration before running and run on a subset of entities
@@ -46,6 +49,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │           ├── pyspark                                                  # rules that are specific to pyspark
 │           │   └── passive
 │           └── testing
+│               ├── active
 │               └── passive
 └── tests
     ├── rules
@@ -75,12 +79,13 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   ├── pyspark
     │   │   └── passive
     │   │       ├── avoid_single_partition_repartition
-    │   │       ├── combine_multiple_filter_calls
     │   │       ├── replace_multiple_with_column_calls
     │   │       ├── replace_multiple_with_column_renamed_calls
     │   │       ├── replace_with_column_in_for_loop
     │   │       └── replace_with_column_renamed_in_for_loop
     │   └── testing
+    │       ├── active
+    │       │   └── create_test
     │       └── passive
     │           ├── assert_against_full_object
     │           ├── do_not_use_magic_mock
