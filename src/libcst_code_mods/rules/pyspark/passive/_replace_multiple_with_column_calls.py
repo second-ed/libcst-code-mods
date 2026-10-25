@@ -2,6 +2,8 @@ import libcst as cst
 import libcst.matchers as m
 
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
+from libcst_code_mods.cst_builders.primitives.collections import cst_dict
+from libcst_code_mods.cst_builders.primitives.expressions import cst_call
 
 
 def update_multiple_with_column_calls(  # noqa: PLR0913
@@ -33,7 +35,6 @@ def update_multiple_with_column_calls(  # noqa: PLR0913
 
     columns.reverse()
 
-    return cst.Call(
-        func=cst.Attribute(value=current, attr=cst.Name(new_fn_name)),
-        args=[cst.Arg(value=cst.Dict(elements=[cst.DictElement(key=name, value=expr) for name, expr in columns]))],
-    )
+    return cst_call(
+        new_fn_name, [cst_dict([cst.DictElement(key=name, value=expr) for name, expr in columns])]
+    ).with_changes(func=cst.Attribute(value=current, attr=cst.Name(new_fn_name)))

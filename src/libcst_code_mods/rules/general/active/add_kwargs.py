@@ -4,6 +4,7 @@ import libcst as cst
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
+from libcst_code_mods.cst_builders.primitives.declarations import cst_kwarg
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 
@@ -70,5 +71,5 @@ class AddKwargsTransformer(BaseCstTransformer):
         kwargs = {
             arg.keyword.value if arg.keyword else fn_kwarg_list[i]: arg.value for i, arg in enumerate(updated_node.args)
         }
-        new_args = [cst.Arg(value=kwargs[name], keyword=cst.Name(name)) for name in fn_kwarg_list]
+        new_args = [cst_kwarg(name, kwargs[name]) for name in fn_kwarg_list]
         return updated_node.with_changes(args=new_args)

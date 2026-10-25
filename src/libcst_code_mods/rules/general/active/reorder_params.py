@@ -5,6 +5,7 @@ import libcst.matchers as m
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
+from libcst_code_mods.cst_builders.primitives.declarations import cst_kwarg
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 
@@ -109,5 +110,5 @@ class ReorderParamsTransformer(BaseCstTransformer):
             arg.keyword.value if arg.keyword else self.new_order[self.index_map[i]]: arg.value
             for i, arg in enumerate(args)
         }
-        new_args = [cst.Arg(value=kwargs[name], keyword=cst.Name(name)) for name in self.new_order]
+        new_args = [cst_kwarg(name, kwargs[name]) for name in self.new_order]
         return updated_node.with_changes(args=new_args)

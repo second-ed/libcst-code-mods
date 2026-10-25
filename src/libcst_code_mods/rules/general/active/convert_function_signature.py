@@ -5,6 +5,7 @@ import libcst.matchers as m
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
+from libcst_code_mods.cst_builders.primitives.declarations import cst_kwarg
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 
@@ -91,7 +92,7 @@ class ConvertFunctionSignatureTransformer(BaseCstTransformer):
             if arg.keyword is None:
                 current_param_name = self.positional_map.get(i, f"arg{i}")
                 new_param_name = self.param_map.get(current_param_name, current_param_name)
-                new_args.append(cst.Arg(value=arg.value, keyword=cst.Name(new_param_name)))
+                new_args.append(cst_kwarg(new_param_name, arg.value))
                 continue
             kw = arg.keyword.value
             new_kw = self.param_map.get(kw, self.positional_map.get(i, kw))

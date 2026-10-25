@@ -6,6 +6,10 @@ def cst_param(name: str, annot: str | None = None, default: cst.BaseExpression |
     return cst.Param(cst.Name(name), annotation=annotation, default=default)
 
 
+def cst_kwarg(name: str, value: cst.BaseExpression) -> cst.Arg:
+    return cst.Arg(keyword=cst.Name(name), value=value)
+
+
 def cst_stmt(stmt: cst.BaseSmallStatement) -> cst.SimpleStatementLine:
     return cst.SimpleStatementLine([stmt])
 

@@ -14,8 +14,8 @@ def _cst_false() -> cst.Name:
 
 
 @cst_register("bool")
-def cst_bool(*, default: bool = True) -> cst.Name:
-    return _cst_false() if default else _cst_true()
+def cst_bool(*, default: bool = False) -> cst.Name:
+    return _cst_true() if default else _cst_false()
 
 
 @cst_register("int")

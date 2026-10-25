@@ -3,7 +3,7 @@ import libcst as cst
 from libcst_code_mods.cst_builders.primitives import cst_register
 
 
-def _cst_call(name: str, args: list[cst.BaseElement] | None = None) -> cst.Call:
+def cst_call(name: str, args: list[cst.BaseElement] | None = None) -> cst.Call:
     args = args or []
     function: cst.BaseExpression = cst.Name(name.split(".", 1)[0])
 
@@ -15,4 +15,4 @@ def _cst_call(name: str, args: list[cst.BaseElement] | None = None) -> cst.Call:
 
 @cst_register("ContextManager")
 def cst_nullcontext() -> cst.Call:
-    return _cst_call("nullcontext")
+    return cst_call("nullcontext")

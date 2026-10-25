@@ -8,6 +8,7 @@ import libcst.matchers as m
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
+from libcst_code_mods.cst_builders.primitives.collections import cst_dict, cst_list, cst_set
 from libcst_code_mods.rules._cst_utils import extract_docstring_node_and_idx, get_fqn, normalise
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
@@ -192,11 +193,11 @@ def _add_params(params: Sequence[cst.Param], param_dict: dict[str, dict[str, str
 
 
 REPLACEMENTS: dict[str, cst.BaseExpression] = {
-    "[]": cst.List([]),
-    "{}": cst.Dict([]),
-    "set()": cst.Call(cst.Name("set")),
-    "list()": cst.List([]),
-    "dict()": cst.Dict([]),
+    "[]": cst_list(),
+    "{}": cst_dict(),
+    "set()": cst_set(),
+    "list()": cst_list(),
+    "dict()": cst_dict(),
 }
 
 

@@ -5,6 +5,8 @@ import libcst.matchers as m
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
+from libcst_code_mods.cst_builders.primitives.declarations import cst_stmt
+from libcst_code_mods.cst_builders.primitives.expressions import cst_call
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 
@@ -451,12 +453,12 @@ def _build_stream_assignments(
 
 
 def _call(name: str, function: cst.BaseExpression, argument: cst.BaseExpression) -> cst.Call:
-    return cst.Call(func=cst.Name(name), args=[cst.Arg(value=function), cst.Arg(value=argument)])
+    return cst_call(name, [function, argument])
 
 
 def _list_call(argument: cst.BaseExpression) -> cst.Call:
-    return cst.Call(func=cst.Name("list"), args=[cst.Arg(value=argument)])
+    return cst_call("list", [argument])
 
 
 def _assignment(name: str, value: cst.BaseExpression) -> cst.SimpleStatementLine:
-    return cst.SimpleStatementLine(body=[cst.Assign(targets=[cst.AssignTarget(target=cst.Name(name))], value=value)])
+    return cst_stmt(cst.Assign(targets=[cst.AssignTarget(target=cst.Name(name))], value=value))

@@ -1,6 +1,9 @@
 import libcst as cst
 import libcst.matchers as m
 
+from libcst_code_mods.cst_builders.primitives.declarations import cst_stmt
+from libcst_code_mods.cst_builders.primitives.expressions import cst_call
+
 
 def for_loop_matcher(fn_name: str) -> m.For:
     return m.For(
@@ -41,5 +44,7 @@ def update_with_column_call_in_for_loop(
         for_in=cst.CompFor(target=extracted_nodes["loop"], iter=extracted_nodes["iterable"]),
     )
 
-    new_call = cst.Call(func=cst.Attribute(value=target, attr=cst.Name(new_fn_name)), args=[cst.Arg(value=dict_comp)])
-    return cst.SimpleStatementLine(body=[cst.Assign(targets=[cst.AssignTarget(target=target)], value=new_call)])
+    new_call = cst_call(new_fn_name, [dict_comp]).with_changes(
+        func=cst.Attribute(value=target, attr=cst.Name(new_fn_name))
+    )
+    return cst_stmt(cst.Assign(targets=[cst.AssignTarget(target=target)], value=new_call))
