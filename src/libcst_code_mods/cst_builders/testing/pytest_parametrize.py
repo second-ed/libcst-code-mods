@@ -10,7 +10,7 @@ from libcst_code_mods.cst_builders.primitives.literals import cst_str
 
 
 def create_test_fn(
-    name: str, params: dict[str, str], return_annot: str, raises: list[str] | None = None
+    name: str, params: dict[str, str], return_annot: str, raises: list[str] | None = None, msg: str | None = None
 ) -> cst.FunctionDef:
     raises = raises or []
     expected_result = {"expected_result": return_annot}
@@ -20,7 +20,8 @@ def create_test_fn(
             test=cst.Comparison(
                 left=cst_call(name, [cst.Name(parameter) for parameter in params]),
                 comparisons=[cst.ComparisonTarget(operator=cst.Equal(), comparator=cst.Name("expected_result"))],
-            )
+            ),
+            msg=cst_str(msg) if msg is not None else msg,
         )
     )
 

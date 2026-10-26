@@ -13,6 +13,7 @@ rules:
   replace_mutable_defaults_with_guard_clause: {}
   do_not_use_private_functions_in_another_module: {}
   assignment_then_guard_to_walrus: {}
+  do_not_use_assertions: {}
   method_does_not_use_self:
     ignore_patterns:
       - name: visit_*
@@ -21,10 +22,10 @@ rules:
         parameters: 2
   # identify_pure_functions: {}
   replace_with_column_in_for_loop: {}
+  avoid_single_partition_repartition: {}
   replace_multiple_with_column_renamed_calls: {}
   replace_multiple_with_column_calls: {}
   replace_with_column_renamed_in_for_loop: {}
-  avoid_single_partition_repartition: {}
   do_not_use_unittest: {}
   do_not_use_test_classes: {}
   parametrize_similar_tests: {}
