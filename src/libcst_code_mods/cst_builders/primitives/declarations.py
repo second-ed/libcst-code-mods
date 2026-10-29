@@ -16,3 +16,10 @@ def cst_stmt(stmt: cst.BaseSmallStatement) -> cst.SimpleStatementLine:
 
 def with_block(name: str, stmts: list[cst.SimpleStatementLine]) -> cst.With:
     return cst.With([cst.WithItem(cst.Name(name))], cst.IndentedBlock(stmts))
+
+
+def cst_import(name: str, as_name: str | None = None) -> cst.SimpleStatementLine:
+    cst_as_name = cst.AsName(cst.Name(as_name)) if as_name is not None else as_name
+    return cst.SimpleStatementLine(
+        body=[cst.Import(names=[cst.ImportAlias(name=cst.Name(value=name), asname=cst_as_name)])]
+    )
