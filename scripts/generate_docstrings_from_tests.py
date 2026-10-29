@@ -167,13 +167,7 @@ class _AddDocstringExamples(BaseCstTransformer):
 
         examples_block = f"Examples:\n\n{self.examples}\n{END_MARKER}\n"
 
-        if (
-            body
-            and isinstance(body[0], cst.SimpleStatementLine)
-            and len(body[0].body) == 1
-            and isinstance(body[0].body[0], cst.Expr)
-            and isinstance(body[0].body[0].value, cst.SimpleString)
-        ):
+        if body and m.matches(body[0], m.SimpleStatementLine(body=[m.Expr(value=m.SimpleString())])):
             existing_docstring = body[0].body[0].value.evaluated_value
             existing_docstring = EXAMPLES_RE.sub("", existing_docstring).rstrip()
 
