@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.replace\_nested\_list\_comps\_with\_linear\_gen\_exps module
+=====================================================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.replace_nested_list_comps_with_linear_gen_exps
+   :members:
+   :show-inheritance:
+   :undoc-members:

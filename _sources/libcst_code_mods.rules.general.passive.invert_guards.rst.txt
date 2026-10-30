@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.invert\_guards module
+==============================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.invert_guards
+   :members:
+   :show-inheritance:
+   :undoc-members:

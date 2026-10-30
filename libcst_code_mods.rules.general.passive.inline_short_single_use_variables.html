@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>libcst_code_mods.rules.general.passive.inline_short_single_use_variables module &#8212; libcst_code_mods 2026 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=fc6fd62b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">libcst_code_mods 2026 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">libcst_code_mods.rules.general.passive.inline_short_single_use_variables module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-libcst_code_mods.rules.general.passive.inline_short_single_use_variables">
+<span id="libcst-code-mods-rules-general-passive-inline-short-single-use-variables-module"></span><h1>libcst_code_mods.rules.general.passive.inline_short_single_use_variables module<a class="headerlink" href="#module-libcst_code_mods.rules.general.passive.inline_short_single_use_variables" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariables">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.passive.inline_short_single_use_variables.</span></span><span class="sig-name descname"><span class="pre">InlineShortSingleUseVariables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_value_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariables" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.refactoring_rule.html#libcst_code_mods.core.refactoring_rule.RefactoringRule" title="libcst_code_mods.core.refactoring_rule.RefactoringRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefactoringRule</span></code></a></p>
+<p class="rubric">Examples</p>
+<section id="case">
+<h2>Case<a class="headerlink" href="#case" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">single_use_variable_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="s2">&quot;something&quot;</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">single_use_variable_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="s2">&quot;something&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>Case<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_in_fstring_is_inlined_if_it_includes_quote_chars_they_are_changed_to_avoid_syntax_errors</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">isinstance_checks_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">isinstance_checks</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">isinstance_checks_str</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_in_fstring_is_inlined_if_it_includes_quote_chars_they_are_changed_to_avoid_syntax_errors</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">isinstance_checks</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>Case<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_in_subscript_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">block_body</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">updated_node</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">block_body</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_in_subscript_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">updated_node</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">body</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>Case<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_as_method_receiver_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="n">extracted</span><span class="p">[</span><span class="s2">&quot;if_cond&quot;</span><span class="p">]</span>
+    <span class="n">new_cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_as_method_receiver_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">new_cond</span> <span class="o">=</span> <span class="n">extracted</span><span class="p">[</span><span class="s2">&quot;if_cond&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>Case<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_as_attribute_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">original_assign</span> <span class="o">=</span> <span class="n">original_node</span><span class="o">.</span><span class="n">body</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">original_assign</span><span class="o">.</span><span class="n">value</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_as_attribute_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">original_node</span><span class="o">.</span><span class="n">body</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>Case<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_in_attribute_update_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">updated_assign</span> <span class="o">=</span> <span class="n">updated_node</span><span class="o">.</span><span class="n">body</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">updated_assign</span><span class="o">.</span><span class="n">with_changes</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">variable_used_in_attribute_update_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">updated_node</span><span class="o">.</span><span class="n">body</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">with_changes</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2>Case<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">single_use_list_comp_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">single_use_list_comp_is_inlined</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>—</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariables.max_value_length">
+<span class="sig-name descname"><span class="pre">max_value_length</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariables.max_value_length" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesTransformer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.passive.inline_short_single_use_variables.</span></span><span class="sig-name descname"><span class="pre">InlineShortSingleUseVariablesTransformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_value_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesTransformer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.base_cst_transformer.html#libcst_code_mods.core.base_cst_transformer.BaseCstTransformer" title="libcst_code_mods.core.base_cst_transformer.BaseCstTransformer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCstTransformer</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesTransformer.leave_FunctionDef">
+<span class="sig-name descname"><span class="pre">leave_FunctionDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FunctionDef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FunctionDef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">FunctionDef</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesTransformer.leave_FunctionDef" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesTransformer.max_value_length">
+<span class="sig-name descname"><span class="pre">max_value_length</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesTransformer.max_value_length" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesVisitor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.passive.inline_short_single_use_variables.</span></span><span class="sig-name descname"><span class="pre">InlineShortSingleUseVariablesVisitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="libcst_code_mods.core.cst_context.html#libcst_code_mods.core.cst_context.CstContext" title="libcst_code_mods.core.cst_context.CstContext"><span class="pre">CstContext</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesVisitor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.base_cst_visitor.html#libcst_code_mods.core.base_cst_visitor.BaseCstVisitor" title="libcst_code_mods.core.base_cst_visitor.BaseCstVisitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCstVisitor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesVisitor.visit_FunctionDef">
+<span class="sig-name descname"><span class="pre">visit_FunctionDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FunctionDef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesVisitor.visit_FunctionDef" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">libcst_code_mods.rules.general.passive.inline_short_single_use_variables module</a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariables"><code class="docutils literal notranslate"><span class="pre">InlineShortSingleUseVariables</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariables.max_value_length"><code class="docutils literal notranslate"><span class="pre">InlineShortSingleUseVariables.max_value_length</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesTransformer"><code class="docutils literal notranslate"><span class="pre">InlineShortSingleUseVariablesTransformer</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesTransformer.leave_FunctionDef"><code class="docutils literal notranslate"><span class="pre">InlineShortSingleUseVariablesTransformer.leave_FunctionDef()</span></code></a></li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesTransformer.max_value_length"><code class="docutils literal notranslate"><span class="pre">InlineShortSingleUseVariablesTransformer.max_value_length</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesVisitor"><code class="docutils literal notranslate"><span class="pre">InlineShortSingleUseVariablesVisitor</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.inline_short_single_use_variables.InlineShortSingleUseVariablesVisitor.visit_FunctionDef"><code class="docutils literal notranslate"><span class="pre">InlineShortSingleUseVariablesVisitor.visit_FunctionDef()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/libcst_code_mods.rules.general.passive.inline_short_single_use_variables.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">libcst_code_mods 2026 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">libcst_code_mods.rules.general.passive.inline_short_single_use_variables module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2026, Ed Cuss.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    </div>
+  </body>
+</html>

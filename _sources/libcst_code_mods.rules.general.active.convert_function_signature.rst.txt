@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.active.convert\_function\_signature module
+===========================================================================
+
+.. automodule:: libcst_code_mods.rules.general.active.convert_function_signature
+   :members:
+   :show-inheritance:
+   :undoc-members:

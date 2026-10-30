@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus module &#8212; libcst_code_mods 2026 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=fc6fd62b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">libcst_code_mods 2026 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus">
+<span id="libcst-code-mods-rules-general-passive-replace-multiple-function-calls-in-comp-with-walrus-module"></span><h1>libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus module<a class="headerlink" href="#module-libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrus">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.</span></span><span class="sig-name descname"><span class="pre">ReplaceMultipleFunctionCallsInCompWithWalrus</span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrus" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.refactoring_rule.html#libcst_code_mods.core.refactoring_rule.RefactoringRule" title="libcst_code_mods.core.refactoring_rule.RefactoringRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefactoringRule</span></code></a></p>
+<p class="rubric">Examples</p>
+<section id="case">
+<h2>Case<a class="headerlink" href="#case" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">should_replace_multiple_function_calls_with_walrus</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">if</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">should_replace_multiple_function_calls_with_walrus</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">__code_mod_tmp</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">if</span> <span class="p">(</span><span class="n">__code_mod_tmp</span> <span class="o">:=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))]</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>Case<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">should_replace_multiple_function_calls_with_comparison_with_walrus</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">if</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">should_replace_multiple_function_calls_with_comparison_with_walrus</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">__code_mod_tmp</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">if</span> <span class="p">(</span><span class="n">__code_mod_tmp</span> <span class="o">:=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>Case<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">should_replace_multiple_function_calls_with_nested_call_in_cond</span><span class="p">(</span>
+    <span class="n">xs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">Callable</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">if</span> <span class="n">g</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))]</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">should_replace_multiple_function_calls_with_nested_call_in_cond</span><span class="p">(</span>
+    <span class="n">xs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">Callable</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">__code_mod_tmp</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">if</span> <span class="n">g</span><span class="p">((</span><span class="n">__code_mod_tmp</span> <span class="o">:=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)))]</span>
+</pre></div>
+</div>
+<p>—</p>
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusTransformer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.</span></span><span class="sig-name descname"><span class="pre">ReplaceMultipleFunctionCallsInCompWithWalrusTransformer</span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusTransformer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.base_cst_transformer.html#libcst_code_mods.core.base_cst_transformer.BaseCstTransformer" title="libcst_code_mods.core.base_cst_transformer.BaseCstTransformer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCstTransformer</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusTransformer.leave_ListComp">
+<span class="sig-name descname"><span class="pre">leave_ListComp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ListComp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ListComp</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ListComp</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusTransformer.leave_ListComp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusVisitor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.</span></span><span class="sig-name descname"><span class="pre">ReplaceMultipleFunctionCallsInCompWithWalrusVisitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="libcst_code_mods.core.cst_context.html#libcst_code_mods.core.cst_context.CstContext" title="libcst_code_mods.core.cst_context.CstContext"><span class="pre">CstContext</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusVisitor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.base_cst_visitor.html#libcst_code_mods.core.base_cst_visitor.BaseCstVisitor" title="libcst_code_mods.core.base_cst_visitor.BaseCstVisitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCstVisitor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusVisitor.visit_ListComp">
+<span class="sig-name descname"><span class="pre">visit_ListComp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ListComp</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusVisitor.visit_ListComp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus module</a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrus"><code class="docutils literal notranslate"><span class="pre">ReplaceMultipleFunctionCallsInCompWithWalrus</span></code></a></li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusTransformer"><code class="docutils literal notranslate"><span class="pre">ReplaceMultipleFunctionCallsInCompWithWalrusTransformer</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusTransformer.leave_ListComp"><code class="docutils literal notranslate"><span class="pre">ReplaceMultipleFunctionCallsInCompWithWalrusTransformer.leave_ListComp()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusVisitor"><code class="docutils literal notranslate"><span class="pre">ReplaceMultipleFunctionCallsInCompWithWalrusVisitor</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.ReplaceMultipleFunctionCallsInCompWithWalrusVisitor.visit_ListComp"><code class="docutils literal notranslate"><span class="pre">ReplaceMultipleFunctionCallsInCompWithWalrusVisitor.visit_ListComp()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">libcst_code_mods 2026 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2026, Ed Cuss.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    </div>
+  </body>
+</html>

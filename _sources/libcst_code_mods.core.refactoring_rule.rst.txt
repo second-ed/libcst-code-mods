@@ -1,0 +1,7 @@
+libcst\_code\_mods.core.refactoring\_rule module
+================================================
+
+.. automodule:: libcst_code_mods.core.refactoring_rule
+   :members:
+   :show-inheritance:
+   :undoc-members:

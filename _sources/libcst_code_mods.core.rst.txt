@@ -1,0 +1,24 @@
+libcst\_code\_mods.core package
+===============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   libcst_code_mods.core.base_cst_transformer
+   libcst_code_mods.core.base_cst_visitor
+   libcst_code_mods.core.cst_context
+   libcst_code_mods.core.cst_rule
+   libcst_code_mods.core.diagnostics
+   libcst_code_mods.core.matchers
+   libcst_code_mods.core.refactoring_rule
+
+Module contents
+---------------
+
+.. automodule:: libcst_code_mods.core
+   :members:
+   :show-inheritance:
+   :undoc-members:

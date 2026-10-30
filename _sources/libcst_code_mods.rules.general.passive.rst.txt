@@ -1,0 +1,33 @@
+libcst\_code\_mods.rules.general.passive package
+================================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   libcst_code_mods.rules.general.passive.assignment_then_guard_to_walrus
+   libcst_code_mods.rules.general.passive.dataclasses_should_be_frozen
+   libcst_code_mods.rules.general.passive.dataclasses_should_have_slots
+   libcst_code_mods.rules.general.passive.do_not_use_assertions
+   libcst_code_mods.rules.general.passive.do_not_use_private_functions_in_another_module
+   libcst_code_mods.rules.general.passive.do_not_use_staticmethod
+   libcst_code_mods.rules.general.passive.function_should_be_private
+   libcst_code_mods.rules.general.passive.identify_duplicated_code
+   libcst_code_mods.rules.general.passive.identify_pure_functions
+   libcst_code_mods.rules.general.passive.inline_short_single_use_variables
+   libcst_code_mods.rules.general.passive.invert_guards
+   libcst_code_mods.rules.general.passive.invert_loop_guards
+   libcst_code_mods.rules.general.passive.method_does_not_use_self
+   libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus
+   libcst_code_mods.rules.general.passive.replace_mutable_defaults_with_guard_clause
+   libcst_code_mods.rules.general.passive.replace_nested_list_comps_with_linear_gen_exps
+
+Module contents
+---------------
+
+.. automodule:: libcst_code_mods.rules.general.passive
+   :members:
+   :show-inheritance:
+   :undoc-members:

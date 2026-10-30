@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.dataclasses\_should\_have\_slots module
+================================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.dataclasses_should_have_slots
+   :members:
+   :show-inheritance:
+   :undoc-members:

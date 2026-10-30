@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.do\_not\_use\_assertions module
+========================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.do_not_use_assertions
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>libcst_code_mods.rules.general.active.remove_kwargs_if_default_value module &#8212; libcst_code_mods 2026 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=fc6fd62b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">libcst_code_mods 2026 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">libcst_code_mods.rules.general.active.remove_kwargs_if_default_value module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-libcst_code_mods.rules.general.active.remove_kwargs_if_default_value">
+<span id="libcst-code-mods-rules-general-active-remove-kwargs-if-default-value-module"></span><h1>libcst_code_mods.rules.general.active.remove_kwargs_if_default_value module<a class="headerlink" href="#module-libcst_code_mods.rules.general.active.remove_kwargs_if_default_value" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValue">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.</span></span><span class="sig-name descname"><span class="pre">RemoveKwargsIfDefaultValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValue" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.refactoring_rule.html#libcst_code_mods.core.refactoring_rule.RefactoringRule" title="libcst_code_mods.core.refactoring_rule.RefactoringRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefactoringRule</span></code></a></p>
+<p class="rubric">Examples</p>
+<section id="case">
+<h2>Case<a class="headerlink" href="#case" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">func</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">func</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">func</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>—</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValue.fn_names">
+<span class="sig-name descname"><span class="pre">fn_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValue.fn_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.</span></span><span class="sig-name descname"><span class="pre">RemoveKwargsIfDefaultValueTransformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">BaseExpression</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.base_cst_transformer.html#libcst_code_mods.core.base_cst_transformer.BaseCstTransformer" title="libcst_code_mods.core.base_cst_transformer.BaseCstTransformer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCstTransformer</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">BaseExpression</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer.default_params" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer.fn_names">
+<span class="sig-name descname"><span class="pre">fn_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer.fn_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer.leave_Call">
+<span class="sig-name descname"><span class="pre">leave_Call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Call</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Call</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Call</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer.leave_Call" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.</span></span><span class="sig-name descname"><span class="pre">RemoveKwargsIfDefaultValueVisitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="libcst_code_mods.core.cst_context.html#libcst_code_mods.core.cst_context.CstContext" title="libcst_code_mods.core.cst_context.CstContext"><span class="pre">CstContext</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.base_cst_visitor.html#libcst_code_mods.core.base_cst_visitor.BaseCstVisitor" title="libcst_code_mods.core.base_cst_visitor.BaseCstVisitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCstVisitor</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor.fn_names">
+<span class="sig-name descname"><span class="pre">fn_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor.fn_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor.visit_Call">
+<span class="sig-name descname"><span class="pre">visit_Call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Call</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor.visit_Call" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor.visit_FunctionDef">
+<span class="sig-name descname"><span class="pre">visit_FunctionDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FunctionDef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor.visit_FunctionDef" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">libcst_code_mods.rules.general.active.remove_kwargs_if_default_value module</a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValue"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValue</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValue.fn_names"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValue.fn_names</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValueTransformer</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer.default_params"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValueTransformer.default_params</span></code></a></li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer.fn_names"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValueTransformer.fn_names</span></code></a></li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueTransformer.leave_Call"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValueTransformer.leave_Call()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValueVisitor</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor.fn_names"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValueVisitor.fn_names</span></code></a></li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor.visit_Call"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValueVisitor.visit_Call()</span></code></a></li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.RemoveKwargsIfDefaultValueVisitor.visit_FunctionDef"><code class="docutils literal notranslate"><span class="pre">RemoveKwargsIfDefaultValueVisitor.visit_FunctionDef()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/libcst_code_mods.rules.general.active.remove_kwargs_if_default_value.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">libcst_code_mods 2026 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">libcst_code_mods.rules.general.active.remove_kwargs_if_default_value module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2026, Ed Cuss.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    </div>
+  </body>
+</html>

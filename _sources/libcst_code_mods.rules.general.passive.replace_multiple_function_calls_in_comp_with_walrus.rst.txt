@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.replace\_multiple\_function\_calls\_in\_comp\_with\_walrus module
+==========================================================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus
+   :members:
+   :show-inheritance:
+   :undoc-members:

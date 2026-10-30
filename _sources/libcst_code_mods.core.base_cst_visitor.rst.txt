@@ -1,0 +1,7 @@
+libcst\_code\_mods.core.base\_cst\_visitor module
+=================================================
+
+.. automodule:: libcst_code_mods.core.base_cst_visitor
+   :members:
+   :show-inheritance:
+   :undoc-members:
