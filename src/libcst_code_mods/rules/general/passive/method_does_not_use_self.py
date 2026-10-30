@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections.abc import Collection
 from fnmatch import fnmatchcase
-from pathlib import Path
 from typing import ClassVar
 
 import attrs
@@ -11,9 +10,7 @@ import libcst.matchers as m
 from libcst.metadata import PositionProvider
 
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
-from libcst_code_mods.core.diagnostics import Diagnostic, relative_path
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
-from libcst_code_mods.rules._cst_utils import normalise
 from libcst_code_mods.rules._rule_mapping import RULE_NAME_MAPPING, register_rule, register_rule_visitor
 
 
@@ -59,15 +56,10 @@ class MethodDoesNotUseSelfVisitor(BaseCstVisitor):
             and not _matches_callback_pattern(node, self.ignore_patterns)
             and not m.findall(node.body, m.Name("self"))
         ):
-            self.context.paths.add(self.path)
-            self.context.diagnostics.add(
-                Diagnostic(
-                    rule=RULE_NAME_MAPPING[self.__class__],
-                    path=relative_path(Path(self.path), self.context.root),
-                    code_range=self.get_metadata(PositionProvider, node),
-                    code=normalise(node),
-                    instead="use a free floating function if the method doesn't need to be attached to the object",
-                )
+            self.add_diagnostic(
+                node,
+                RULE_NAME_MAPPING[self.__class__],
+                "use a free floating function if the method doesn't need to be attached to the object",
             )
 
         self.function_depth += 1

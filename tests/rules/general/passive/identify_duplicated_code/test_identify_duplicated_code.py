@@ -94,8 +94,10 @@ PARENT = Path(__file__).parent
 def test_identify_duplicated_code(case_name, transformers, expected_diagnostics) -> None:
     usecase_root = f"{PARENT}/cases/{case_name}"
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
-    _, diagnostics = multi_file_refactor(usecase_root, before_paths, transformers, RULE_MAPPING, fix=False)
-
+    refactored_code, diagnostics = multi_file_refactor(
+        usecase_root, before_paths, transformers, RULE_MAPPING, fix=False
+    )
+    assert not refactored_code
     assert _diags_to_dicts(diagnostics) == _diags_to_dicts(expected_diagnostics)
 
 

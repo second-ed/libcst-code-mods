@@ -67,6 +67,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │       ├── dataclasses_should_have_slots
     │   │       ├── do_not_use_assertions
     │   │       ├── do_not_use_private_functions_in_another_module
+    │   │       ├── do_not_use_staticmethod
     │   │       ├── function_should_be_private
     │   │       ├── identify_duplicated_code
     │   │       ├── identify_pure_functions
