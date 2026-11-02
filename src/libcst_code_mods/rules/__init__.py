@@ -6,11 +6,14 @@ from libcst_code_mods.rules.general.active.convert_function_signature import Con
 from libcst_code_mods.rules.general.active.remove_kwargs_if_default_value import RemoveKwargsIfDefaultValue
 from libcst_code_mods.rules.general.active.reorder_params import ReorderParams
 from libcst_code_mods.rules.general.passive.assignment_then_guard_to_walrus import AssignmentThenGuardToWalrus
+from libcst_code_mods.rules.general.passive.bitwise_condition_to_boolean import BitwiseConditionToBoolean
 from libcst_code_mods.rules.general.passive.dataclasses_should_be_frozen import DataclassesShouldBeFrozen
 from libcst_code_mods.rules.general.passive.dataclasses_should_have_slots import DataclassesShouldHaveSlots
+from libcst_code_mods.rules.general.passive.do_not_use_assertions import DoNotUseAssertions
 from libcst_code_mods.rules.general.passive.do_not_use_private_functions_in_another_module import (
     DoNotUsePrivateFunctionsInAnotherModule,
 )
+from libcst_code_mods.rules.general.passive.do_not_use_staticmethod import DoNotUseStaticmethod
 from libcst_code_mods.rules.general.passive.function_should_be_private import FunctionShouldBePrivate
 from libcst_code_mods.rules.general.passive.identify_duplicated_code import IdentifyDuplicatedCode
 from libcst_code_mods.rules.general.passive.identify_pure_functions import IdentifyPureFunctions
@@ -51,11 +54,14 @@ __all__ = [
     "AssertAgainstFullObject",
     "AssignmentThenGuardToWalrus",
     "AvoidSinglePartitionRepartition",
+    "BitwiseConditionToBoolean",
     "ConvertFunctionSignature",
     "DataclassesShouldBeFrozen",
     "DataclassesShouldHaveSlots",
+    "DoNotUseAssertions",
     "DoNotUseMagicMock",
     "DoNotUsePrivateFunctionsInAnotherModule",
+    "DoNotUseStaticmethod",
     "DoNotUseTestClasses",
     "DoNotUseUnittest",
     "FunctionShouldBePrivate",

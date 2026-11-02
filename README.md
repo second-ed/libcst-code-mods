@@ -63,6 +63,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │   │   └── reorder_params
     │   │   └── passive
     │   │       ├── assignment_then_guard_to_walrus
+    │   │       ├── bitwise_condition_to_boolean
     │   │       ├── dataclasses_should_be_frozen
     │   │       ├── dataclasses_should_have_slots
     │   │       ├── do_not_use_assertions
