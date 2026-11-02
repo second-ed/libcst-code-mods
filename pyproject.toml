@@ -10,7 +10,6 @@ requires-python = ">=3.11"
 dependencies = [
     "attrs>=25.4.0",
     "black>=26.3.1",
-    "hypothesis>=6.152.9",
     "libcst>=1.8.6",
     "pyyaml>=6.0.3",
 ]
@@ -24,13 +23,14 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "hypothesis>=6.152.9",
     "ipykernel>=7.2.0",
     "polars>=1.41.2",
     "pre-commit>=4.5.1",
     "py-spy>=0.4.2",
     "pytest>=9.0.2",
     "pytest-cov>=7.0.0",
-    "repo-mapper-rs==0.5.0",
+    "repo-mapper-rs>=0.5.0",
     "ruff>=0.15.0",
     "sphinx>=9.0.4",
 ]
