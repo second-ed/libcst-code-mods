@@ -57,9 +57,10 @@ def multi_file_refactor(  # noqa: PLR0913
     if not fix:
         return {}, list(dict.fromkeys(diagnostics))
 
-    return _run_transformers(
-        paths, refactoring_rules, immutable_rule_mapping, manager, contexts, format_code=format_code
-    ), list(dict.fromkeys(diagnostics))
+    return (
+        _run_transformers(paths, refactoring_rules, immutable_rule_mapping, manager, contexts, format_code=format_code),
+        list(dict.fromkeys(diagnostics)),
+    )
 
 
 def _run_transformers(  # noqa: PLR0913
