@@ -58,8 +58,8 @@ def multi_file_refactor(  # noqa: PLR0913
         return {}, list(dict.fromkeys(diagnostics))
 
     return _run_transformers(
-        paths, refactoring_rules, immutable_rule_mapping, manager, contexts, diagnostics, format_code=format_code
-    )
+        paths, refactoring_rules, immutable_rule_mapping, manager, contexts, format_code=format_code
+    ), list(dict.fromkeys(diagnostics))
 
 
 def _run_transformers(  # noqa: PLR0913
@@ -68,10 +68,9 @@ def _run_transformers(  # noqa: PLR0913
     immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule],
     manager: FullRepoManager,
     contexts: dict[type[RefactoringRule], CstContext],
-    diagnostics: list[Diagnostic],
     *,
     format_code: bool,
-) -> tuple[dict[Path, str], list[Diagnostic]]:
+) -> dict[Path, str]:
     refactored_code = {}
 
     for path in paths:
@@ -94,7 +93,7 @@ def _run_transformers(  # noqa: PLR0913
         if (new_code := wrapper.module.code) != original_code:
             refactored_code[path] = black_format(new_code) if format_code else new_code
 
-    return refactored_code, list(dict.fromkeys(diagnostics))
+    return refactored_code
 
 
 def _collect_context(
