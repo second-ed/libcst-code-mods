@@ -79,7 +79,8 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │       ├── method_does_not_use_self
     │   │       ├── replace_multiple_function_calls_in_comp_with_walrus
     │   │       ├── replace_mutable_defaults_with_guard_clause
-    │   │       └── replace_nested_list_comps_with_linear_gen_exps
+    │   │       ├── replace_nested_list_comps_with_linear_gen_exps
+    │   │       └── replace_single_use_list_comp_with_generator
     │   ├── pyspark
     │   │   └── passive
     │   │       ├── avoid_single_partition_repartition
