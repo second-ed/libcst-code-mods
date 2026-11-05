@@ -1,0 +1,7 @@
+libcst\_code\_mods.core.diagnostics module
+==========================================
+
+.. automodule:: libcst_code_mods.core.diagnostics
+   :members:
+   :show-inheritance:
+   :undoc-members:

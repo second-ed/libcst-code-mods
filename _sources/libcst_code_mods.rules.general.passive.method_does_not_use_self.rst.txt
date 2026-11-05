@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.method\_does\_not\_use\_self module
+============================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.method_does_not_use_self
+   :members:
+   :show-inheritance:
+   :undoc-members:

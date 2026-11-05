@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.active.add\_kwargs module
+==========================================================
+
+.. automodule:: libcst_code_mods.rules.general.active.add_kwargs
+   :members:
+   :show-inheritance:
+   :undoc-members:
