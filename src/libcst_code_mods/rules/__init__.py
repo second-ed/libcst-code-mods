@@ -21,6 +21,8 @@ from libcst_code_mods.rules.general.passive.inline_short_single_use_variables im
 from libcst_code_mods.rules.general.passive.invert_guards import InvertGuards
 from libcst_code_mods.rules.general.passive.invert_loop_guards import InvertLoopGuards
 from libcst_code_mods.rules.general.passive.method_does_not_use_self import MethodDoesNotUseSelf
+from libcst_code_mods.rules.general.passive.prefer_simpler_functions import PreferSimplerFunctions
+from libcst_code_mods.rules.general.passive.prefer_smaller_functions import PreferSmallerFunctions
 from libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus import (
     ReplaceMultipleFunctionCallsInCompWithWalrus,
 )
@@ -29,6 +31,9 @@ from libcst_code_mods.rules.general.passive.replace_mutable_defaults_with_guard_
 )
 from libcst_code_mods.rules.general.passive.replace_nested_list_comps_with_linear_gen_exps import (
     ReplaceNestedListCompsWithLinearGenExps,
+)
+from libcst_code_mods.rules.general.passive.replace_single_use_list_comp_with_generator import (
+    ReplaceSingleUseListCompWithGenerator,
 )
 from libcst_code_mods.rules.pyspark.passive.avoid_single_partition_repartition import AvoidSinglePartitionRepartition
 from libcst_code_mods.rules.pyspark.passive.replace_multiple_with_column_calls import ReplaceMultipleWithColumnCalls
@@ -73,6 +78,8 @@ __all__ = [
     "MethodDoesNotUseSelf",
     "NoAssertsInLoop",
     "ParametrizeSimilarTests",
+    "PreferSimplerFunctions",
+    "PreferSmallerFunctions",
     "RemoveKwargsIfDefaultValue",
     "ReorderParams",
     "ReplaceMultipleFunctionCallsInCompWithWalrus",
@@ -80,6 +87,7 @@ __all__ = [
     "ReplaceMultipleWithColumnRenamedCalls",
     "ReplaceMutableDefaultsWithGuardClause",
     "ReplaceNestedListCompsWithLinearGenExps",
+    "ReplaceSingleUseListCompWithGenerator",
     "ReplaceWithColumnInForLoop",
     "ReplaceWithColumnRenamedInForLoop",
 ]

@@ -255,16 +255,12 @@ class IdentifyPureFunctionsVisitor(BaseCstVisitor):
         dependencies = []
         parameter_names = {parameter.name.value for parameter in m.findall(node.params, m.Param(name=m.Name()))}
         for name in m.findall(node.body, m.Name()):
-            if name.value in parameter_names:
-                continue
-
             if (
-                self.get_metadata(cst.metadata.ExpressionContextProvider, name, None)
+                name.value in parameter_names
+                or self.get_metadata(cst.metadata.ExpressionContextProvider, name, None)
                 is not cst.metadata.ExpressionContext.LOAD
+                or (name_scope := self.get_metadata(cst.metadata.ScopeProvider, name, None)) is None
             ):
-                continue
-
-            if (name_scope := self.get_metadata(cst.metadata.ScopeProvider, name, None)) is None:
                 continue
 
             assignments = name_scope[name.value] if name.value in name_scope else set()  # noqa: SIM401
