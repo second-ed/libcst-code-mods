@@ -76,6 +76,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │       ├── invert_guards
     │   │       ├── invert_loop_guards
     │   │       ├── method_does_not_use_self
+    │   │       ├── prefer_flatter_functions
     │   │       ├── prefer_simpler_functions
     │   │       ├── prefer_smaller_functions
     │   │       ├── replace_multiple_function_calls_in_comp_with_walrus
