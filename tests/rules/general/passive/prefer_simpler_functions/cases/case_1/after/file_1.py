@@ -98,3 +98,7 @@ def triggers_for_single_match_with_multiple_cases() -> None:
             pass
         case 4:
             pass
+
+
+def function_with_multiple_ands_and_ors() -> None:
+    thing = (a and b and (c or d)) or e

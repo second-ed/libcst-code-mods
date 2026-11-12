@@ -19,7 +19,7 @@ class PreferSimplerFunctions(RefactoringRule):
     allowed_functions: list[str] = attrs.field(factory=list)
 
 
-DECISIONS = m.OneOf(m.If(), m.Else(), m.For(), m.While(), m.IfExp(), m.ExceptHandler(), m.MatchCase())
+DECISIONS = m.OneOf(m.If(), m.Else(), m.For(), m.While(), m.IfExp(), m.ExceptHandler(), m.MatchCase(), m.And(), m.Or())
 
 
 @register_rule_visitor(PreferSimplerFunctions)

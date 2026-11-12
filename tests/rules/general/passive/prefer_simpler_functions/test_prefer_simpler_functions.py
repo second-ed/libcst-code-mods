@@ -76,6 +76,13 @@ PARENT = Path(__file__).parent
                     code="\n\ndef triggers_for_single_match_with_multiple_cases() -> None:\n    match value:\n        case 1:\n            pass\n        case 2:\n            pass\n        case 3:\n            pass\n        case 4:\n            pass\n",
                     instead="Prefer simpler focused pure functions with no more than 2 branches. `triggers_for_single_match_with_multiple_cases` has 4.",
                 ),
+                Diagnostic(
+                    "prefer_simpler_functions",
+                    Path("before/file_1.py"),
+                    code_range=CodeRange(CodePosition(103, 0), CodePosition(104, 39)),
+                    code="\n\ndef function_with_multiple_ands_and_ors() -> None:\n    thing = (a and b and (c or d)) or e\n",
+                    instead="Prefer simpler focused pure functions with no more than 2 branches. `function_with_multiple_ands_and_ors` has 4.",
+                ),
             ],
         )
     ],
