@@ -171,45 +171,10 @@ class InlineShortSingleUseVariablesTransformer(BaseCstTransformer):
     def leave_FunctionDef(  # noqa: N802
         self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef
     ) -> cst.FunctionDef:
-        if not (
-            assignments := [
-                (index, statement)
-                for index, statement in enumerate(original_node.body.body)
-                if m.matches(statement, ASSIGNMENT_MATCHER)
-            ]
-        ):
+        if not (assignments := _assignments(original_node)):
             return updated_node
 
-        inlineable = []
-        for assignment_index, assignment in assignments:
-            extracted = m.extract(assignment, ASSIGNMENT_MATCHER)
-            name = extracted["name"]
-            value = extracted["value"]
-            if len(cst.Module([]).code_for_node(value)) > self.max_value_length:
-                continue
-
-            names = m.findall(original_node.body, m.Name(value=name.value))
-            target_assignments = m.findall(original_node.body, m.AssignTarget(target=m.Name(value=name.value)))
-            if len(target_assignments) != 1:
-                continue
-
-            assignment_targets = {target.target for target in target_assignments}
-            keyword_names = {
-                argument.keyword for argument in m.findall(original_node.body, m.Arg(keyword=m.Name(value=name.value)))
-            }
-            attribute_names = {
-                attribute.attr
-                for attribute in m.findall(original_node.body, m.Attribute(attr=m.Name(value=name.value)))
-            }
-            uses = [
-                node
-                for node in names
-                if node not in assignment_targets and node not in keyword_names and node not in attribute_names
-            ]
-            if len(uses) != 1:
-                continue
-
-            inlineable.append((assignment_index, name.value, value))
+        inlineable = _inlineable_assignments(original_node, assignments, self.max_value_length)
 
         body = updated_node.body.body
         for assignment_index, name, value in reversed(inlineable):
@@ -219,6 +184,51 @@ class InlineShortSingleUseVariablesTransformer(BaseCstTransformer):
                 if index != assignment_index
             ]
         return updated_node.with_changes(body=updated_node.body.with_changes(body=body))
+
+
+def _assignments(function: cst.FunctionDef) -> list[tuple[int, cst.BaseStatement]]:
+    return [
+        (index, statement)
+        for index, statement in enumerate(function.body.body)
+        if m.matches(statement, ASSIGNMENT_MATCHER)
+    ]
+
+
+def _inlineable_assignments(
+    function: cst.FunctionDef, assignments: list[tuple[int, cst.BaseStatement]], max_value_length: int
+) -> list[tuple[int, str, cst.BaseExpression]]:
+    inlineable: list[tuple[int, str, cst.BaseExpression]] = []
+    for assignment_index, assignment in assignments:
+        extracted = m.extract(assignment, ASSIGNMENT_MATCHER)
+        name = extracted["name"]
+        value = extracted["value"]
+        if _can_inline(function, name, value, max_value_length):
+            inlineable.append((assignment_index, name.value, value))
+    return inlineable
+
+
+def _can_inline(function: cst.FunctionDef, name: cst.Name, value: cst.BaseExpression, max_value_length: int) -> bool:
+    if len(cst.Module([]).code_for_node(value)) > max_value_length:
+        return False
+    target_assignments = m.findall(function.body, m.AssignTarget(target=m.Name(value=name.value)))
+    if len(target_assignments) != 1:
+        return False
+    return _single_use(function, name, target_assignments)
+
+
+def _single_use(function: cst.FunctionDef, name: cst.Name, target_assignments: list[cst.AssignTarget]) -> bool:
+    names = m.findall(function.body, m.Name(value=name.value))
+    assignment_targets = {target.target for target in target_assignments}
+    keyword_names = {argument.keyword for argument in m.findall(function.body, m.Arg(keyword=m.Name(value=name.value)))}
+    attribute_names = {
+        attribute.attr for attribute in m.findall(function.body, m.Attribute(attr=m.Name(value=name.value)))
+    }
+    uses = [
+        node
+        for node in names
+        if node not in assignment_targets and node not in keyword_names and node not in attribute_names
+    ]
+    return len(uses) == 1
 
 
 @attrs.define

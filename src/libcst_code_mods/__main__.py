@@ -5,6 +5,7 @@ from pathlib import Path
 
 from libcst_code_mods.cache import RefactoringCache
 from libcst_code_mods.config import RefactoringConfig
+from libcst_code_mods.core.diagnostics import Diagnostic
 from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.rules import RULES
 
@@ -29,10 +30,7 @@ def main(inp_root: Path | str, config: RefactoringConfig) -> int:
     cache = RefactoringCache.new(config, paths)
 
     if not cache.paths_to_process:
-        if config.fix:
-            cache.update()
-        print("All passed")  # noqa: T201
-        return 0
+        return _report_no_work(config, cache)
 
     refactoring_rules = [RULES[k].from_dict(v) for k, v in config.rules.items() if k in RULES]
     refactored_code, diagnostics = multi_file_refactor(
@@ -43,16 +41,36 @@ def main(inp_root: Path | str, config: RefactoringConfig) -> int:
         format_code=config.black_format,
     )
 
+    _print_diagnostics(diagnostics)
+    _write_refactored_code(refactored_code)
+    _update_cache(cache, config, diagnostics)
+    return _report_result(refactored_code, diagnostics)
+
+
+def _report_no_work(config: RefactoringConfig, cache: RefactoringCache) -> int:
+    if config.fix:
+        cache.update()
+    print("All passed")  # noqa: T201
+    return 0
+
+
+def _print_diagnostics(diagnostics: list[Diagnostic]) -> None:
     if diagnostics:
         print(json.dumps([diag.to_dict() for diag in diagnostics], indent=2))  # noqa: T201
 
+
+def _write_refactored_code(refactored_code: dict[Path, str]) -> None:
     for path, code in refactored_code.items():
         path.write_text(code)
         print(f"Modified: {path}")  # noqa: T201
 
+
+def _update_cache(cache: RefactoringCache, config: RefactoringConfig, diagnostics: list[Diagnostic]) -> None:
     if config.fix and not diagnostics:
         cache.update()
 
+
+def _report_result(refactored_code: dict[Path, str], diagnostics: list[Diagnostic]) -> int:
     n_changes = len(refactored_code)
     n_diagnostics = len(diagnostics)
 

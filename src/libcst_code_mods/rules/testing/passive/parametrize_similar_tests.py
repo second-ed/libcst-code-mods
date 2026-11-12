@@ -53,7 +53,7 @@ class ParametrizeSimilarTestsVisitor(BaseCstVisitor):
         functions = [statement for statement in node.body if isinstance(statement, cst.FunctionDef)]
         candidates = [candidate for candidate in map(_candidate, functions) if candidate is not None]
 
-        for group in _similar_groups(candidates):
+        for group in _similar_groups(candidates, MIN_SIMILAR_TESTS):
             replacement = _replacement(group)
             self.context.data.setdefault("replacements", []).append(replacement)
             self.context.paths.add(self.path)
@@ -114,24 +114,12 @@ def _candidate(function: cst.FunctionDef) -> _TestCandidate | None:
     if not function.name.value.startswith("test_") or not isinstance(function.body, cst.IndentedBlock):
         return None
 
-    param_names, param_values, assertions = [], [], []
-
-    for statement in function.body.body:
-        if (extracted := m.extract(statement, ASSIGNMENT)) is not None:
-            param_names.append(extracted["name"].value)
-            param_values.append(normalise(extracted["value"]))
-        if m.matches(statement, ASSERTION):
-            assertions.append(statement.body[0])
-
-    if (
-        not param_names
-        or not param_values
-        or len(assertions) != 1
-        or len(param_names) + len(assertions) != len(function.body.body)
-    ):
+    param_names, param_values, assertions = _candidate_parts(function)
+    if not _valid_candidate_parts(param_names, param_values, assertions, function):
         return None
 
     assertion = assertions[0]
+
     return _TestCandidate(
         function=function,
         name=function.name.value,
@@ -143,11 +131,36 @@ def _candidate(function: cst.FunctionDef) -> _TestCandidate | None:
     )
 
 
-def _similar_groups(candidates: Iterable[_TestCandidate]) -> Iterable[tuple[_TestCandidate, ...]]:
+def _candidate_parts(function: cst.FunctionDef) -> tuple[list[str], list[str], list[cst.Assert]]:
+    param_names: list[str] = []
+    param_values: list[str] = []
+    assertions: list[cst.Assert] = []
+    for statement in function.body.body:
+        if (extracted := m.extract(statement, ASSIGNMENT)) is not None:
+            param_names.append(extracted["name"].value)
+            param_values.append(normalise(extracted["value"]))
+        if m.matches(statement, ASSERTION):
+            assertions.append(statement.body[0])
+    return param_names, param_values, assertions
+
+
+def _valid_candidate_parts(
+    param_names: list[str], param_values: list[str], assertions: list[cst.Assert], function: cst.FunctionDef
+) -> bool:
+    return (
+        bool(param_names and param_values)
+        and len(assertions) == 1
+        and len(param_names) + len(assertions) == len(function.body.body)
+    )
+
+
+def _similar_groups(
+    candidates: Iterable[_TestCandidate], min_similar_tests: int
+) -> Iterable[tuple[_TestCandidate, ...]]:
     grouped: dict[tuple[tuple[str, ...], str], list[_TestCandidate]] = {}
     for candidate in candidates:
         grouped.setdefault((candidate.param_names, candidate.assertion_left), []).append(candidate)
-    return (tuple(group) for group in grouped.values() if len(group) >= MIN_SIMILAR_TESTS)
+    return (tuple(group) for group in grouped.values() if len(group) >= min_similar_tests)
 
 
 def _replacement(group: tuple[_TestCandidate, ...]) -> _Replacement:

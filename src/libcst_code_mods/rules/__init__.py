@@ -21,6 +21,7 @@ from libcst_code_mods.rules.general.passive.inline_short_single_use_variables im
 from libcst_code_mods.rules.general.passive.invert_guards import InvertGuards
 from libcst_code_mods.rules.general.passive.invert_loop_guards import InvertLoopGuards
 from libcst_code_mods.rules.general.passive.method_does_not_use_self import MethodDoesNotUseSelf
+from libcst_code_mods.rules.general.passive.prefer_flatter_functions import PreferFlatterFunctions
 from libcst_code_mods.rules.general.passive.prefer_simpler_functions import PreferSimplerFunctions
 from libcst_code_mods.rules.general.passive.prefer_smaller_functions import PreferSmallerFunctions
 from libcst_code_mods.rules.general.passive.replace_multiple_function_calls_in_comp_with_walrus import (
@@ -78,6 +79,7 @@ __all__ = [
     "MethodDoesNotUseSelf",
     "NoAssertsInLoop",
     "ParametrizeSimilarTests",
+    "PreferFlatterFunctions",
     "PreferSimplerFunctions",
     "PreferSmallerFunctions",
     "RemoveKwargsIfDefaultValue",

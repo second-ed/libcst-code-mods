@@ -251,32 +251,52 @@ class IdentifyPureFunctionsVisitor(BaseCstVisitor):
             return
 
         self.function_names[node.name.value] = fqn
-
-        dependencies = []
-        parameter_names = {parameter.name.value for parameter in m.findall(node.params, m.Param(name=m.Name()))}
-        for name in m.findall(node.body, m.Name()):
-            if (
-                name.value in parameter_names
-                or self.get_metadata(cst.metadata.ExpressionContextProvider, name, None)
-                is not cst.metadata.ExpressionContext.LOAD
-                or (name_scope := self.get_metadata(cst.metadata.ScopeProvider, name, None)) is None
-            ):
-                continue
-
-            assignments = name_scope[name.value] if name.value in name_scope else set()  # noqa: SIM401
-            if name.value in PURE_BUILTIN_NAMES and all(
-                assignment.__class__ is BuiltinAssignment for assignment in assignments
-            ):
-                continue
-
-            if _possibly_impure_dependency(dependencies, name, name_scope, assignments):
-                dependencies.append(name.value)
+        dependencies = _function_dependencies(self, node)
 
         self.function_dependencies[fqn] = dependencies
 
         self.context.paths.add(self.path)
         self.context.data.setdefault("function_dependencies", {}).update(self.function_dependencies)
         self.context.data.setdefault("function_names", {}).update(self.function_names)
+
+
+def _function_dependencies(visitor: IdentifyPureFunctionsVisitor, node: cst.FunctionDef) -> list[str]:
+    parameter_names = {parameter.name.value for parameter in m.findall(node.params, m.Param(name=m.Name()))}
+    dependencies = []
+    for name in m.findall(node.body, m.Name()):
+        dependency = _dependency_name(visitor, name, parameter_names)
+        if dependency is not None and dependency not in dependencies:
+            dependencies.append(dependency)
+    return dependencies
+
+
+def _dependency_name(visitor: IdentifyPureFunctionsVisitor, name: cst.Name, parameter_names: set[str]) -> str | None:
+    if not _is_dependency_candidate(visitor, name, parameter_names):
+        return None
+    if (name_scope := visitor.get_metadata(cst.metadata.ScopeProvider, name, None)) is None:
+        return None
+    assignments = _assignments_for_name(name_scope, name)
+    if _is_pure_builtin(name, assignments):
+        return None
+    return name.value if _possibly_impure_dependency([], name, name_scope, assignments) else None
+
+
+def _is_dependency_candidate(visitor: IdentifyPureFunctionsVisitor, name: cst.Name, parameter_names: set[str]) -> bool:
+    if name.value in parameter_names:
+        return False
+    return (
+        visitor.get_metadata(cst.metadata.ExpressionContextProvider, name, None) is cst.metadata.ExpressionContext.LOAD
+    )
+
+
+def _assignments_for_name(name_scope: FunctionScope, name: cst.Name) -> set:
+    return name_scope[name.value] if name.value in name_scope else set()  # noqa: SIM401
+
+
+def _is_pure_builtin(name: cst.Name, assignments: set) -> bool:
+    return name.value in PURE_BUILTIN_NAMES and all(
+        assignment.__class__ is BuiltinAssignment for assignment in assignments
+    )
 
 
 @register_rule_transformer(IdentifyPureFunctions)
@@ -312,17 +332,8 @@ def _classify_functions(
     }
     pure_functions = {fqn for fqn, dependencies in function_dependencies.items() if not dependencies}
 
-    changed = True
-    while changed:
-        changed = False
-        for fqn, dependencies in function_dependencies.items():
-            if fqn in pure_functions:
-                continue
-
-            called_functions = (function_names[name] for name in dependencies if name in function_names)
-            if not impurities[fqn] and all(name in pure_functions for name in called_functions):
-                pure_functions.add(fqn)
-                changed = True
+    while new_functions := _new_pure_functions(function_dependencies, function_names, impurities, pure_functions):
+        pure_functions = pure_functions | new_functions
 
     return {
         fqn: [
@@ -333,6 +344,26 @@ def _classify_functions(
         for fqn, dependencies in function_dependencies.items()
         if fqn not in pure_functions
     }
+
+
+def _new_pure_functions(
+    function_dependencies: dict[str, list[str]],
+    function_names: dict[str, str],
+    impurities: dict[str, list[str]],
+    pure_functions: set[str],
+) -> set[str]:
+    return {
+        fqn
+        for fqn, dependencies in function_dependencies.items()
+        if fqn not in pure_functions and _is_pure(dependencies, function_names, impurities[fqn], pure_functions)
+    }
+
+
+def _is_pure(
+    dependencies: list[str], function_names: dict[str, str], impurities: list[str], pure_functions: set[str]
+) -> bool:
+    called_functions = (function_names[name] for name in dependencies if name in function_names)
+    return not impurities and all(name in pure_functions for name in called_functions)
 
 
 def _possibly_impure_dependency(

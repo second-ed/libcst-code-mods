@@ -33,6 +33,7 @@ dev = [
     "repo-mapper-rs>=0.5.0",
     "ruff>=0.15.0",
     "sphinx>=9.0.4",
+    "ty>=0.0.98",
 ]
 
 [tool.uv]
