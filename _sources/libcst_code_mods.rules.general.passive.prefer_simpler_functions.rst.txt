@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.prefer\_simpler\_functions module
+==========================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.prefer_simpler_functions
+   :members:
+   :show-inheritance:
+   :undoc-members:

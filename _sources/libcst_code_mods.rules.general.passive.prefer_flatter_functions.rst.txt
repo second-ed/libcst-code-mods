@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.prefer\_flatter\_functions module
+==========================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.prefer_flatter_functions
+   :members:
+   :show-inheritance:
+   :undoc-members:

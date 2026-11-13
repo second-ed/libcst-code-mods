@@ -1,0 +1,7 @@
+libcst\_code\_mods.cst\_builders.primitives.declarations module
+===============================================================
+
+.. automodule:: libcst_code_mods.cst_builders.primitives.declarations
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.inline\_short\_single\_use\_variables module
+=====================================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.inline_short_single_use_variables
+   :members:
+   :show-inheritance:
+   :undoc-members:

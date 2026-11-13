@@ -1,0 +1,23 @@
+libcst\_code\_mods.rules.general.active package
+===============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   libcst_code_mods.rules.general.active.add_guards_from_typehints
+   libcst_code_mods.rules.general.active.add_kwargs
+   libcst_code_mods.rules.general.active.add_logger_debugs_for_args
+   libcst_code_mods.rules.general.active.convert_function_signature
+   libcst_code_mods.rules.general.active.remove_kwargs_if_default_value
+   libcst_code_mods.rules.general.active.reorder_params
+
+Module contents
+---------------
+
+.. automodule:: libcst_code_mods.rules.general.active
+   :members:
+   :show-inheritance:
+   :undoc-members:

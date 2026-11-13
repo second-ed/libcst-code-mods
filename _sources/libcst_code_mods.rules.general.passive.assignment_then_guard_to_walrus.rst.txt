@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.assignment\_then\_guard\_to\_walrus module
+===================================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.assignment_then_guard_to_walrus
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.dataclasses\_should\_be\_frozen module
+===============================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.dataclasses_should_be_frozen
+   :members:
+   :show-inheritance:
+   :undoc-members:

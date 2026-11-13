@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.function\_should\_be\_private module
+=============================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.function_should_be_private
+   :members:
+   :show-inheritance:
+   :undoc-members:
