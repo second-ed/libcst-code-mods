@@ -16,7 +16,7 @@ ASSERTION_LINE = m.SimpleStatementLine(body=[m.SaveMatchedNode(m.Assert(), "asse
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class DoNotUseAssertions(RefactoringRule):
     """Examples:
 

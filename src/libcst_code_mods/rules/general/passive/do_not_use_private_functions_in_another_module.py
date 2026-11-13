@@ -11,7 +11,7 @@ from libcst_code_mods.rules._rule_mapping import RULE_NAME_MAPPING, register_rul
 
 
 @register_rule
-@attrs.define(frozen=True)
+@attrs.frozen
 class DoNotUsePrivateFunctionsInAnotherModule(RefactoringRule):
     pass
 
