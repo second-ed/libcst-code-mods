@@ -89,6 +89,7 @@ def main(src_root: Path = REPO_ROOT / "src/libcst_code_mods/rules", test_root: P
 def _paths_to_df(root: Path) -> pl.DataFrame:
     return (
         pl.DataFrame({"path": map(str, root.rglob("*.py"))})
+        .filter(~pl.col("path").str.contains("/rules/custom/", literal=True))
         .with_columns(rule_path=pl.col("path").str.strip_prefix(str(root)).str.strip_chars("/"))
         .with_columns(path_parts=pl.col("rule_path").str.split("/"))
         .with_columns(basename=pl.col("path_parts").list.get(-1))

@@ -44,6 +44,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │       │   ├── primitives
 │       │   └── testing
 │       └── rules
+│           ├── custom
 │           ├── general                                                  # general python lints rather than specialised to a particular lib
 │           │   ├── active                                               # active rules require user configuration before running and run on a subset of entities
 │           │   └── passive                                              # passive rules don't require config and run whenever they see the pattern they alter
@@ -53,6 +54,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 │               └── passive
 └── tests
     ├── rules
+    │   ├── custom
     │   ├── general
     │   │   ├── active
     │   │   │   ├── add_guards_from_typehints
