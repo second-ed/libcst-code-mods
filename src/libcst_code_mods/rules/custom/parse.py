@@ -3,6 +3,44 @@ from typing import Any
 
 import libcst.matchers as m
 
+from libcst_code_mods.core.cst_context import CstContext
+from libcst_code_mods.rules.custom.visitor import CustomDiagnosticVisitor
+
+
+def parse_custom_rule_visitors(config: dict, path: str, context: CstContext) -> list[CustomDiagnosticVisitor]:
+    """Example:
+
+    ```yaml
+    custom_rules:
+        no_print:
+            include:
+            - "src/**/*.py"
+            exclude:
+            - "src/generated/**"
+            - "src/**/test_*.py"
+            matcher:
+            type: Call
+            func:
+                type: Name
+                value: print
+            instead: "use the project logger"
+    ```
+
+    This function expects the values under the "custom_rules" key
+    """
+    return [
+        CustomDiagnosticVisitor(
+            path,
+            context,
+            rule=rule,
+            matcher=_parse_matcher(conf["matcher"]),
+            instead=conf.get("instead", f"No instead given for {rule}"),
+            include=conf.get("include", ()),
+            exclude=conf.get("exclude", ()),
+        )
+        for rule, conf in config.items()
+    ]
+
 
 def _parse_matcher(config: dict[str, Any]) -> m.BaseMatcherNode:
     matcher_name = config["type"]
