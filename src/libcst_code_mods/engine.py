@@ -15,6 +15,7 @@ from libcst_code_mods.core.cst_rule import CstRule
 from libcst_code_mods.core.diagnostics import Diagnostic
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING, RuleMapping, make_rule_mapping_immutable
+from libcst_code_mods.rules.custom.parse import parse_custom_rule_visitors
 from libcst_code_mods.utils import black_format
 
 
@@ -24,12 +25,16 @@ def multi_file_refactor(  # noqa: PLR0913
     refactoring_rules: list[RefactoringRule],
     rule_mapping: RuleMapping | None = None,
     *,
+    custom_rules: dict | None = None,
     fix: bool = True,
     format_code: bool = False,
 ) -> tuple[dict[Path, str], list[Diagnostic]]:
     rule_mapping = rule_mapping if rule_mapping is not None else RULE_MAPPING
-    immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule] = make_rule_mapping_immutable(rule_mapping)
+    custom_rules = custom_rules if custom_rules is not None else {}
+
     manager = _get_manager(str(root), paths)
+
+    immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule] = make_rule_mapping_immutable(rule_mapping)
     contexts: dict[type[RefactoringRule], CstContext] = {
         type(refactoring_rule): CstContext(Path(root).resolve(), data=refactoring_rule.to_dict())
         for refactoring_rule in refactoring_rules
@@ -43,6 +48,8 @@ def multi_file_refactor(  # noqa: PLR0913
                     refactoring_rules=refactoring_rules,
                     immutable_rule_mapping=immutable_rule_mapping,
                     contexts=contexts,
+                    custom_rules=custom_rules,
+                    custom_context=CstContext(Path(root).resolve(), data={}),
                     path=str(path),
                 )
                 for path in paths
@@ -97,19 +104,25 @@ def _run_transformers(  # noqa: PLR0913
     return refactored_code
 
 
-def _collect_context(
+def _collect_context(  # noqa: PLR0913
     manager: FullRepoManager,
     refactoring_rules: list[RefactoringRule],
     immutable_rule_mapping: MappingProxyType[type[RefactoringRule], CstRule],
     contexts: dict[type[RefactoringRule], CstContext],
+    custom_rules: dict,
+    custom_context: CstContext,
     path: str,
 ) -> list[Diagnostic]:
     wrapper = manager.get_metadata_wrapper_for_path(path)
-    if visitors := [
+
+    native_visitors = [
         visitor_factory.from_context(path, contexts[type(rule)])
         for rule in refactoring_rules
         if (visitor_factory := immutable_rule_mapping[type(rule)].visitor_factory) is not None
-    ]:
+    ]
+    custom_visitors = parse_custom_rule_visitors(custom_rules, path, custom_context) if custom_rules else []
+
+    if visitors := [*native_visitors, *custom_visitors]:
         wrapper.visit_batched(visitors)
         return sorted(
             itertools.chain.from_iterable(visitor.context.diagnostics for visitor in visitors),

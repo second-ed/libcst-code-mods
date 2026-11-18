@@ -10,6 +10,7 @@ CONFIG_FILENAME = "refactoring-rules-config.yaml"
 @attrs.frozen
 class RefactoringConfig:
     rules: dict[str, Any]
+    custom_rules: dict
     fix: bool = True
     black_format: bool = False
 
@@ -31,6 +32,7 @@ class RefactoringConfig:
                 if rule_names is not None
                 else configured_rules
             ),
+            custom_rules=values.get("custom_rules", {}),
             fix=fix,
             black_format=black_format if black_format is not None else values.get("black_format", False),
         )

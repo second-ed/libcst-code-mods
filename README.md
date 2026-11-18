@@ -28,6 +28,8 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
 ├── .github
 │   └── workflows
 ├── .libcst_code_mods_cache
+├── .uv-cache
+│   └── sdists-v10
 ├── docs
 │   └── source
 ├── mock_package

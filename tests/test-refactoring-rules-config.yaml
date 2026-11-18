@@ -5,3 +5,11 @@ rules:
   replace_multiple_with_column_renamed_calls: {}
   replace_multiple_with_column_calls: {}
   replace_nested_list_comps_with_linear_gen_exps: {}
+custom_rules:
+  no_print:
+    matcher:
+      type: Call
+      func:
+        type: Name
+        value: print
+    instead: "use the project logger"

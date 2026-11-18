@@ -37,6 +37,7 @@ def main(inp_root: Path | str, config: RefactoringConfig) -> int:
         root,
         cache.paths_to_process,
         refactoring_rules=refactoring_rules,
+        custom_rules=config.custom_rules,
         fix=config.fix,
         format_code=config.black_format,
     )

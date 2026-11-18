@@ -29,7 +29,7 @@ def parse_custom_rule_visitors(config: dict, path: str, context: CstContext) -> 
     This function expects the values under the "custom_rules" key
     """
     return [
-        CustomDiagnosticVisitor(
+        CustomDiagnosticVisitor.new(
             path,
             context,
             rule=rule,
@@ -37,6 +37,7 @@ def parse_custom_rule_visitors(config: dict, path: str, context: CstContext) -> 
             instead=conf.get("instead", f"No instead given for {rule}"),
             include=conf.get("include", ()),
             exclude=conf.get("exclude", ()),
+            matcher_name=conf["matcher"]["type"],
         )
         for rule, conf in config.items()
     ]

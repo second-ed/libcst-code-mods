@@ -15,7 +15,7 @@ def test_main(tmp_path) -> None:
     before_root = tmp_root / "before"
     after_root = tmp_root / "after"
 
-    main(before_root, config=RefactoringConfig.from_file(config_path, fix=True))
+    n_diags = main(before_root, config=RefactoringConfig.from_file(config_path, fix=True))
 
     expected_paths = list(after_root.rglob("**/*.py"))
     actual_paths = list(before_root.rglob("**/*.py"))
@@ -27,3 +27,4 @@ def test_main(tmp_path) -> None:
         )
         == {}
     )
+    assert n_diags == 4
