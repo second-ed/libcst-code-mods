@@ -63,3 +63,32 @@ def _parse_value(value: Collection) -> m.BaseMatcherNode | list[m.BaseMatcherNod
         return list(map(_parse_value, value))
 
     return value
+
+
+def _matcher_to_dict(matcher: m.BaseMatcherNode) -> dict[str, object]:
+    """Convert a LibCST matcher into the dictionary form used by custom rules."""
+    if not isinstance(matcher, m.BaseMatcherNode):
+        raise TypeError(f"Expected a LibCST matcher, got {type(matcher).__name__}")
+
+    values = {name: _matcher_value_to_dict(value) for name, value in _matcher_fields(matcher).items()}
+    return {"type": type(matcher).__name__, **values}
+
+
+def _matcher_fields(matcher: m.BaseMatcherNode) -> dict[str, object]:
+    if isinstance(matcher, m.OneOf):
+        return {"options": matcher.options}
+
+    fields = getattr(matcher, "__dict__", {})
+    return {name: value for name, value in fields.items() if not name.startswith("_") and value is not m.DoNotCare()}
+
+
+def _matcher_value_to_dict(value: object) -> object:
+    if value is m.DoNotCare():
+        return None
+    if isinstance(value, m.BaseMatcherNode):
+        return _matcher_to_dict(value)
+    if isinstance(value, (list, tuple)):
+        return list(map(_matcher_value_to_dict, value))
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    raise TypeError(f"Cannot convert matcher value of type {type(value).__name__}")

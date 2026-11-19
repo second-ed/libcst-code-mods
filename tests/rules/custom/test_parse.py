@@ -2,7 +2,7 @@ import pytest
 import libcst.matchers as m
 import libcst as cst
 
-from libcst_code_mods.rules.custom.parse import _parse_matcher
+from libcst_code_mods.rules.custom.parse import _parse_matcher, _matcher_to_dict
 
 
 @pytest.mark.parametrize(
@@ -92,3 +92,25 @@ def test_parse_matcher_for_statements(config, expected_result, should_match, sho
     assert not m.matches(should_not_match_node, expected_result), (
         f"expected matcher should not identify: {should_not_match_node}"
     )
+
+
+@pytest.mark.parametrize(
+    ("matcher", "node"),
+    [
+        pytest.param(m.Call(func=m.Name("print")), cst.parse_expression("print('x')")),
+        pytest.param(
+            m.Call(func=m.OneOf(m.Name("print"), m.Attribute(value=m.DoNotCare(), attr=m.Name("write")))),
+            cst.parse_expression("thing.write()"),
+        ),
+        pytest.param(
+            m.SimpleStatementLine(body=[m.AnnAssign(target=m.Name("result"), annotation=m.Annotation(m.Name("str")))]),
+            cst.parse_statement("result: str = ''"),
+        ),
+    ],
+)
+def test_matcher_to_dict_round_trip(matcher: m.BaseMatcherNode, node: cst.CSTNode) -> None:
+    config = _matcher_to_dict(matcher)
+    parsed_matcher = _parse_matcher(config)
+
+    assert m.matches(node, parsed_matcher)
+    assert m.matches(node, matcher)
