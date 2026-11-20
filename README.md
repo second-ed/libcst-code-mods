@@ -103,6 +103,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │           ├── do_not_use_test_classes
     │           ├── do_not_use_unittest
     │           ├── no_asserts_in_loop
+    │           ├── no_conditional_branches_in_tests
     │           └── parametrize_similar_tests
     └── test_examples
 
