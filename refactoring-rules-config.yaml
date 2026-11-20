@@ -51,4 +51,5 @@ rules:
   assert_against_full_object: {}
   do_not_use_magic_mock: {}
   no_asserts_in_loop: {}
+  simplify_boolean_operations: {}
 black_format: false

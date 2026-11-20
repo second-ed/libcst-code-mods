@@ -36,6 +36,7 @@ from libcst_code_mods.rules.general.passive.replace_nested_list_comps_with_linea
 from libcst_code_mods.rules.general.passive.replace_single_use_list_comp_with_generator import (
     ReplaceSingleUseListCompWithGenerator,
 )
+from libcst_code_mods.rules.general.passive.simplify_boolean_operations import SimplifyBooleanOperations
 from libcst_code_mods.rules.pyspark.passive.avoid_single_partition_repartition import AvoidSinglePartitionRepartition
 from libcst_code_mods.rules.pyspark.passive.replace_multiple_with_column_calls import ReplaceMultipleWithColumnCalls
 from libcst_code_mods.rules.pyspark.passive.replace_multiple_with_column_renamed_calls import (
@@ -50,6 +51,7 @@ from libcst_code_mods.rules.testing.passive.do_not_use_magic_mock import DoNotUs
 from libcst_code_mods.rules.testing.passive.do_not_use_test_classes import DoNotUseTestClasses
 from libcst_code_mods.rules.testing.passive.do_not_use_unittest import DoNotUseUnittest
 from libcst_code_mods.rules.testing.passive.no_asserts_in_loop import NoAssertsInLoop
+from libcst_code_mods.rules.testing.passive.no_conditional_branches_in_tests import NoConditionalBranchesInTests
 from libcst_code_mods.rules.testing.passive.parametrize_similar_tests import ParametrizeSimilarTests
 
 __all__ = [
@@ -78,6 +80,7 @@ __all__ = [
     "InvertLoopGuards",
     "MethodDoesNotUseSelf",
     "NoAssertsInLoop",
+    "NoConditionalBranchesInTests",
     "ParametrizeSimilarTests",
     "PreferFlatterFunctions",
     "PreferSimplerFunctions",
@@ -92,4 +95,5 @@ __all__ = [
     "ReplaceSingleUseListCompWithGenerator",
     "ReplaceWithColumnInForLoop",
     "ReplaceWithColumnRenamedInForLoop",
+    "SimplifyBooleanOperations",
 ]
