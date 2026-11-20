@@ -20,3 +20,8 @@ composite_factor_or_and = A
 composite_factor_and_or_common_right = B
 composite_factor_or_and_common_right = B
 flattened_composite_factor = A and C
+
+# more complex ones
+composite_a = A or (B and C)
+composite_b = A and B and C
+composite_c = A or not B and not C

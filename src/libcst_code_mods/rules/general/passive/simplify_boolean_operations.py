@@ -36,10 +36,15 @@ class SimplifyBooleanOperationsTransformer(BaseCstTransformer):
             previous = current
 
             for rule in BASIC_BOOLEAN_RULES + COMPOSITE_BOOLEAN_RULES:
-                current = rule(current)
+                next_current = rule(current)
 
-                if not isinstance(current, cst.BooleanOperation):
-                    return current
+                if not isinstance(next_current, cst.BooleanOperation):
+                    return next_current
+
+                if not next_current.deep_equals(current):
+                    return next_current.visit(self)
+
+                current = next_current
 
             if current.deep_equals(previous):
                 return current
@@ -57,10 +62,15 @@ class SimplifyBooleanOperationsTransformer(BaseCstTransformer):
             previous = current
 
             for rule in UNARY_BOOLEAN_RULES:
-                current = rule(current)
+                next_current = rule(current)
 
-                if not isinstance(current, cst.UnaryOperation):
-                    return current
+                if not isinstance(next_current, cst.UnaryOperation):
+                    return next_current.visit(self)
+
+                if not next_current.deep_equals(current):
+                    return next_current.visit(self)
+
+                current = next_current
 
             if current.deep_equals(previous):
                 return current
