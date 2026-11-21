@@ -1,0 +1,19 @@
+libcst\_code\_mods.rules.general package
+========================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   libcst_code_mods.rules.general.active
+   libcst_code_mods.rules.general.passive
+
+Module contents
+---------------
+
+.. automodule:: libcst_code_mods.rules.general
+   :members:
+   :show-inheritance:
+   :undoc-members:

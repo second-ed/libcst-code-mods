@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.active.add\_logger\_debugs\_for\_args module
+=============================================================================
+
+.. automodule:: libcst_code_mods.rules.general.active.add_logger_debugs_for_args
+   :members:
+   :show-inheritance:
+   :undoc-members:

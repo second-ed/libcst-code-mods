@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.identify\_pure\_functions module
+=========================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.identify_pure_functions
+   :members:
+   :show-inheritance:
+   :undoc-members:

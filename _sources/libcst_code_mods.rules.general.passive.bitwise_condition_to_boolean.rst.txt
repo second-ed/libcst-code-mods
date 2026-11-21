@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.bitwise\_condition\_to\_boolean module
+===============================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.bitwise_condition_to_boolean
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.active.remove\_kwargs\_if\_default\_value module
+=================================================================================
+
+.. automodule:: libcst_code_mods.rules.general.active.remove_kwargs_if_default_value
+   :members:
+   :show-inheritance:
+   :undoc-members:

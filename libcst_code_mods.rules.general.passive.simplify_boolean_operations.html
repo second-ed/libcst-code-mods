@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>libcst_code_mods.rules.general.passive.simplify_boolean_operations module &#8212; libcst_code_mods 2026 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=fc6fd62b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">libcst_code_mods 2026 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">libcst_code_mods.rules.general.passive.simplify_boolean_operations module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-libcst_code_mods.rules.general.passive.simplify_boolean_operations">
+<span id="libcst-code-mods-rules-general-passive-simplify-boolean-operations-module"></span><h1>libcst_code_mods.rules.general.passive.simplify_boolean_operations module<a class="headerlink" href="#module-libcst_code_mods.rules.general.passive.simplify_boolean_operations" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperations">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.passive.simplify_boolean_operations.</span></span><span class="sig-name descname"><span class="pre">SimplifyBooleanOperations</span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperations" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.refactoring_rule.html#libcst_code_mods.core.refactoring_rule.RefactoringRule" title="libcst_code_mods.core.refactoring_rule.RefactoringRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">RefactoringRule</span></code></a></p>
+<p class="rubric">Examples</p>
+<section id="case">
+<h2>Case<a class="headerlink" href="#case" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">identity_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">and</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">identity_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>Case<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">identity_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">or</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">identity_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>Case<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">domination_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">and</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">domination_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>Case<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">domination_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">or</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">domination_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>Case<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">idempotent_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">and</span> <span class="n">A</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">idempotent_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>Case<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">idempotent_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">or</span> <span class="n">A</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">idempotent_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2>Case<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">complement_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">A</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">complement_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2>Case<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">complement_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">A</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">complement_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2>Case<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">absorption_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">absorption_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h2>Case<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">absorption_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">and</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">absorption_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h2>Case<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">double_negation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="ow">not</span> <span class="ow">not</span> <span class="n">A</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">double_negation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h2>Case<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">demorgan_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">demorgan_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">A</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">B</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h2>Case<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">demorgan_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">demorgan_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">A</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">B</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h2>Case<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">constant_not_true</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="ow">not</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">constant_not_true</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h2>Case<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">constant_not_false</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="ow">not</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">constant_not_false</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="id15">
+<h2>Case<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_identity_and_and_absorption_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_identity_and_and_absorption_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h2>Case<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_factor_and_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_factor_and_or</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id17">
+<h2>Case<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_factor_or_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="n">B</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_factor_or_and</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id18">
+<h2>Case<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_factor_and_or_common_right</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_factor_and_or_common_right</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">B</span>
+</pre></div>
+</div>
+</section>
+<section id="id19">
+<h2>Case<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_factor_or_and_common_right</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="n">B</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">A</span> <span class="ow">or</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_factor_or_and_common_right</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">B</span>
+</pre></div>
+</div>
+</section>
+<section id="id20">
+<h2>Case<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">flattened_composite_factor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span> <span class="ow">and</span> <span class="n">C</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">B</span> <span class="ow">and</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">flattened_composite_factor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">and</span> <span class="n">C</span>
+</pre></div>
+</div>
+</section>
+<section id="id21">
+<h2>Case<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># more complex ones</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">composite_a</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="n">B</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># more complex ones</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">composite_a</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">or</span> <span class="p">(</span><span class="n">B</span> <span class="ow">and</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id22">
+<h2>Case<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_b</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">and</span> <span class="n">B</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">B</span> <span class="ow">and</span> <span class="n">C</span> <span class="ow">or</span> <span class="n">A</span> <span class="ow">and</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_b</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">and</span> <span class="n">B</span> <span class="ow">and</span> <span class="n">C</span>
+</pre></div>
+</div>
+</section>
+<section id="id23">
+<h2>Case<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_c</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">B</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">C</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">B</span> <span class="ow">or</span> <span class="n">C</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="n">B</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">composite_c</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">B</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">C</span>
+</pre></div>
+</div>
+</section>
+<section id="id24">
+<h2>Case<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">more_absorption_law</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">more_absorption_law</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span>
+</pre></div>
+</div>
+</section>
+<section id="id25">
+<h2>Case<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">demorgan_double_negation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="ow">not</span> <span class="n">A</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">demorgan_double_negation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="id26">
+<h2>Case<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">all_possible_branches</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">A</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">all_possible_branches</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="id27">
+<h2>Case<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">conjunction_of_zero</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="n">B</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">A</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">B</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">A</span> <span class="ow">or</span> <span class="n">C</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">A</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">conjunction_of_zero</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</section>
+<section id="id28">
+<h2>Case<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">absorption_across_multiple_terms</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">C</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">B</span> <span class="ow">and</span> <span class="n">C</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span> <span class="ow">and</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">absorption_across_multiple_terms</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">A</span> <span class="ow">and</span> <span class="p">(</span><span class="n">B</span> <span class="ow">or</span> <span class="n">C</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">B</span> <span class="ow">and</span> <span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id29">
+<h2>Case<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h2>
+<p>Pre-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">simplify_four_terms</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">((</span><span class="n">A</span> <span class="ow">and</span> <span class="n">B</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">A</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">B</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">C</span> <span class="ow">and</span> <span class="n">D</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">C</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">D</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Post-transformer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">simplify_four_terms</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">C</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">A</span>
+</pre></div>
+</div>
+<p>—</p>
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsTransformer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.passive.simplify_boolean_operations.</span></span><span class="sig-name descname"><span class="pre">SimplifyBooleanOperationsTransformer</span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsTransformer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.base_cst_transformer.html#libcst_code_mods.core.base_cst_transformer.BaseCstTransformer" title="libcst_code_mods.core.base_cst_transformer.BaseCstTransformer"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCstTransformer</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsTransformer.leave_BooleanOperation">
+<span class="sig-name descname"><span class="pre">leave_BooleanOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BooleanOperation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BooleanOperation</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BaseExpression</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsTransformer.leave_BooleanOperation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsTransformer.leave_UnaryOperation">
+<span class="sig-name descname"><span class="pre">leave_UnaryOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UnaryOperation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UnaryOperation</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BaseExpression</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsTransformer.leave_UnaryOperation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsVisitor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">libcst_code_mods.rules.general.passive.simplify_boolean_operations.</span></span><span class="sig-name descname"><span class="pre">SimplifyBooleanOperationsVisitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="libcst_code_mods.core.cst_context.html#libcst_code_mods.core.cst_context.CstContext" title="libcst_code_mods.core.cst_context.CstContext"><span class="pre">CstContext</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsVisitor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="libcst_code_mods.core.base_cst_visitor.html#libcst_code_mods.core.base_cst_visitor.BaseCstVisitor" title="libcst_code_mods.core.base_cst_visitor.BaseCstVisitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCstVisitor</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsVisitor.visit_BooleanOperation">
+<span class="sig-name descname"><span class="pre">visit_BooleanOperation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BooleanOperation</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsVisitor.visit_BooleanOperation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">libcst_code_mods.rules.general.passive.simplify_boolean_operations module</a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperations"><code class="docutils literal notranslate"><span class="pre">SimplifyBooleanOperations</span></code></a></li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsTransformer"><code class="docutils literal notranslate"><span class="pre">SimplifyBooleanOperationsTransformer</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsTransformer.leave_BooleanOperation"><code class="docutils literal notranslate"><span class="pre">SimplifyBooleanOperationsTransformer.leave_BooleanOperation()</span></code></a></li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsTransformer.leave_UnaryOperation"><code class="docutils literal notranslate"><span class="pre">SimplifyBooleanOperationsTransformer.leave_UnaryOperation()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsVisitor"><code class="docutils literal notranslate"><span class="pre">SimplifyBooleanOperationsVisitor</span></code></a><ul>
+<li><a class="reference internal" href="#libcst_code_mods.rules.general.passive.simplify_boolean_operations.SimplifyBooleanOperationsVisitor.visit_BooleanOperation"><code class="docutils literal notranslate"><span class="pre">SimplifyBooleanOperationsVisitor.visit_BooleanOperation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/libcst_code_mods.rules.general.passive.simplify_boolean_operations.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">libcst_code_mods 2026 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">libcst_code_mods.rules.general.passive.simplify_boolean_operations module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2026, Ed Cuss.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+    </div>
+  </body>
+</html>

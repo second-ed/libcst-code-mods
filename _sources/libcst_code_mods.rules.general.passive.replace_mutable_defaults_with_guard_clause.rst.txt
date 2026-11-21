@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.replace\_mutable\_defaults\_with\_guard\_clause module
+===============================================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.replace_mutable_defaults_with_guard_clause
+   :members:
+   :show-inheritance:
+   :undoc-members:
