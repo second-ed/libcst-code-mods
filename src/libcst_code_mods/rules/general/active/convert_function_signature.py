@@ -21,7 +21,7 @@ class ConvertFunctionSignature(RefactoringRule):
 
         .. code-block:: python
 
-            def main():
+            def main() -> int:
                 x = add(1, 2)
                 y = add(2, b=2)
                 print(y)
@@ -31,7 +31,7 @@ class ConvertFunctionSignature(RefactoringRule):
 
         .. code-block:: python
 
-            def main():
+            def main() -> int:
                 x = new_sum(value_1=1, value_2=2)
                 y = new_sum(value_1=2, value_2=2)
                 print(y)

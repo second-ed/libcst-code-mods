@@ -1,5 +1,6 @@
 import libcst.matchers as m
 import pytest
+from libcst.metadata.full_repo_manager import FullRepoManager
 from libcst.metadata.wrapper import MetadataWrapper
 
 import libcst_code_mods.core.matchers as mat
@@ -11,7 +12,7 @@ MATCHER_TEST_ROOT = f"{REPO_ROOT}/tests/test_examples"
 
 
 @pytest.fixture(scope="session")
-def test_manager():
+def test_manager() -> FullRepoManager:
     return _get_manager(MATCHER_TEST_ROOT)
 
 
@@ -34,7 +35,7 @@ def _get_node_collecter_results(wrapper: MetadataWrapper, type_matcher: m.BaseMa
     ],
     indirect=["usecase_wrapper"],
 )
-def test_is_function(usecase_wrapper, expected_result):
+def test_is_function(usecase_wrapper, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.is_function())
     assert bool(results) == expected_result
 
@@ -47,7 +48,7 @@ def test_is_function(usecase_wrapper, expected_result):
     ],
     indirect=["usecase_wrapper"],
 )
-def test_is_nested_function(usecase_wrapper, expected_result):
+def test_is_nested_function(usecase_wrapper, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.is_nested_function())
     assert bool(results) == expected_result
 
@@ -60,7 +61,7 @@ def test_is_nested_function(usecase_wrapper, expected_result):
     ],
     indirect=["usecase_wrapper"],
 )
-def test_is_class(usecase_wrapper, expected_result):
+def test_is_class(usecase_wrapper, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.is_class())
     assert bool(results) == expected_result
 
@@ -74,7 +75,7 @@ def test_is_class(usecase_wrapper, expected_result):
     ],
     indirect=["usecase_wrapper"],
 )
-def test_raises_exception(usecase_wrapper, expected_result):
+def test_raises_exception(usecase_wrapper, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.raises_exception())
     assert bool(results) == expected_result
 
@@ -93,7 +94,7 @@ def test_raises_exception(usecase_wrapper, expected_result):
     ],
     indirect=["usecase_wrapper"],
 )
-def test_has_return_type(usecase_wrapper, type_matcher, expected_result):
+def test_has_return_type(usecase_wrapper, type_matcher, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.has_return_type(type_matcher))
     assert bool(results) == expected_result
 
@@ -114,7 +115,7 @@ def test_has_return_type(usecase_wrapper, type_matcher, expected_result):
     ],
     indirect=["usecase_wrapper"],
 )
-def test_assignment_has_type_hint(usecase_wrapper, type_matcher, expected_result):
+def test_assignment_has_type_hint(usecase_wrapper, type_matcher, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.assignment_has_type_hint(type_matcher))
     assert bool(results) == expected_result
 
@@ -133,7 +134,7 @@ def test_assignment_has_type_hint(usecase_wrapper, type_matcher, expected_result
     ],
     indirect=["usecase_wrapper"],
 )
-def test_param_has_type_hint(usecase_wrapper, type_matcher, expected_result):
+def test_param_has_type_hint(usecase_wrapper, type_matcher, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.param_has_type_hint(type_matcher))
     assert bool(results) == expected_result
 
@@ -147,7 +148,7 @@ def test_param_has_type_hint(usecase_wrapper, type_matcher, expected_result):
     ],
     indirect=["usecase_wrapper"],
 )
-def test_is_call_with_name(usecase_wrapper, type_matcher, expected_result):
+def test_is_call_with_name(usecase_wrapper, type_matcher, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.is_call_with_name(type_matcher))
     assert bool(results) == expected_result
 
@@ -161,7 +162,7 @@ def test_is_call_with_name(usecase_wrapper, type_matcher, expected_result):
     ],
     indirect=["usecase_wrapper"],
 )
-def test_is_fstring_with_text(usecase_wrapper, type_matcher, expected_result):
+def test_is_fstring_with_text(usecase_wrapper, type_matcher, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.is_fstring_with_text(type_matcher))
     assert bool(results) == expected_result
 
@@ -177,6 +178,6 @@ def test_is_fstring_with_text(usecase_wrapper, type_matcher, expected_result):
     ],
     indirect=["usecase_wrapper"],
 )
-def test_is_fstring_with_placeholder(usecase_wrapper, type_matcher, expected_result):
+def test_is_fstring_with_placeholder(usecase_wrapper, type_matcher, expected_result) -> None:
     results = _get_node_collecter_results(usecase_wrapper, mat.is_fstring_with_placeholder(type_matcher))
     assert bool(results) == expected_result

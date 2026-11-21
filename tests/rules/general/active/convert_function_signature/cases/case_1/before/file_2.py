@@ -1,7 +1,7 @@
 from .file_1 import add
 
 
-def main():
+def main() -> int:
     x = add(1, 2)
     y = add(2, b=2)
     print(y)
