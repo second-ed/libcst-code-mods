@@ -53,6 +53,16 @@ class MethodDoesNotUseSelfVisitor(BaseCstVisitor):
             self.class_depth
             and not self.function_depth
             and _has_self_parameter(node)
+            and not m.matches(
+                node,
+                m.FunctionDef(
+                    decorators=[
+                        m.ZeroOrMore(m.DoNotCare()),
+                        m.Decorator(decorator=m.Name("abstractmethod")),
+                        m.ZeroOrMore(m.DoNotCare()),
+                    ]
+                ),
+            )
             and not _matches_callback_pattern(node, self.ignore_patterns)
             and not m.findall(node.body, m.Name("self"))
         ):

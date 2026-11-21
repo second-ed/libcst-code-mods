@@ -23,7 +23,7 @@ PARENT = Path(__file__).parent
                 Diagnostic(
                     rule="method_does_not_use_self",
                     path=Path("before/file_1.py"),
-                    code_range=CodeRange(CodePosition(5, 4), CodePosition(6, 20)),
+                    code_range=CodeRange(CodePosition(8, 4), CodePosition(9, 20)),
                     code="\ndef add(self, a: int, b: int) -> int:\n    return a + b\n",
                     instead="use a free floating function if the method doesn't need to be attached to the object",
                 )
