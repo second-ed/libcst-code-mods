@@ -93,3 +93,27 @@ def composite_b() -> None:
 
 def composite_c() -> None:
     _ = A or not B and not C
+
+
+def more_absorption_law() -> None:
+    _ = A
+
+
+def demorgan_double_negation() -> None:
+    _ = True
+
+
+def all_possible_branches() -> None:
+    _ = True
+
+
+def conjunction_of_zero() -> None:
+    _ = False
+
+
+def absorption_across_multiple_terms() -> None:
+    _ = A and (B or C) or (B and C)
+
+
+def simplify_four_terms() -> None:
+    _ = C or not A

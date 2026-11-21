@@ -422,6 +422,108 @@ class SimplifyBooleanOperations(RefactoringRule):
 
             def composite_c() -> None:
                 _ = A or not B and not C
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def more_absorption_law() -> None:
+                _ = (A and B) or (A and not B) or (A and C)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def more_absorption_law() -> None:
+                _ = A
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def demorgan_double_negation() -> None:
+                _ = not (not A and not B) or not (A or B)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def demorgan_double_negation() -> None:
+                _ = True
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def all_possible_branches() -> None:
+                _ = (A and B) or (A and not B) or (not A and B) or (not A and not B)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def all_possible_branches() -> None:
+                _ = True
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def conjunction_of_zero() -> None:
+                _ = (A or B) and (A or not B) and (not A or C) and (not A or not C)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def conjunction_of_zero() -> None:
+                _ = False
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def absorption_across_multiple_terms() -> None:
+                _ = (A and B) or (A and C) or (B and C) or (A and B and C)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def absorption_across_multiple_terms() -> None:
+                _ = A and (B or C) or (B and C)
+
+        Case
+        ----
+
+        Pre-transformer:
+
+        .. code-block:: python
+
+            def simplify_four_terms() -> None:
+                _ = not ((A and B) or (A and not B)) or (C and D) or (C and not D)
+
+        Post-transformer:
+
+        .. code-block:: python
+
+            def simplify_four_terms() -> None:
+                _ = C or not A
     ---
     """
 

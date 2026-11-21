@@ -11,11 +11,17 @@ def _is_false(expr: cst.BaseExpression) -> bool:
 
 
 def _is_not(expr: cst.BaseExpression, value: cst.BaseExpression) -> bool:
-    return m.matches(expr, m.UnaryOperation(m.Not(), m.MatchIfTrue(lambda operand: operand.deep_equals(value))))
+    return m.matches(
+        expr, m.UnaryOperation(m.Not(), m.MatchIfTrue(lambda operand: _deep_equals_without_parentheses(operand, value)))
+    )
 
 
 def _is_complement(left: cst.BaseExpression, right: cst.BaseExpression) -> bool:
     return _is_not(left, right) or _is_not(right, left)
+
+
+def _has_complement(terms: list[cst.BaseExpression]) -> bool:
+    return any(_is_complement(term, other) for index, term in enumerate(terms) for other in terms[index + 1 :])
 
 
 def _flatten(expr: cst.BaseExpression, operator: m.BaseMatcherNode) -> list[cst.BaseExpression]:
@@ -25,7 +31,28 @@ def _flatten(expr: cst.BaseExpression, operator: m.BaseMatcherNode) -> list[cst.
     return [expr]
 
 
-def _combine(expressions: list[cst.BaseExpression], operator: cst.BinaryOperation) -> cst.BaseExpression:
+def _terms(expr: cst.BaseExpression, operator: m.BaseMatcherNode) -> list[cst.BaseExpression]:
+    if m.matches(expr, m.BooleanOperation(operator=operator)):
+        return _flatten(expr, operator)
+
+    return [expr]
+
+
+def _find_operator_term(terms: list[cst.BaseExpression], operator: m.BaseMatcherNode) -> int | None:
+    return next(
+        (index for index, term in enumerate(terms) if m.matches(term, m.BooleanOperation(operator=operator))), None
+    )
+
+
+def _deep_equals_without_parentheses(left: cst.BaseExpression, right: cst.BaseExpression) -> bool:
+    return _without_parentheses(left).deep_equals(_without_parentheses(right))
+
+
+def _without_parentheses(expr: cst.BaseExpression) -> cst.BaseExpression:
+    return expr.with_changes(lpar=[], rpar=[])
+
+
+def _combine(expressions: list[cst.BaseExpression], operator: cst.And | cst.Or) -> cst.BaseExpression:
     result = expressions[0]
 
     for expression in expressions[1:]:
@@ -35,7 +62,14 @@ def _combine(expressions: list[cst.BaseExpression], operator: cst.BinaryOperatio
 
 
 def _matching_index(expression: cst.BaseExpression, candidates: list[cst.BaseExpression]) -> int | None:
-    return next((index for index, candidate in enumerate(candidates) if expression.deep_equals(candidate)), None)
+    return next(
+        (
+            index
+            for index, candidate in enumerate(candidates)
+            if _deep_equals_without_parentheses(expression, candidate)
+        ),
+        None,
+    )
 
 
 def _partition_common_terms(
@@ -57,7 +91,7 @@ def _partition_common_terms(
 
 
 def _factor_complementary_terms(
-    left: list[cst.BaseExpression], right: list[cst.BaseExpression], output_operator: cst.BinaryOperation
+    left: list[cst.BaseExpression], right: list[cst.BaseExpression], output_operator: cst.And | cst.Or
 ) -> cst.BaseExpression | None:
     common, remaining_left, remaining_right = _partition_common_terms(left, right)
 
@@ -74,8 +108,8 @@ def _factor_complementary_terms(
 def _factor_common_terms(
     left: list[cst.BaseExpression],
     right: list[cst.BaseExpression],
-    term_operator: cst.BinaryOperation,
-    factor_operator: cst.BinaryOperation,
+    term_operator: cst.And | cst.Or,
+    factor_operator: cst.And | cst.Or,
 ) -> cst.BaseExpression | None:
     common, remaining_left, remaining_right = _partition_common_terms(left, right)
 
@@ -91,6 +125,26 @@ def _factor_common_terms(
     )
 
     return cst.BooleanOperation(left=_combine(common, term_operator), operator=term_operator, right=remainder)
+
+
+def _all_terms_have_complements(terms: list[cst.BaseExpression], candidates: list[cst.BaseExpression]) -> bool:
+    return all(any(_is_complement(term, candidate) for candidate in candidates) for term in terms)
+
+
+def _build_or_clauses(common: cst.BaseExpression, terms: list[cst.BaseExpression]) -> list[cst.BaseExpression]:
+    return [cst.BooleanOperation(left=common, operator=cst.Or(), right=term) for term in terms]
+
+
+def _build_distributed_or(terms: list[cst.BaseExpression], and_index: int) -> cst.BaseExpression | None:
+    and_terms = _flatten(terms[and_index], m.And())
+    if len(and_terms) != 2 or not (other_terms := terms[:and_index] + terms[and_index + 1 :]):  # noqa: PLR2004
+        return None
+
+    if not _all_terms_have_complements(and_terms, other_terms):
+        return None
+
+    common = _combine(other_terms, cst.Or())
+    return _combine(_build_or_clauses(common, and_terms), cst.And())
 
 
 def bool_identity_and(expr: cst.BooleanOperation) -> cst.BaseExpression:
@@ -164,7 +218,7 @@ def bool_complement_and(expr: cst.BooleanOperation) -> cst.BaseExpression:
     if not m.matches(expr.operator, m.And()):
         return expr
 
-    if _is_not(expr.left, expr.right) or _is_not(expr.right, expr.left):
+    if _has_complement(_flatten(expr, m.And())):
         return cst.Name("False")
 
     return expr
@@ -175,7 +229,7 @@ def bool_complement_or(expr: cst.BooleanOperation) -> cst.BaseExpression:
     if not m.matches(expr.operator, m.Or()):
         return expr
 
-    if _is_not(expr.left, expr.right) or _is_not(expr.right, expr.left):
+    if _has_complement(_flatten(expr, m.Or())):
         return cst.Name("True")
 
     return expr
@@ -277,14 +331,20 @@ def bool_absorption_or(expr: cst.BooleanOperation) -> cst.BaseExpression:
         return expr
 
     terms = _flatten(expr, m.Or())
-    for index, term in enumerate(terms):
-        if not m.matches(term, m.BooleanOperation(operator=m.And())):
-            continue
+    for absorbed_index, absorbed in enumerate(terms):
+        absorbed_factors = _terms(absorbed, m.And())
 
-        term_factors = _flatten(term, m.And())
-        other_terms = terms[:index] + terms[index + 1 :]
-        if any(other.deep_equals(factor) for other in other_terms for factor in term_factors):
-            return _combine(other_terms, cst.Or())
+        for candidate_index, candidate in enumerate(terms):
+            if absorbed_index == candidate_index:
+                continue
+
+            candidate_factors = _terms(candidate, m.And())
+            if len(absorbed_factors) >= len(candidate_factors):
+                continue
+
+            if all(_matching_index(factor, candidate_factors) is not None for factor in absorbed_factors):
+                remaining = terms[:candidate_index] + terms[candidate_index + 1 :]
+                return _combine(remaining, cst.Or())
 
     return expr
 
@@ -295,14 +355,20 @@ def bool_absorption_and(expr: cst.BooleanOperation) -> cst.BaseExpression:
         return expr
 
     terms = _flatten(expr, m.And())
-    for index, term in enumerate(terms):
-        if not m.matches(term, m.BooleanOperation(operator=m.Or())):
-            continue
+    for absorbed_index, absorbed in enumerate(terms):
+        absorbed_factors = _terms(absorbed, m.Or())
 
-        term_factors = _flatten(term, m.Or())
-        other_terms = terms[:index] + terms[index + 1 :]
-        if any(other.deep_equals(factor) for other in other_terms for factor in term_factors):
-            return _combine(other_terms, cst.And())
+        for candidate_index, candidate in enumerate(terms):
+            if absorbed_index == candidate_index:
+                continue
+
+            candidate_factors = _terms(candidate, m.Or())
+            if len(absorbed_factors) >= len(candidate_factors):
+                continue
+
+            if all(_matching_index(factor, candidate_factors) is not None for factor in absorbed_factors):
+                remaining = terms[:candidate_index] + terms[candidate_index + 1 :]
+                return _combine(remaining, cst.And())
 
     return expr
 
@@ -343,6 +409,58 @@ def bool_factor_common_or_and(expr: cst.BooleanOperation) -> cst.BaseExpression:
     return factored if factored is not None else expr
 
 
+def bool_factor_common_or_terms(expr: cst.BooleanOperation) -> cst.BaseExpression:
+    # (A and B) or (A and C) or D -> A and (B or C) or D
+    if not m.matches(expr.operator, m.Or()):
+        return expr
+
+    terms = _flatten(expr, m.Or())
+    for left_index, left in enumerate(terms):
+        for right_index, right in enumerate(terms[left_index + 1 :], left_index + 1):
+            if (
+                factored := _factor_common_terms(_terms(left, m.And()), _terms(right, m.And()), cst.And(), cst.Or())
+            ) is None:
+                continue
+
+            remaining = [term for index, term in enumerate(terms) if index not in (left_index, right_index)]
+            return _combine([factored, *[_without_parentheses(term) for term in remaining]], cst.Or())
+
+    return expr
+
+
+def bool_conjunction_of_complements(expr: cst.BooleanOperation) -> cst.BaseExpression:
+    # A and C and (not A or not C) -> False
+    if not m.matches(expr.operator, m.And()):
+        return expr
+
+    terms = _flatten(expr, m.And())
+
+    for index, term in enumerate(terms):
+        if not m.matches(term, m.BooleanOperation(operator=m.Or())):
+            continue
+
+        and_terms = terms[:index] + terms[index + 1 :]
+        or_terms = _flatten(term, m.Or())
+
+        if all(any(_is_complement(or_term, and_term) for and_term in and_terms) for or_term in or_terms):
+            return cst.Name("False")
+
+    return expr
+
+
+def bool_distribute_or_over_and(expr: cst.BooleanOperation) -> cst.BaseExpression:
+    # X or (Y and Z) -> (X or Y) and (X or Z)
+    if not m.matches(expr.operator, m.Or()):
+        return expr
+
+    terms = _flatten(expr, m.Or())
+    if (and_index := _find_operator_term(terms, m.And())) is None:
+        return expr
+
+    distributed = _build_distributed_or(terms, and_index)
+    return distributed if distributed is not None else expr
+
+
 BASIC_BOOLEAN_RULES = (
     bool_identity_and,
     bool_identity_or,
@@ -356,10 +474,18 @@ BASIC_BOOLEAN_RULES = (
     bool_reduce_or_and,
     bool_absorption_and,
     bool_absorption_or,
+    bool_conjunction_of_complements,
 )
 
 
-COMPOSITE_BOOLEAN_RULES = (bool_factor_and_or, bool_factor_or_and, bool_factor_common_and_or, bool_factor_common_or_and)
+COMPOSITE_BOOLEAN_RULES = (
+    bool_factor_and_or,
+    bool_factor_or_and,
+    bool_factor_common_and_or,
+    bool_factor_common_or_and,
+    bool_factor_common_or_terms,
+    bool_distribute_or_over_and,
+)
 
 
 UNARY_BOOLEAN_RULES = (bool_constant_negation, bool_double_negation, bool_demorgan)
