@@ -40,6 +40,25 @@ class ReorderFunctionsTransformer(BaseCstTransformer):
         )
 
 
+@attrs.define
+class CallCounter(cst.CSTVisitor):
+    fn_name: str
+    module_names: list[str]
+    calls: list[str] = attrs.field(factory=list)
+
+    def visit_Call(self, node: cst.Call) -> bool | None:  # noqa: N802
+        if node.func.value in self.module_names:
+            self.calls.append(node.func.value)
+        return super().visit_Call(node)
+
+
+@attrs.frozen
+class FnCallStats:
+    name: str
+    calls: list[str]
+    called_by: list[str]
+
+
 def _extract_nodes(
     updated_node: cst.Module,
 ) -> tuple[
@@ -77,25 +96,6 @@ def _populate_call_visitors(fn_nodes: dict[str, cst.FunctionDef]) -> dict[str, l
         fn.visit(visitor)
         calls.setdefault(name, []).extend(visitor.calls)
     return calls
-
-
-@attrs.define
-class CallCounter(cst.CSTVisitor):
-    fn_name: str
-    module_names: list[str]
-    calls: list[str] = attrs.field(factory=list)
-
-    def visit_Call(self, node: cst.Call) -> bool | None:  # noqa: N802
-        if node.func.value in self.module_names:
-            self.calls.append(node.func.value)
-        return super().visit_Call(node)
-
-
-@attrs.frozen
-class FnCallStats:
-    name: str
-    calls: list[str]
-    called_by: list[str]
 
 
 def _sort_functions(calls: dict[str, list[str]]) -> list[FnCallStats]:
