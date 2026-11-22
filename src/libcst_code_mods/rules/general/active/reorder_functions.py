@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import attrs
 import libcst as cst
 import libcst.matchers as m
@@ -13,16 +11,16 @@ from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_tr
 @register_rule
 @attrs.frozen
 class ReorderFunctions(RefactoringRule):
-    reorder_path: Path
+    reorder_paths: list[str]
 
 
 @register_rule_visitor(ReorderFunctions)
 @attrs.define
 class ReorderFunctionsVisitor(BaseCstVisitor):
-    reorder_path: Path
+    reorder_paths: list[str]
 
     def leave_Module(self, original_node: cst.Module) -> None:  # noqa: N802
-        if self.path == str(self.reorder_path):
+        if self.path in self.reorder_paths:
             self.context.paths.add(self.path)
         return super().leave_Module(original_node)
 
@@ -32,27 +30,32 @@ class ReorderFunctionsVisitor(BaseCstVisitor):
 class ReorderFunctionsTransformer(BaseCstTransformer):
     def leave_Module(self, original_node: cst.Module, updated_node: cst.Module) -> cst.Module:  # noqa: ARG002, N802
 
-        imports, assigns, fns, classes = [], [], {}, []
+        import_nodes, assign_nodes, fn_nodes, class_nodes = [], [], {}, []
 
         for node in updated_node.body:
             if m.matches(node, m.SimpleStatementLine([m.OneOf(m.Import(), m.ImportFrom())])):
-                imports.append(node)
+                import_nodes.append(node)
             elif m.matches(node, m.SimpleStatementLine([m.OneOf(m.AnnAssign(), m.Assign())])):
-                assigns.append(node)
+                assign_nodes.append(node)
             elif m.matches(node, m.ClassDef()):
-                classes.append(node)
+                class_nodes.append(node)
             elif m.matches(node, m.FunctionDef()):
-                fns[node.name.value] = node
+                fn_nodes[node.name.value] = node
 
-        all_calls = {}
+        calls = _populate_call_visitors(fn_nodes)
 
-        for name, fn in fns.items():
-            visitor = CallCounter(name, list(fns))
-            fn.visit(visitor)
-            all_calls.setdefault(name, []).extend(visitor.calls)
+        fn_nodes = [fn_nodes[fn.name] for fn in _sort_functions(calls)]
+        return updated_node.with_changes(body=[*import_nodes, *class_nodes, *fn_nodes, *assign_nodes])
 
-        fns = [fns[fn.name] for fn in _sort_functions(all_calls)]
-        return updated_node.with_changes(body=[*imports, *classes, *fns, *assigns])
+
+def _populate_call_visitors(fn_nodes: dict[str, cst.FunctionDef]) -> dict[str, list[str]]:
+    calls = {}
+
+    for name, fn in fn_nodes.items():
+        visitor = CallCounter(name, list(fn_nodes))
+        fn.visit(visitor)
+        calls.setdefault(name, []).extend(visitor.calls)
+    return calls
 
 
 @attrs.define

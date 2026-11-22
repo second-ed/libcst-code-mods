@@ -13,7 +13,7 @@ PARENT = Path(__file__).parent
 
 @pytest.mark.parametrize(
     ("case_name", "transformers", "expected_diagnostics"),
-    [pytest.param("case_1", [ReorderFunctions(PARENT / "cases/case_1/before/file_1.py")], [])],
+    [pytest.param("case_1", [ReorderFunctions([str((PARENT / "cases/case_1/before/file_1.py"))])], [])],
 )
 def test_reorder_functions(case_name, transformers, expected_diagnostics) -> None:
     usecase_root = f"{PARENT}/cases/{case_name}"
