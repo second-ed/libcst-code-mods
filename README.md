@@ -65,6 +65,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   │   │   ├── add_logger_debugs_for_args
     │   │   │   ├── convert_function_signature
     │   │   │   ├── remove_kwargs_if_default_value
+    │   │   │   ├── reorder_functions
     │   │   │   └── reorder_params
     │   │   └── passive
     │   │       ├── assignment_then_guard_to_walrus
