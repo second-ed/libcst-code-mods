@@ -30,22 +30,43 @@ class ReorderFunctionsVisitor(BaseCstVisitor):
 class ReorderFunctionsTransformer(BaseCstTransformer):
     def leave_Module(self, original_node: cst.Module, updated_node: cst.Module) -> cst.Module:  # noqa: ARG002, N802
 
-        import_nodes, assign_nodes, fn_nodes, class_nodes = [], [], {}, []
-
-        for node in updated_node.body:
-            if m.matches(node, m.SimpleStatementLine([m.OneOf(m.Import(), m.ImportFrom())])):
-                import_nodes.append(node)
-            elif m.matches(node, m.SimpleStatementLine([m.OneOf(m.AnnAssign(), m.Assign())])):
-                assign_nodes.append(node)
-            elif m.matches(node, m.ClassDef()):
-                class_nodes.append(node)
-            elif m.matches(node, m.FunctionDef()):
-                fn_nodes[node.name.value] = node
+        import_nodes, assign_nodes, fn_nodes, class_nodes, main_nodes, others = _extract_nodes(updated_node)
 
         calls = _populate_call_visitors(fn_nodes)
 
         fn_nodes = [fn_nodes[fn.name] for fn in _sort_functions(calls)]
-        return updated_node.with_changes(body=[*import_nodes, *class_nodes, *fn_nodes, *assign_nodes])
+        return updated_node.with_changes(
+            body=[*import_nodes, *class_nodes, *fn_nodes, *assign_nodes, *others, *main_nodes]
+        )
+
+
+def _extract_nodes(
+    updated_node: cst.Module,
+) -> tuple[
+    list[cst.SimpleStatementLine],
+    list[cst.SimpleStatementLine],
+    dict[str, cst.FunctionDef],
+    list[cst.ClassDef],
+    list[cst.If],
+    list[cst.CSTNode],
+]:
+    import_nodes, assign_nodes, fn_nodes, class_nodes, main_nodes, others = [], [], {}, [], [], []
+    routes = (
+        (m.SimpleStatementLine([m.OneOf(m.Import(), m.ImportFrom())]), import_nodes.append),
+        (m.SimpleStatementLine([m.OneOf(m.AnnAssign(), m.Assign())]), assign_nodes.append),
+        (m.ClassDef(), class_nodes.append),
+        (m.FunctionDef(), lambda node: fn_nodes.__setitem__(node.name.value, node)),
+        (
+            m.If(m.Comparison(m.Name("__name__"), [m.ComparisonTarget(m.Equal(), m.SimpleString("__main__"))])),
+            main_nodes.append,
+        ),
+    )
+
+    for node in updated_node.body:
+        handler = next((handler for matcher, handler in routes if m.matches(node, matcher)), others.append)
+        handler(node)
+
+    return import_nodes, assign_nodes, fn_nodes, class_nodes, main_nodes, others
 
 
 def _populate_call_visitors(fn_nodes: dict[str, cst.FunctionDef]) -> dict[str, list[str]]:

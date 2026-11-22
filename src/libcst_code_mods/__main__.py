@@ -48,27 +48,16 @@ def main(inp_root: Path | str, config: RefactoringConfig) -> int:
     return _report_result(refactored_code, diagnostics)
 
 
-def _report_no_work(config: RefactoringConfig, cache: RefactoringCache) -> int:
-    if config.fix:
-        cache.update()
-    print("All passed")  # noqa: T201
-    return 0
-
-
 def _print_diagnostics(diagnostics: list[Diagnostic]) -> None:
     if diagnostics:
         print(json.dumps([diag.to_dict() for diag in diagnostics], indent=2))  # noqa: T201
 
 
-def _write_refactored_code(refactored_code: dict[Path, str]) -> None:
-    for path, code in refactored_code.items():
-        path.write_text(code)
-        print(f"Modified: {path}")  # noqa: T201
-
-
-def _update_cache(cache: RefactoringCache, config: RefactoringConfig, diagnostics: list[Diagnostic]) -> None:
-    if config.fix and not diagnostics:
+def _report_no_work(config: RefactoringConfig, cache: RefactoringCache) -> int:
+    if config.fix:
         cache.update()
+    print("All passed")  # noqa: T201
+    return 0
 
 
 def _report_result(refactored_code: dict[Path, str], diagnostics: list[Diagnostic]) -> int:
@@ -94,6 +83,17 @@ def _resolve_root_path(inp_root: Path | str) -> tuple[Path, list[Path]]:
     else:
         raise FileNotFoundError(f"Target does not exist: {target}")
     return root, paths
+
+
+def _update_cache(cache: RefactoringCache, config: RefactoringConfig, diagnostics: list[Diagnostic]) -> None:
+    if config.fix and not diagnostics:
+        cache.update()
+
+
+def _write_refactored_code(refactored_code: dict[Path, str]) -> None:
+    for path, code in refactored_code.items():
+        path.write_text(code)
+        print(f"Modified: {path}")  # noqa: T201
 
 
 if __name__ == "__main__":
