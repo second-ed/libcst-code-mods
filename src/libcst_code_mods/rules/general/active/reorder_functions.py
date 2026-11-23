@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 import attrs
 import libcst as cst
 import libcst.matchers as m
@@ -5,6 +7,7 @@ import libcst.matchers as m
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
 from libcst_code_mods.core.refactoring_rule import RefactoringRule
+from libcst_code_mods.cst_utils.matchers import DOCSTRING, GLOBAL_ASSIGNMENT, IMPORT_MATCHER, TRY_IMPORT_MATCHER
 from libcst_code_mods.rules._rule_mapping import register_rule, register_rule_transformer, register_rule_visitor
 
 
@@ -30,14 +33,22 @@ class ReorderFunctionsVisitor(BaseCstVisitor):
 class ReorderFunctionsTransformer(BaseCstTransformer):
     def leave_Module(self, original_node: cst.Module, updated_node: cst.Module) -> cst.Module:  # noqa: ARG002, N802
 
-        import_nodes, assign_nodes, fn_nodes, class_nodes, main_nodes, others = _extract_nodes(updated_node)
+        new_body, body_idx = [], 0
+
+        if updated_node.body and m.matches(updated_node.body[0], DOCSTRING):
+            body_idx = 1
+            new_body.append(updated_node.body[0])
+
+        import_nodes, assign_nodes, fn_nodes, class_nodes, main_nodes, others = _extract_nodes(
+            updated_node.body[body_idx:]
+        )
 
         calls = _populate_call_visitors(fn_nodes)
 
         fn_nodes = [fn_nodes[fn.name] for fn in _sort_functions(calls)]
-        return updated_node.with_changes(
-            body=[*import_nodes, *class_nodes, *fn_nodes, *assign_nodes, *others, *main_nodes]
-        )
+        new_body.extend([*import_nodes, *class_nodes, *fn_nodes, *assign_nodes, *others, *main_nodes])
+
+        return updated_node.with_changes(body=new_body)
 
 
 @attrs.define
@@ -60,7 +71,7 @@ class FnCallStats:
 
 
 def _extract_nodes(
-    updated_node: cst.Module,
+    body: Sequence[cst.SimpleStatementLine | cst.BaseCompoundStatement],
 ) -> tuple[
     list[cst.SimpleStatementLine],
     list[cst.SimpleStatementLine],
@@ -71,8 +82,9 @@ def _extract_nodes(
 ]:
     import_nodes, assign_nodes, fn_nodes, class_nodes, main_nodes, others = [], [], {}, [], [], []
     routes = (
-        (m.SimpleStatementLine([m.OneOf(m.Import(), m.ImportFrom())]), import_nodes.append),
-        (m.SimpleStatementLine([m.OneOf(m.AnnAssign(), m.Assign())]), assign_nodes.append),
+        (IMPORT_MATCHER, import_nodes.append),
+        (TRY_IMPORT_MATCHER, import_nodes.append),
+        (GLOBAL_ASSIGNMENT, assign_nodes.append),
         (m.ClassDef(), class_nodes.append),
         (m.FunctionDef(), lambda node: fn_nodes.__setitem__(node.name.value, node)),
         (
@@ -81,7 +93,7 @@ def _extract_nodes(
         ),
     )
 
-    for node in updated_node.body:
+    for node in body:
         handler = next((handler for matcher, handler in routes if m.matches(node, matcher)), others.append)
         handler(node)
 
