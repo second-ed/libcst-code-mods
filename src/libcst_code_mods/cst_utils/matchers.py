@@ -1,6 +1,77 @@
+# repo-map-desc: some basic matchers
+
+from __future__ import annotations
+
+import attrs
+import libcst as cst
 import libcst.matchers as m
 
 DOCSTRING = m.SimpleStatementLine([m.Expr(m.SimpleString())])
 IMPORT_MATCHER = m.SimpleStatementLine([m.OneOf(m.Import(), m.ImportFrom())])
 TRY_IMPORT_MATCHER = m.Try(m.IndentedBlock([m.AtLeastN(IMPORT_MATCHER, n=1)]))
 GLOBAL_ASSIGNMENT = m.SimpleStatementLine([m.OneOf(m.Assign(), m.AnnAssign())])
+
+
+@attrs.frozen
+class HasAny:
+    match_cond: m.BaseMatcherNode
+
+    def __call__(self, node: cst.CSTNode) -> bool:
+        return bool(m.findall(node, self.match_cond))
+
+
+def is_function(name: m.Name | None = None) -> m.FunctionDef:
+    name = name or m.DoNotCare()
+    return m.FunctionDef(name=name)
+
+
+def is_nested_function(name: m.Name | None = None) -> m.FunctionDef:
+    name = name or m.DoNotCare()
+    return m.FunctionDef(name=name, body=m.MatchIfTrue(HasAny(m.FunctionDef())))
+
+
+def is_class(name: m.Name | None = None) -> m.ClassDef:
+    name = name or m.DoNotCare()
+    return m.ClassDef(name=name)
+
+
+def raises_exception(exc: m.Name | None = None) -> m.FunctionDef:
+    exc = exc or m.DoNotCare()
+    return m.FunctionDef(body=m.MatchIfTrue(HasAny(m.Raise(exc=exc))))
+
+
+def has_return_type(type_hint: m.Name | None = None) -> m.FunctionDef:
+    type_hint = type_hint or m.DoNotCare()
+    return m.FunctionDef(returns=m.Annotation(annotation=type_hint))
+
+
+def assignment_has_type_hint(type_hint: m.Name | None = None) -> m.BaseMatcherNode:
+    type_hint = type_hint or m.DoNotCare()
+    return m.AnnAssign(annotation=m.Annotation(annotation=type_hint))
+
+
+def param_has_type_hint(type_hint: m.Name | None = None) -> m.BaseMatcherNode:
+    type_hint = type_hint or m.DoNotCare()
+    return m.Param(annotation=m.Annotation(annotation=type_hint))
+
+
+def is_call_with_name(func_name: m.Name | None = None) -> m.BaseMatcherNode:
+    if func_name is None:
+        # match any call
+        return m.Call()
+
+    return m.Call(func=m.OneOf(func_name, m.Attribute(value=m.DoNotCare(), attr=func_name)))
+
+
+def is_fstring_with_text(formatted_text: str | None = None) -> m.FormattedString:
+    formatted_text = formatted_text or m.DoNotCare()
+    return _fstring_with_node(m.FormattedStringText(value=formatted_text))
+
+
+def is_fstring_with_placeholder(expression: m.Name | None = None) -> m.FormattedString:
+    expression = expression or m.DoNotCare()
+    return _fstring_with_node(m.FormattedStringExpression(expression=expression))
+
+
+def _fstring_with_node(node: m.BaseMatcherNode) -> m.FormattedString:
+    return m.FormattedString(parts=[m.ZeroOrMore(), node, m.ZeroOrMore()])

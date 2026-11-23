@@ -3,7 +3,7 @@ import pytest
 from libcst.metadata.full_repo_manager import FullRepoManager
 from libcst.metadata.wrapper import MetadataWrapper
 
-import libcst_code_mods.core.matchers as mat
+import libcst_code_mods.cst_utils.matchers as mat
 from libcst_code_mods.constants import REPO_ROOT
 from libcst_code_mods.engine import _get_manager
 from libcst_code_mods.node_collector import NodeCollector, NodeMetadata
