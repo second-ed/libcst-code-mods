@@ -5,6 +5,7 @@ import libcst.matchers as m
 
 from libcst_code_mods.core.base_cst_transformer import BaseCstTransformer
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
+from libcst_code_mods.cst_utils.matchers import DOCSTRING
 
 
 def normalise(node: cst.CSTNode | None) -> str:
@@ -74,7 +75,7 @@ def has_docstring(node: cst.FunctionDef) -> bool:
     if not node.body.body:
         return False
 
-    return m.matches(node.body.body[0], m.SimpleStatementLine([m.Expr(m.SimpleString())]))
+    return m.matches(node.body.body[0], DOCSTRING)
 
 
 def prepend_comment_to_function(node: cst.FunctionDef, text: str) -> cst.FunctionDef:
