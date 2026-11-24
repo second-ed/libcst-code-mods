@@ -6,6 +6,7 @@ from typing import ClassVar
 
 import attrs
 import libcst as cst
+import libcst.matchers as m
 from libcst.metadata import CodeRange, PositionProvider
 
 from libcst_code_mods.core.base_cst_visitor import BaseCstVisitor
@@ -52,7 +53,7 @@ class IdentifyDuplicatedCodeVisitor(BaseCstVisitor):
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:  # noqa: N802
         function_body = node.body
-        if has_docstring(node) and isinstance(function_body, cst.IndentedBlock):
+        if has_docstring(node) and m.matches(function_body, m.IndentedBlock()):
             function_body = function_body.with_changes(body=function_body.body[1:])
 
         for candidates in _iter_candidates(function_body):
