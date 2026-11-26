@@ -94,6 +94,7 @@ note3((RULE_MAPPING binds rule to visitors and transformers)) --- B
     │   ├── pyspark
     │   │   └── passive
     │   │       ├── avoid_single_partition_repartition
+    │   │       ├── no_collect_inside_loop
     │   │       ├── replace_multiple_with_column_calls
     │   │       ├── replace_multiple_with_column_renamed_calls
     │   │       ├── replace_with_column_in_for_loop
