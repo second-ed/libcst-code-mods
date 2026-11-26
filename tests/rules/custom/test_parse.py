@@ -1,8 +1,8 @@
-import pytest
-import libcst.matchers as m
 import libcst as cst
+import libcst.matchers as m
+import pytest
 
-from libcst_code_mods.rules.custom.parse import _parse_matcher, _matcher_to_dict
+from libcst_code_mods.rules.custom.parse import _matcher_to_dict, _parse_matcher
 
 
 @pytest.mark.parametrize(

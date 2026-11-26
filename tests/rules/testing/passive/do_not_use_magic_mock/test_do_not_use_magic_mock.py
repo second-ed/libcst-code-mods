@@ -1,22 +1,12 @@
 from pathlib import Path
 
 import pytest
-
-from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
-from libcst_code_mods.rules.testing.passive.do_not_use_magic_mock import DoNotUseMagicMock
-from libcst_code_mods.engine import multi_file_refactor
-from tests.conftest import code_map_to_rows, diff_code_lfs, paths_to_rows, rows_to_lf
-from pathlib import Path
-
 from libcst.metadata import CodePosition, CodeRange
-import pytest
 
 from libcst_code_mods.core.diagnostics import Diagnostic
-from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
-from libcst_code_mods.rules.testing.passive.no_asserts_in_loop import NoAssertsInLoop
 from libcst_code_mods.engine import multi_file_refactor
-from tests.conftest import code_map_to_rows, diff_code_lfs, paths_to_rows, rows_to_lf
-
+from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
+from libcst_code_mods.rules.testing.passive.do_not_use_magic_mock import DoNotUseMagicMock
 
 PARENT = Path(__file__).parent
 

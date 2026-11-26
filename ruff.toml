@@ -34,7 +34,8 @@ ignore = [
 ]
 "conf.py" = ["ALL"]
 "tests/test_transformer_cases/**.py" = ["ALL"]
-"tests/rules/**.py" = ["ALL"]
+"tests/rules/**/before/**.py" = ["ALL"]
+"tests/rules/**/after/**.py" = ["ALL"]
 "mock_package/**.py" = ["ALL"]
 
 [format]

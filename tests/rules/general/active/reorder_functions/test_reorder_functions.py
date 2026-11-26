@@ -2,18 +2,17 @@ from pathlib import Path
 
 import pytest
 
+from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
 from libcst_code_mods.rules.general.active.reorder_functions import ReorderFunctions
-from libcst_code_mods.engine import multi_file_refactor
 from tests.conftest import code_map_to_rows, diff_code_lfs, paths_to_rows, rows_to_lf
-
 
 PARENT = Path(__file__).parent
 
 
 @pytest.mark.parametrize(
     ("case_name", "transformers", "expected_diagnostics"),
-    [pytest.param("case_1", [ReorderFunctions([str((PARENT / "cases/case_1/before/file_1.py"))])], [])],
+    [pytest.param("case_1", [ReorderFunctions([str(PARENT / "cases/case_1/before/file_1.py")])], [])],
 )
 def test_reorder_functions(case_name, transformers, expected_diagnostics) -> None:
     usecase_root = f"{PARENT}/cases/{case_name}"

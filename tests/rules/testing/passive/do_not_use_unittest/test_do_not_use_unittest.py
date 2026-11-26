@@ -1,13 +1,12 @@
 from pathlib import Path
 
-from libcst.metadata import CodePosition, CodeRange
 import pytest
+from libcst.metadata import CodePosition, CodeRange
 
 from libcst_code_mods.core.diagnostics import Diagnostic
+from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
 from libcst_code_mods.rules.testing.passive.do_not_use_unittest import DoNotUseUnittest
-from libcst_code_mods.engine import multi_file_refactor
-
 
 PARENT = Path(__file__).parent
 

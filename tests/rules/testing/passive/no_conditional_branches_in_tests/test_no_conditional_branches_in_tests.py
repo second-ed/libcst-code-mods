@@ -1,14 +1,12 @@
 from pathlib import Path
 
-from attrs import asdict
-from libcst.metadata import CodePosition, CodeRange
 import pytest
+from libcst.metadata import CodePosition, CodeRange
 
 from libcst_code_mods.core.diagnostics import Diagnostic
+from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
 from libcst_code_mods.rules.testing.passive.no_conditional_branches_in_tests import NoConditionalBranchesInTests
-from libcst_code_mods.engine import multi_file_refactor
-
 
 PARENT = Path(__file__).parent
 
@@ -48,7 +46,6 @@ PARENT = Path(__file__).parent
 def test_no_conditional_branches_in_tests(case_name, transformers, expected_diagnostics) -> None:
     usecase_root = f"{PARENT}/cases/{case_name}"
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
-    after_paths = list(Path(f"{usecase_root}/after").rglob("**/*.py"))
 
     refactored_code, diagnostics = multi_file_refactor(
         usecase_root, before_paths, transformers, RULE_MAPPING, format_code=True

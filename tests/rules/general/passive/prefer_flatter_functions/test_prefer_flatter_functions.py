@@ -1,14 +1,12 @@
 from pathlib import Path
 
-from libcst.metadata import CodePosition, CodeRange
 import pytest
+from libcst.metadata import CodePosition, CodeRange
 
 from libcst_code_mods.core.diagnostics import Diagnostic
+from libcst_code_mods.engine import multi_file_refactor
 from libcst_code_mods.rules._rule_mapping import RULE_MAPPING
 from libcst_code_mods.rules.general.passive.prefer_flatter_functions import PreferFlatterFunctions
-from libcst_code_mods.engine import multi_file_refactor
-from tests.conftest import code_map_to_rows, diff_code_lfs, paths_to_rows, rows_to_lf
-
 
 PARENT = Path(__file__).parent
 
@@ -41,7 +39,6 @@ PARENT = Path(__file__).parent
 def test_prefer_flatter_functions(case_name, transformers, expected_diagnostics) -> None:
     usecase_root = f"{PARENT}/cases/{case_name}"
     before_paths = list(Path(f"{usecase_root}/before").rglob("**/*.py"))
-    after_paths = list(Path(f"{usecase_root}/after").rglob("**/*.py"))
 
     refactored_code, diagnostics = multi_file_refactor(
         usecase_root, before_paths, transformers, RULE_MAPPING, format_code=True
