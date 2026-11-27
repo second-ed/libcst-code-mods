@@ -4,6 +4,7 @@ from libcst_code_mods.rules.general.active.add_kwargs import AddKwargs
 from libcst_code_mods.rules.general.active.add_logger_debugs_for_args import AddLoggerDebugsForArgs
 from libcst_code_mods.rules.general.active.convert_function_signature import ConvertFunctionSignature
 from libcst_code_mods.rules.general.active.remove_kwargs_if_default_value import RemoveKwargsIfDefaultValue
+from libcst_code_mods.rules.general.active.reorder_functions import ReorderFunctions
 from libcst_code_mods.rules.general.active.reorder_params import ReorderParams
 from libcst_code_mods.rules.general.passive.assignment_then_guard_to_walrus import AssignmentThenGuardToWalrus
 from libcst_code_mods.rules.general.passive.bitwise_condition_to_boolean import BitwiseConditionToBoolean
@@ -38,6 +39,7 @@ from libcst_code_mods.rules.general.passive.replace_single_use_list_comp_with_ge
 )
 from libcst_code_mods.rules.general.passive.simplify_boolean_operations import SimplifyBooleanOperations
 from libcst_code_mods.rules.pyspark.passive.avoid_single_partition_repartition import AvoidSinglePartitionRepartition
+from libcst_code_mods.rules.pyspark.passive.no_collect_inside_loop import NoCollectInsideLoop
 from libcst_code_mods.rules.pyspark.passive.replace_multiple_with_column_calls import ReplaceMultipleWithColumnCalls
 from libcst_code_mods.rules.pyspark.passive.replace_multiple_with_column_renamed_calls import (
     ReplaceMultipleWithColumnRenamedCalls,
@@ -80,12 +82,14 @@ __all__ = [
     "InvertLoopGuards",
     "MethodDoesNotUseSelf",
     "NoAssertsInLoop",
+    "NoCollectInsideLoop",
     "NoConditionalBranchesInTests",
     "ParametrizeSimilarTests",
     "PreferFlatterFunctions",
     "PreferSimplerFunctions",
     "PreferSmallerFunctions",
     "RemoveKwargsIfDefaultValue",
+    "ReorderFunctions",
     "ReorderParams",
     "ReplaceMultipleFunctionCallsInCompWithWalrus",
     "ReplaceMultipleWithColumnCalls",
