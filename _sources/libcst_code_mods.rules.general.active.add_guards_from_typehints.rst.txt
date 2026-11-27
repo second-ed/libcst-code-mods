@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.active.add\_guards\_from\_typehints module
+===========================================================================
+
+.. automodule:: libcst_code_mods.rules.general.active.add_guards_from_typehints
+   :members:
+   :show-inheritance:
+   :undoc-members:

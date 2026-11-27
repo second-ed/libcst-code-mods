@@ -1,0 +1,21 @@
+libcst\_code\_mods.cst\_builders.primitives package
+===================================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   libcst_code_mods.cst_builders.primitives.collections
+   libcst_code_mods.cst_builders.primitives.declarations
+   libcst_code_mods.cst_builders.primitives.expressions
+   libcst_code_mods.cst_builders.primitives.literals
+
+Module contents
+---------------
+
+.. automodule:: libcst_code_mods.cst_builders.primitives
+   :members:
+   :show-inheritance:
+   :undoc-members:

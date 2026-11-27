@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.identify\_duplicated\_code module
+==========================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.identify_duplicated_code
+   :members:
+   :show-inheritance:
+   :undoc-members:

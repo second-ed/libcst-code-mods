@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.replace\_single\_use\_list\_comp\_with\_generator module
+=================================================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.replace_single_use_list_comp_with_generator
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+libcst\_code\_mods.core.cst\_rule module
+========================================
+
+.. automodule:: libcst_code_mods.core.cst_rule
+   :members:
+   :show-inheritance:
+   :undoc-members:

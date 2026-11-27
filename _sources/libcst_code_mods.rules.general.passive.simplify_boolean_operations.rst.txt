@@ -1,0 +1,7 @@
+libcst\_code\_mods.rules.general.passive.simplify\_boolean\_operations module
+=============================================================================
+
+.. automodule:: libcst_code_mods.rules.general.passive.simplify_boolean_operations
+   :members:
+   :show-inheritance:
+   :undoc-members:

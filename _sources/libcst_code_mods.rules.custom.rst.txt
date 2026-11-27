@@ -1,0 +1,19 @@
+libcst\_code\_mods.rules.custom package
+=======================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   libcst_code_mods.rules.custom.parse
+   libcst_code_mods.rules.custom.visitor
+
+Module contents
+---------------
+
+.. automodule:: libcst_code_mods.rules.custom
+   :members:
+   :show-inheritance:
+   :undoc-members:
